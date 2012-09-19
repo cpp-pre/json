@@ -1,7 +1,7 @@
 #include <iostream>
 #include <sstream>
 
-#include "utils.hpp"
+#include "../swissarmyknife/enums/utils.hpp"
 
 namespace myapp {
 

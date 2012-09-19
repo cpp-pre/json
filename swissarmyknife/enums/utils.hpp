@@ -59,6 +59,7 @@
  * \param enumDeclaration Provide here the enum declaration as you are used to (e.g. enum Hello { Wo, rld })
  */
 #define SMART_ENUM(enumTypeArg, ...)                                                     \
+namespace enumTypeArg {                                                                  \
     __VA_ARGS__;                                                                         \
     std::ostream& operator<<(std::ostream& os, const enumTypeArg& val) {                 \
             os << swissarmyknife::enums::to_string(#__VA_ARGS__, val);                   \
@@ -72,6 +73,7 @@
     enumTypeArg from_string(const std::string &str) {                                    \
             return swissarmyknife::enums::from_string<enumTypeArg>(#__VA_ARGS__, str);   \
     }                                                                                    \
+}                                                                                        \
 
 
 namespace swissarmyknife { namespace enums {
