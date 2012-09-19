@@ -2,7 +2,6 @@
 #define SWISSARMYKNIFE_ENUMS_UTILS_HPP
 
 #include <ostream>
-#include <algorithm>
 
 #include <boost/assert.hpp> 
 #include <boost/algorithm/string.hpp>
@@ -18,38 +17,39 @@
  *          STOPPED
  *      });
  *
- * This results in a namespace being created named State, containing an the provide enum and a stream operator
- * overload for this enum :
+ * This results in providing the declared enum and a stream operator overload for this enum :
  *
- *  namespace State {
  *      enum State { 
  *          FAULT,
  *          RUNNING,
  *          STOPPED
  *      };
  *      
- *      std::ostream& operator<<(std::ostream& os, const enumTypeArg& val) {
+ *      std::ostream& operator<<(std::ostream& os, const State& val) {
  *         os << swissarmyknife::enums::to_string(#__VA_ARGS__, val);
  *         return os;
  *      }
- *  }
  *  
  *  This has the effect that you can seamlessly transform the enum into string by streaming it to a stringstream
- *  or directly to std::cout as follow :
+ *  or directly to std::cout as it follow :
+}                                                                                   
  *      std::stringstream ss;
  *      ss << State::FAULT 
  *      std::string myEnumStr = ss;
  *
+ *      or
+ *
+ *      std::cout << State::RUNNING << std::endl;
+ *
  * \param enumTypeArg Provide here the enum name (e.g. Hello)
  * \param enumDeclaration Provide here the enum declaration as you are used to (e.g. enum Hello { Wo, rld })
  */
-#define SMART_ENUM(enumTypeArg, ...) namespace enumTypeArg {                        \
+#define SMART_ENUM(enumTypeArg, ...)                                                \
     __VA_ARGS__;                                                                    \
     std::ostream& operator<<(std::ostream& os, const enumTypeArg& val) {            \
             os << swissarmyknife::enums::to_string(#__VA_ARGS__, val);              \
             return os;                                                              \
     }                                                                               \
-}                                                                                   \
 
 
 namespace swissarmyknife { namespace enums {
