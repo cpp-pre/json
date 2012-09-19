@@ -1,0 +1,23 @@
+                            libswissarmyknife
+  About it
+  --------
+  The swiss army knife library is a set of helper functions for common programming
+  operations like bit shifting, byte array conversions, unaligned access to bits,
+  as well as helper for stringifying enums.
+
+  Using it
+  --------
+  The swiss army knife library is header only and is meant to simply be included by
+  client code.
+
+  License
+  -------
+  The library is currently released as MIT license, that is to say that you can use
+  it for anything as you want, you just have to inform the users of your application
+  that this lib is inside and that it comes from us.
+
+  See LICENSE file for more details.
+
+  Help
+  ----
+  You can get help about the library by sending a mail to : damien.buhl@lecbna.org
