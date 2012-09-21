@@ -7,8 +7,7 @@
 #include <boost/algorithm/string.hpp>
 
 /**
- * \brief This macro generates for you a Smart Enum, that is to say a struct inheriting the SmartEnum class,
- * providing the ability to transform enum to string and from string.
+ * \brief This macro generates for you a Smart Enum, that is to say a namespace containing the enum with functions to transform it from and back to string.
  *
  * This is meant to be used this way :
  *      SMART_ENUM(State, enum State {
@@ -26,19 +25,14 @@
  *              STOPPED
  *          };
  *      
- *          std::ostream& operator<<(std::ostream& os, const State& val) {
- *             os << swissarmyknife::enums::to_string(#__VA_ARGS__, val);
- *             return os;
- *          }
- *
- *          std::string to_string(const enumTypeArg& val) {
- *              return swissarmyknife::enums::to_string(#__VA_ARGS__, val);
- *          }
+ *          inline std::ostream& operator<<(std::ostream& os, const enumTypeArg& val);
+ *          inline std::string to_string(const enumTypeArg& val);
+ *          inline enumTypeArg from_string(const std::string &str);
+ *                    
  *      }
  *  
  *  This has the effect that you can seamlessly transform the enum into string by streaming it to a stringstream
  *  or directly to std::cout as it follow :
-}                                                                                   
  *      std::stringstream ss;
  *      ss << State::FAULT 
  *      std::string myEnumStr = ss.str();
@@ -53,7 +47,7 @@
  *
  *  Additionally if you get some string version of your enum you can destringify it :
  *      
- *      State::State myEnumVal = State::from_string(State::FAULT);
+ *      State::State myEnumVal = State::from_string("FAULT");
  *
  * \param enumTypeArg Provide here the enum name (e.g. Hello)
  * \param enumDeclaration Provide here the enum declaration as you are used to (e.g. enum Hello { Wo, rld })
@@ -61,16 +55,16 @@
 #define SMART_ENUM(enumTypeArg, ...)                                                     \
 namespace enumTypeArg {                                                                  \
     __VA_ARGS__;                                                                         \
-    static inline std::ostream& operator<<(std::ostream& os, const enumTypeArg& val) {   \
+    inline std::ostream& operator<<(std::ostream& os, const enumTypeArg& val) {          \
             os << swissarmyknife::enums::to_string(#__VA_ARGS__, val);                   \
             return os;                                                                   \
     }                                                                                    \
                                                                                          \
-    static inline std::string to_string(const enumTypeArg& val) {                        \
+    inline std::string to_string(const enumTypeArg& val) {                               \
             return swissarmyknife::enums::to_string(#__VA_ARGS__, val);                  \
     }                                                                                    \
                                                                                          \
-    static inline enumTypeArg from_string(const std::string &str) {                      \
+    inline enumTypeArg from_string(const std::string &str) {                             \
             return swissarmyknife::enums::from_string<enumTypeArg>(#__VA_ARGS__, str);   \
     }                                                                                    \
 }                                                                                        \
