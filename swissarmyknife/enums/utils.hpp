@@ -61,16 +61,16 @@
 #define SMART_ENUM(enumTypeArg, ...)                                                     \
 namespace enumTypeArg {                                                                  \
     __VA_ARGS__;                                                                         \
-    std::ostream& operator<<(std::ostream& os, const enumTypeArg& val) {                 \
+    static inline std::ostream& operator<<(std::ostream& os, const enumTypeArg& val) {   \
             os << swissarmyknife::enums::to_string(#__VA_ARGS__, val);                   \
             return os;                                                                   \
     }                                                                                    \
                                                                                          \
-    std::string to_string(const enumTypeArg& val) {                                      \
+    static inline std::string to_string(const enumTypeArg& val) {                        \
             return swissarmyknife::enums::to_string(#__VA_ARGS__, val);                  \
     }                                                                                    \
                                                                                          \
-    enumTypeArg from_string(const std::string &str) {                                    \
+    static inline enumTypeArg from_string(const std::string &str) {                      \
             return swissarmyknife::enums::from_string<enumTypeArg>(#__VA_ARGS__, str);   \
     }                                                                                    \
 }                                                                                        \
