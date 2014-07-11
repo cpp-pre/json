@@ -1,7 +1,7 @@
 #include <iostream>
 #include <sstream>
 
-#include "../swissarmyknife/enums/utils.hpp"
+#include "../swissarmyknife/enums/smart_enum.hpp"
 
 namespace myapp {
 
