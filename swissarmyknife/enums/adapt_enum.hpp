@@ -18,7 +18,7 @@
  * \param ENUMERATION_SEQ Sequence of enum states
  */
 #define SWISSARMYKNIFE_ADAPT_ENUM(ENUM_TYPE, ENUMERATION_SEQ)                   \
-    inline std::string to_string(ENUM_TYPE enum_value) {                        \
+    inline std::string to_string(const ENUM_TYPE& enum_value) {                 \
       switch (enum_value) {                                                     \
       BOOST_PP_SEQ_FOR_EACH(                                                    \
           SWISSARMYKNIFE_ADAPT_ENUM_EACH_ENUMERATION_ENTRY_C,                   \
