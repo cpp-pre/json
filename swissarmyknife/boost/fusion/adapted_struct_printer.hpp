@@ -2,13 +2,13 @@
 #define BOOST_FUSION_ADAPTED_STRUCT_PRINTER_HPP
 
 #include <boost/fusion/include/is_sequence.hpp>
-#include <boost/fusion/for_each_member.hpp>
 #include <boost/fusion/include/io.hpp>
+#include <swissarmyknife/boost/fusion/for_each_member.hpp>
 
-#include <indenting_ostream.hpp>
+#include <swissarmyknife/iostreams/indenting_ostream.hpp>
 
-#include <boost/fusion/detail/adapted_variant_printer.hpp>
-#include <boost/fusion/detail/cstdint_to_hexa_stream_operators.hpp>
+#include <swissarmyknife/boost/fusion/detail/adapted_variant_printer.hpp>
+#include <swissarmyknife/boost/fusion/detail/cstdint_to_hexa_stream_operators.hpp>
 
 namespace boost { namespace fusion {
 

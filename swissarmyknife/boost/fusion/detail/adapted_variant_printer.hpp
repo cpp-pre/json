@@ -1,16 +1,16 @@
 #ifndef BOOST_FUSION_DETAIL_ADAPTED_VARIANT_PRINTER_HPP
 #define BOOST_FUSION_DETAIL_ADAPTED_VARIANT_PRINTER_HPP
 
-#include <boost/fusion/traits/is_boost_variant.hpp>
-
 #include <boost/fusion/include/mpl.hpp>
 #include <boost/fusion/include/is_sequence.hpp>
-#include <boost/fusion/for_each_member.hpp>
 #include <boost/fusion/include/io.hpp>
 
-#include <indenting_ostream.hpp>
+#include <swissarmyknife/boost/fusion/traits/is_boost_variant.hpp>
+#include <swissarmyknife/boost/fusion/for_each_member.hpp>
 
-#include <boost/fusion/detail/cstdint_to_hexa_stream_operators.hpp>
+#include <swissarmyknife/iostreams/indenting_ostream.hpp>
+
+#include <swissarmyknife/boost/fusion/detail/cstdint_to_hexa_stream_operators.hpp>
 
 namespace boost { namespace fusion {
 
