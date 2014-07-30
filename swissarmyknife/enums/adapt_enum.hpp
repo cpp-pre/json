@@ -1,3 +1,6 @@
+#ifndef SWISSARMYKNIFE_ENUMS_ADAPT_ENUM_HPP
+#define SWISSARMYKNIFE_ENUMS_ADAPT_ENUM_HPP
+
 #include <string>
 #include <ostream>
 #include <boost/preprocessor/cat.hpp>
@@ -33,4 +36,4 @@
       return os;                                                                \
     }
 
-
+#endif
