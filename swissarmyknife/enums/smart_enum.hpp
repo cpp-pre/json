@@ -1,6 +1,8 @@
 #ifndef SWISSARMYKNIFE_ENUMS_SMART_ENUM_HPP
 #define SWISSARMYKNIFE_ENUMS_SMART_ENUM_HPP
 
+#include <swissarmyknife/detail/config.hpp>
+
 #include <ostream>
 
 #include <boost/assert.hpp> 

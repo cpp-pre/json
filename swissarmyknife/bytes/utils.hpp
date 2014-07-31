@@ -1,6 +1,8 @@
 #ifndef SWISSARMYKNIFE_BYTES_UTILS_HPP
 #define SWISSARMYKNIFE_BYTES_UTILS_HPP
 
+#include <swissarmyknife/detail/config.hpp>
+
 #include <string>
 #include <sstream>
 #include <cctype>

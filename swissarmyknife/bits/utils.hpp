@@ -1,6 +1,8 @@
 #ifndef SWISSARMYKNIFE_BITS_UTILS_HPP
 #define SWISSARMYKNIFE_BITS_UTILS_HPP
 
+#include <swissarmyknife/detail/config.hpp>
+
 #include <iostream>
 #include <bitset>
 #include <string>

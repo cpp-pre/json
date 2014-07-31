@@ -5,6 +5,8 @@
 #ifndef INDENTING_OSTREAM_HPP
 #define INDENTING_OSTREAM_HPP
 
+#include <swissarmyknife/detail/config.hpp>
+
 #include <streambuf>
 
 class identing_streambuf: public std::streambuf {
