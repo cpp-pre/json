@@ -4,22 +4,43 @@
 #include <swissarmyknife/detail/config.hpp>
 
 #include <boost/chrono.hpp>
+#include <chrono>
 
-namespace swissarmyknife { namespace chrono {
+namespace swissarmyknife { namespace chrono { 
+  
+  namespace boost {
 
-  constexpr boost::chrono::milliseconds operator "" _ms(
-      unsigned long long ms) {
-    return boost::chrono::milliseconds(ms);
+    constexpr ::boost::chrono::milliseconds operator "" _ms(
+        unsigned long long ms) {
+      return ::boost::chrono::milliseconds(ms);
+    }
+
+    constexpr ::boost::chrono::seconds operator "" _sec(
+        unsigned long long sec) {
+      return ::boost::chrono::seconds(sec);
+    }
+
+    constexpr ::boost::chrono::milliseconds operator "" _min(
+        unsigned long long min) {
+      return ::boost::chrono::minutes(min);
+    }
   }
 
-  constexpr boost::chrono::seconds operator "" _sec(
-      unsigned long long sec) {
-    return boost::chrono::seconds(sec);
-  }
+  namespace std {
+    constexpr ::std::chrono::milliseconds operator "" _ms(
+        unsigned long long ms) {
+      return ::std::chrono::milliseconds(ms);
+    }
 
-  constexpr boost::chrono::milliseconds operator "" _min(
-      unsigned long long min) {
-    return boost::chrono::minutes(min);
+    constexpr ::std::chrono::seconds operator "" _sec(
+        unsigned long long sec) {
+      return ::std::chrono::seconds(sec);
+    }
+
+    constexpr ::std::chrono::milliseconds operator "" _min(
+        unsigned long long min) {
+      return ::std::chrono::minutes(min);
+    }
   }
 
 }}
