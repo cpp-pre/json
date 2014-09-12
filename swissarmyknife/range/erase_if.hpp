@@ -21,8 +21,8 @@ namespace swissarmyknife {
         typedef BOOST_DEDUCED_TYPENAME Container::const_iterator iterator_t;
 
         iterator_t it_end = ::boost::end(on);
-        for (iterator_t it = ::boost::begin(on); it != it_end; ++it) {
-          if (pred(*it)) { on.erase(it); }
+        for (iterator_t it = ::boost::begin(on); it != it_end;) {
+          if (pred(*it)) { it = on.erase(it); } else { ++it; }
         }
 
         return on;
