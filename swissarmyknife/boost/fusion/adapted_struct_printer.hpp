@@ -15,8 +15,6 @@
 
 namespace boost { namespace fusion {
 
-
-
 	struct adapted_struct_printer : public boost::static_visitor<> {
 
 		adapted_struct_printer(std::ostream& os) 
@@ -49,8 +47,6 @@ namespace boost { namespace fusion {
 		void operator()(T& value) const {
       this->operator()("", value);
 		}
-
-
 
 		template<class T, 
 			typename std::enable_if<
@@ -95,6 +91,30 @@ namespace boost { namespace fusion {
 	};
 
 	
+  template<class T, 
+    typename std::enable_if<
+      boost::fusion::traits::is_sequence<T>::value &&
+      !is_boost_variant<T>::value 
+      >::type* = nullptr>
+  inline std::ostream& operator<<(std::ostream& os, T& value) {
+      os << indent;
+      boost::fusion::for_each_member(value, adapted_struct_printer(os));
+      os << deindent;
+      return os;
+  }
+
+  template<class T, 
+    typename std::enable_if<
+      (boost::fusion::traits::is_sequence<typename T:: types>::value && 
+        is_boost_variant<T>::value)
+    >::type* = nullptr>
+  inline std::ostream& operator<<(std::ostream& os, T& value) {
+      os << indent;
+      boost::apply_visitor(adapted_struct_printer(os), value);
+      os << deindent;
+      return os;
+  }
+  
 
 }}
 
