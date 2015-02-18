@@ -2,6 +2,7 @@
 
 #include <boost/fusion/include/define_struct.hpp>
 #include <swissarmyknife/boost/fusion/adapted_struct_printer.hpp>
+#include <boost/variant.hpp>
 
 namespace bla {
   using boost::fusion::detail::operator <<;
@@ -19,7 +20,10 @@ BOOST_FUSION_DEFINE_STRUCT((bla), bimbim,
     (bla::innerbim, my_inner_bim)
     )
 
-typedef boost::tuple<std::string, int, bla::innerbim> my_tuple_t;
+
+typedef boost::variant<int, double, bla::innerbim> myvariant_t;
+typedef boost::tuple<std::string, int, bla::innerbim, myvariant_t> my_tuple_t;
+
 
 BOOST_FUSION_DEFINE_STRUCT((bla), blabla,
     (bla::bimbim, bim)
@@ -28,6 +32,7 @@ BOOST_FUSION_DEFINE_STRUCT((bla), blabla,
     (std::vector<double>, list)
     (std::list<bla::bimbim>, list_of_bimbim)
     (my_tuple_t, mytuple)
+    (myvariant_t, myvariant)
     )
 
 int main(int argc, char** argv) {
@@ -42,7 +47,8 @@ int main(int argc, char** argv) {
       {24, 9, bla::innerbim{"FEEL GOOD"} },
       {26, 14, bla::innerbim{"SO BAD"} },
     },
-    {"Hey that's not an int", 1, bla::innerbim{"hello"}}
+    {"Hey that's not an int", 1, bla::innerbim{"hello"}, 12},
+    bla::innerbim("I'm in the variant")
   };
   std::cout << instance << std::endl;
 

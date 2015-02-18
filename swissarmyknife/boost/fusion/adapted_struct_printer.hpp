@@ -87,9 +87,9 @@ namespace boost { namespace fusion {
 		template<class T, 
 			enable_if_is_variant_t<T>* = nullptr>
 		void operator()(T& value) const {
-      m_os << "<boost::variant>";
+      m_os << "\n{" << indent << "\n";
       boost::apply_visitor(*this, value);
-      m_os << "</boost::variant>";
+      m_os << deindent << "}\n";
 		}
 
 		private:
