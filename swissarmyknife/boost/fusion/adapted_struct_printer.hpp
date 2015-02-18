@@ -9,6 +9,7 @@
 #include <swissarmyknife/boost/fusion/for_each_member.hpp>
 
 #include <boost/fusion/include/io.hpp>
+#include <boost/fusion/include/boost_tuple.hpp>
 #include <swissarmyknife/iostreams/indenting_ostream.hpp>
 #include <swissarmyknife/boost/fusion/detail/cstdint_to_hexa_stream_operators.hpp>
 #include <swissarmyknife/boost/fusion/detail/std_containers_ostream_operators.hpp>
@@ -56,11 +57,6 @@ namespace boost { namespace fusion {
 		}
 
 
-
-
-
-
-
     template<class T, 
 			enable_if_is_sequence_and_not_variant_t<T>* = nullptr>
 		void operator()(const char* name, T& value) const {
@@ -77,13 +73,6 @@ namespace boost { namespace fusion {
       boost::fusion::for_each_member(value, *this);
       m_os << deindent << "}\n";
 		}
-
-
-
-
-
-
-
 
 
     template<class T, 
