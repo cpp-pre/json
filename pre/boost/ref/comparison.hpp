@@ -4,7 +4,7 @@
 #ifndef SWISSARMYKNIFE_BOOST_REF_COMPARISON_HPP
 #define SWISSARMYKNIFE_BOOST_REF_COMPARISON_HPP
 
-#include <swissarmyknife/detail/config.hpp>
+#include <pre/detail/namespace_compatibility.hpp>
 
 #include <boost/ref.hpp>
 

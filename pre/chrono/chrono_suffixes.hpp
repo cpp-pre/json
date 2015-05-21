@@ -1,12 +1,12 @@
 #ifndef SWISSARMYKNIFE_CHRONO_CHRONOSUFFIXES_HPP
 #define SWISSARMYKNIFE_CHRONO_CHRONOSUFFIXES_HPP
 
-#include <swissarmyknife/detail/config.hpp>
+#include <pre/detail/namespace_compatibility.hpp>
 
 #include <boost/chrono.hpp>
 #include <chrono>
 
-namespace swissarmyknife { namespace chrono { 
+namespace pre { namespace chrono { 
   
   namespace boost {
 

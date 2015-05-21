@@ -1,7 +1,7 @@
 #ifndef SWISSARMYKNIFE_BITS_UTILS_HPP
 #define SWISSARMYKNIFE_BITS_UTILS_HPP
 
-#include <swissarmyknife/detail/config.hpp>
+#include <pre/detail/namespace_compatibility.hpp>
 
 #include <iostream>
 #include <bitset>
@@ -13,7 +13,7 @@
 #include <boost/dynamic_bitset.hpp>
 #include <boost/container/vector.hpp>
 
-namespace swissarmyknife { namespace bits {
+namespace pre { namespace bits {
 
     /**
      * \brief Create string representation of the dynamic bitset given

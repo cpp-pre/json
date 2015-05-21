@@ -1,7 +1,7 @@
 #ifndef SWISSARMYKNIFE_BYTES_UTILS_HPP
 #define SWISSARMYKNIFE_BYTES_UTILS_HPP
 
-#include <swissarmyknife/detail/config.hpp>
+#include <pre/detail/namespace_compatibility.hpp>
 
 #include <string>
 #include <sstream>
@@ -15,7 +15,7 @@
 #include <boost/assign.hpp>
 #include <boost/foreach.hpp>
 
-namespace swissarmyknife { namespace bytes {
+namespace pre { namespace bytes {
 
     /**
      * \brief Constant telling how much bits there is in a nibble

@@ -3,12 +3,12 @@
 
 #include <boost/fusion/include/is_sequence.hpp>
 #include <boost/fusion/include/io.hpp>
-#include <swissarmyknife/boost/fusion/for_each_member.hpp>
+#include preboost/fusion/for_each_member.hpp>
 
-#include <swissarmyknife/iostreams/indenting_ostream.hpp>
+#include preiostreams/indenting_ostream.hpp>
 
-#include <swissarmyknife/boost/fusion/detail/adapted_variant_printer.hpp>
-#include <swissarmyknife/boost/fusion/detail/cstdint_to_hexa_stream_operators.hpp>
+#include preboost/fusion/detail/adapted_variant_printer.hpp>
+#include preboost/fusion/detail/cstdint_to_hexa_stream_operators.hpp>
 
 namespace boost { namespace fusion {
 

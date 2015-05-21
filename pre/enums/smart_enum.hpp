@@ -1,7 +1,7 @@
 #ifndef SWISSARMYKNIFE_ENUMS_SMART_ENUM_HPP
 #define SWISSARMYKNIFE_ENUMS_SMART_ENUM_HPP
 
-#include <swissarmyknife/detail/config.hpp>
+#include <pre/detail/namespace_compatibility.hpp>
 
 #include <ostream>
 
@@ -72,7 +72,7 @@ namespace enumTypeArg {                                                         
 }                                                                                        \
 
 
-namespace swissarmyknife { namespace enums {
+namespace pre { namespace enums {
 
    
     /**

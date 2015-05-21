@@ -1,14 +1,25 @@
-                            libswissarmyknife
+                            cpp pre library - The pre-Boost library
+                                |||
+                                ||+----------------+
+                                v+-------v         v
+                            C++ precursor reusable elements
   About it
   --------
-  The swiss army knife library is a set of helper functions for common programming
+  The pre library is a set of helper functions for common programming
   operations like bit shifting, byte array conversions, unaligned access to bits,
-  as well as helper for stringifying enums.
+  as well as helper for stringifying enums, var_dump equivalent for C++ to print 
+  any types and so on.
+
+  This is a programming toolbox for Le CBNA & Fr. Sauter AG where all the reusable 
+  codes which are missing in std:: or boost:: for common programming task are added
+  there, until they get (if they ever can) into boost, and perhaps later in std::.
+
+  Boost is the pre-std library for the world, pre is the pre-boost library for 
+  Le CBNA & Fr. Sauter AG.
 
   Using it
   --------
-  The swiss army knife library is header only and is meant to simply be included by
-  client code.
+  The pre library is header only and is meant to simply be included by client code.  
 
   License
   -------
@@ -20,4 +31,7 @@
 
   Help
   ----
-  You can get help about the library by sending a mail to : damien.buhl@lecbna.org
+  You can get help about the library by sending a mail to : 
+    damien.buhl@lecbna.org
+
+  If you want more from one feature, we don't bite.

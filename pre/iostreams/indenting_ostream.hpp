@@ -5,7 +5,7 @@
 #ifndef INDENTING_OSTREAM_HPP
 #define INDENTING_OSTREAM_HPP
 
-#include <swissarmyknife/detail/config.hpp>
+#include <pre/detail/namespace_compatibility.hpp>
 
 #include <streambuf>
 
