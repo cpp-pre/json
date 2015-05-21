@@ -5,11 +5,11 @@
 #ifndef INDENTING_OSTREAM_HPP
 #define INDENTING_OSTREAM_HPP
 
-#include <swissarmyknife/detail/config.hpp>
+#include <pre/detail/namespace_compatibility.hpp>
 
 #include <streambuf>
 
-namespace swissarmyknife { namespace iostreams {
+namespace pre { namespace iostreams {
 
   class indenting_streambuf: public std::streambuf {
 

@@ -4,7 +4,7 @@
 #include <iterator>
 #include <ostream>
 #include <type_traits>
-#include <swissarmyknife/boost/fusion/traits/is_container.hpp>
+#include <pre/boost/fusion/traits/is_container.hpp>
 
 namespace boost { namespace fusion { namespace detail {
 

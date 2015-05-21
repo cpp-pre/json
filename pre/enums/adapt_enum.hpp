@@ -1,7 +1,7 @@
 #ifndef SWISSARMYKNIFE_ENUMS_ADAPT_ENUM_HPP
 #define SWISSARMYKNIFE_ENUMS_ADAPT_ENUM_HPP
 
-#include <swissarmyknife/detail/config.hpp>
+#include <pre/detail/namespace_compatibility.hpp>
 
 #include <string>
 #include <ostream>

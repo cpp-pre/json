@@ -1,16 +1,16 @@
 #ifndef SWISSARMYKNIFE_RANGE_ERASE_IF_HPP
 #define SWISSARMYKNIFE_RANGE_ERASE_IF_HPP
 
-#include <swissarmyknife/detail/config.hpp>
+#include <pre/detail/namespace_compatibility.hpp>
 
-#include <boost/range/config.hpp>
+#include <boost/range/namespace_compatibility.hpp>
 #include <boost/range/concepts.hpp>
 #include <boost/range/iterator.hpp>
 #include <boost/range/begin.hpp>
 #include <boost/range/end.hpp>
 #include <boost/assert.hpp>
 
-namespace swissarmyknife {
+namespace pre {
 
 
   namespace range {
@@ -31,6 +31,6 @@ namespace swissarmyknife {
   } // namespace range
 
   using range::erase_if;
-} // namespace swissarmyknife 
+} // namespace pre 
 
 #endif

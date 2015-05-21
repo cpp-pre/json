@@ -16,12 +16,12 @@
 #ifndef SWISSARMYKNIFE_ITERATORS_INDEXED_HPP
 #define SWISSARMYKNIFE_ITERATORS_INDEXED_HPP
 
-#include <swissarmyknife/detail/config.hpp>
+#include <pre/detail/namespace_compatibility.hpp>
 
 #include <iterator>
 #include <limits>
 
-namespace swissarmyknife { namespace iterators {
+namespace pre { namespace iterators {
 
   template <typename T>
   struct iterator_extractor { typedef typename T::iterator type; };

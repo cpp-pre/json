@@ -1,7 +1,7 @@
 #include <iostream>
 
 #include <boost/fusion/include/define_struct.hpp>
-#include <swissarmyknife/boost/fusion/adapted_struct_printer.hpp>
+#include <pre/boost/fusion/adapted_struct_printer.hpp>
 #include <boost/variant.hpp>
 
 namespace bla {

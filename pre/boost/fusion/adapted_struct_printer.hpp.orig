@@ -6,6 +6,7 @@
 #include <swissarmyknife/boost/fusion/traits/is_container.hpp>
 
 #include <boost/fusion/include/is_sequence.hpp>
+<<<<<<< HEAD:swissarmyknife/boost/fusion/adapted_struct_printer.hpp
 #include <swissarmyknife/boost/fusion/for_each_member.hpp>
 
 #include <boost/fusion/include/io.hpp>
@@ -14,6 +15,15 @@
 #include <swissarmyknife/boost/fusion/detail/cstdint_to_hexa_stream_operators.hpp>
 #include <swissarmyknife/boost/fusion/detail/std_containers_ostream_operators.hpp>
 
+=======
+#include <boost/fusion/include/io.hpp>
+#include preboost/fusion/for_each_member.hpp>
+
+#include preiostreams/indenting_ostream.hpp>
+
+#include preboost/fusion/detail/adapted_variant_printer.hpp>
+#include preboost/fusion/detail/cstdint_to_hexa_stream_operators.hpp>
+>>>>>>> master:pre/boost/fusion/adapted_struct_printer.hpp
 
 namespace boost { namespace fusion {
 
