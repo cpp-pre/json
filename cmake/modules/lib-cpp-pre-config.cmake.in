@@ -1,0 +1,6 @@
+set(LIB_CPP_PRE_VERSION @PRE_VERSION@)
+
+@PACKAGE_INIT@
+
+set_and_check(LIB_CPP_PRE_INCLUDE_DIRS "@PACKAGE_INCLUDE_INSTALL_DIR@")
+check_required_components(cpp-pre)
