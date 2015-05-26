@@ -6,27 +6,31 @@
 #include <type_traits>
 #include <pre/boost/fusion/traits/is_container.hpp>
 
-namespace boost { namespace fusion { namespace detail {
+namespace boost { namespace fusion { namespace std_containers_ostream_operators {
 
   template<class T, 
     typename std::enable_if<
       boost::fusion::traits::is_container<T>::value
     >::type* = nullptr>
-  inline std::ostream& operator<<(std::ostream& os, T& value) {
+  inline std::ostream& operator<<(std::ostream& os, const T& value) {
     auto end = std::begin(value);
     std::advance(end, value.size() - 1);
 
     os << "[";
-    for (typename T::iterator iter=std::begin(value); iter!=std::end(value); ++iter) {
+    for (typename T::const_iterator iter=std::begin(value); iter!=std::end(value); ++iter) {
       os << *iter << ( (iter != end) ? ", " : "");
     }
     os << "]";
 
-      return os;
+    return os;
   }
 
 
-}}}
+}
+  
+  using std_containers_ostream_operators::operator<<;
+
+}}
 
 
 #endif

@@ -46,7 +46,7 @@ namespace detail {
 
       f(
 				extension::struct_member_name<
-					typename First::seq_type, First::index::value
+					typename std::remove_cv< typename First::seq_type>::type , First::index::value
 				>::call(), 
 				*first
 			);

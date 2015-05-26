@@ -3,7 +3,7 @@
 
 #include <pre/detail/namespace_compatibility.hpp>
 
-#include <boost/range/namespace_compatibility.hpp>
+#include <boost/range/config.hpp>
 #include <boost/range/concepts.hpp>
 #include <boost/range/iterator.hpp>
 #include <boost/range/begin.hpp>

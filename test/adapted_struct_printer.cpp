@@ -4,11 +4,8 @@
 #include <pre/boost/fusion/adapted_struct_printer.hpp>
 #include <boost/variant.hpp>
 
-namespace bla {
-  using boost::fusion::detail::operator <<;
-}
-
 #include <boost/tuple/tuple.hpp>
+// We don't use : #include <boost/tuple/tuple_io.hpp>, we use adapted boost::tuple from fusion.
 
 BOOST_FUSION_DEFINE_STRUCT((bla), innerbim,
     (std::string, mystring)
@@ -35,8 +32,14 @@ BOOST_FUSION_DEFINE_STRUCT((bla), blabla,
     (myvariant_t, myvariant)
     )
 
+namespace bla {
+  // Kick in operator << via ADL.
+  using boost::fusion::adapted_struct_printer::operator <<;
+}
+
+
 int main(int argc, char** argv) {
-  using namespace swak;
+  using namespace pre;
 
   bla::blabla instance{
     {22, 12, bla::innerbim{"COOL"} }, 
