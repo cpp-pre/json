@@ -9,11 +9,19 @@
 #include <boost/asio/detail/config.hpp>
 
 #include <string>
+#include <boost/bind.hpp>
 #include <boost/asio/error.hpp>
 #include <boost/asio/io_service.hpp>
 #include <boost/asio/serial_port_base.hpp>
-
 #include <boost/asio/streambuf.hpp>
+
+#include <boost/asio/buffer.hpp> 
+#include <boost/asio/buffers_iterator.hpp> 
+
+#include <boost/asio/detail/buffer_sequence_adapter.hpp> 
+
+#include <boost/thread/condition_variable.hpp>
+#include <boost/thread/recursive_mutex.hpp>
 
 namespace boost {
 namespace asio {
@@ -27,7 +35,15 @@ public:
   typedef int native_handle_type;
 
   // The dummy implementation type of the serial port.
-  struct implementation_type { };
+  struct implementation_type {
+    native_handle_type handle_ = -1;
+    std::string serial_line_simulation_buffer_in_{};
+    volatile bool open_ = false;
+    volatile bool cancelled_ = false;
+
+    boost::recursive_mutex mutex_;
+    boost::condition_variable ready_read_;
+  };
 
   BOOST_ASIO_DECL mockup_serial_port_service(
       boost::asio::io_service& io_service);
@@ -38,8 +54,7 @@ public:
   // Construct a new serial port implementation.
   void construct(implementation_type& impl)
   {
-    serial_line_simulation_buffer_in_.clear();
-    serial_line_simulation_buffer_in_.clear();
+    impl.serial_line_simulation_buffer_in_.clear();
   }
 
   // Move-construct a new serial port implementation.
@@ -47,22 +62,21 @@ public:
       implementation_type& other_impl)
   {
     impl.serial_line_simulation_buffer_in_ = other_impl.serial_line_simulation_buffer_in_;
-    impl.serial_line_simulation_buffer_out_ = other_impl.serial_line_simulation_buffer_out_;
   }
 
-  // Move-assign from another serial port implementation.
-  void move_assign(implementation_type& impl,
-      mockup_serial_port_service& other_service,
-      implementation_type& other_impl)
-  {
-    descriptor_service_.move_assign(impl,
-        other_service.descriptor_service_, other_impl);
-  }
+//  // Move-assign from another serial port implementation.
+//  void move_assign(implementation_type& impl,
+//      mockup_serial_port_service& other_service,
+//      implementation_type& other_impl)
+//  {
+//    impl = other_service.fake_serial_;
+//  }
 
   // Destroy a serial port implementation.
   void destroy(implementation_type& impl)
   {
-    descriptor_service_.destroy(impl);
+    impl.serial_line_simulation_buffer_in_.clear();
+    impl.serial_line_simulation_buffer_in_.clear();
   }
 
   // Open the serial port using the specified device name.
@@ -74,33 +88,44 @@ public:
       const native_handle_type& native_descriptor,
       boost::system::error_code& ec)
   {
-    return descriptor_service_.assign(impl, native_descriptor, ec);
+    throw std::runtime_error("Assigning from native handle is unsupported in mockup.");
   }
 
   // Determine whether the serial port is open.
   bool is_open(const implementation_type& impl) const
   {
-    return descriptor_service_.is_open(impl);
+    return fake_serial_.open_;
   }
 
   // Destroy a serial port implementation.
   boost::system::error_code close(implementation_type& impl,
       boost::system::error_code& ec)
   {
-    return descriptor_service_.close(impl, ec);
+    fake_serial_.open_ = false;
+    ec = boost::system::error_code();
+    return ec;
   }
 
   // Get the native serial port representation.
   native_handle_type native_handle(implementation_type& impl)
   {
-    return descriptor_service_.native_handle(impl);
+    return impl.handle_;
   }
 
   // Cancel all operations associated with the serial port.
   boost::system::error_code cancel(implementation_type& impl,
       boost::system::error_code& ec)
   {
-    return descriptor_service_.cancel(impl, ec);
+    if (!is_open(impl)) 
+    {
+      ec = boost::asio::error::bad_descriptor;
+      return ec;
+    }
+
+    impl.cancelled_ = true;
+    impl.ready_read_.notify_all();
+    ec = boost::system::error_code();
+    return ec;
   }
 
   // Set an option on the serial port.
@@ -127,9 +152,7 @@ public:
   boost::system::error_code send_break(implementation_type& impl,
       boost::system::error_code& ec)
   {
-    errno = 0;
-    descriptor_ops::error_wrapper(::tcsendbreak(
-          descriptor_service_.native_handle(impl), 0), ec);
+    ec = boost::asio::error::operation_not_supported;
     return ec;
   }
 
@@ -138,7 +161,14 @@ public:
   size_t write_some(implementation_type& impl,
       const ConstBufferSequence& buffers, boost::system::error_code& ec)
   {
-    return descriptor_service_.write_some(impl, buffers, ec);
+    boost::recursive_mutex::scoped_lock lock{impl.mutex_};
+
+    auto begin_bytes = boost::asio::buffers_iterator<ConstBufferSequence>::begin(buffers); 
+    auto end_bytes = boost::asio::buffers_iterator<ConstBufferSequence>::end(buffers); 
+
+    std::copy(begin_bytes, end_bytes, std::back_inserter(impl.serial_line_simulation_buffer_in_));
+    ec = boost::system::error_code();
+    return std::distance(begin_bytes, end_bytes);
   }
 
   // Start an asynchronous write. The data being written must be valid for the
@@ -147,7 +177,15 @@ public:
   void async_write_some(implementation_type& impl,
       const ConstBufferSequence& buffers, Handler& handler)
   {
-    descriptor_service_.async_write_some(impl, buffers, handler);
+
+    auto perform_write = [&impl, &buffers, &handler, this](){
+      boost::system::error_code ec{};
+      auto bytes_written = write_some(impl, buffers, ec);
+
+      io_service_.post(boost::bind(handler, ec, bytes_written)); 
+    };
+
+    io_service_.post(perform_write); 
   }
 
   // Read some data. Returns the number of bytes received.
@@ -155,7 +193,20 @@ public:
   size_t read_some(implementation_type& impl,
       const MutableBufferSequence& buffers, boost::system::error_code& ec)
   {
-    return descriptor_service_.read_some(impl, buffers, ec);
+    boost::recursive_mutex::scoped_lock lock{impl.mutex_};
+
+    size_t read_count = 0;
+
+    for (auto buf : buffers) {
+      char* bytes = boost::asio::buffer_cast<char*>(buf);
+      auto bytes_to_read =  std::min(boost::asio::buffer_size(buf), impl.serial_line_simulation_buffer_in_.size());
+      memcpy(bytes, impl.serial_line_simulation_buffer_in_.data(), bytes_to_read); 
+      impl.serial_line_simulation_buffer_in_.erase(0, bytes_to_read);
+      read_count += bytes_to_read;
+    }
+
+    ec = boost::system::error_code();
+    return read_count;
   }
 
   // Start an asynchronous read. The buffer for the data being received must be
@@ -164,7 +215,15 @@ public:
   void async_read_some(implementation_type& impl,
       const MutableBufferSequence& buffers, Handler& handler)
   {
-    descriptor_service_.async_read_some(impl, buffers, handler);
+
+    auto perform_read = [&impl, &buffers, &handler, this](){
+      boost::system::error_code ec{};
+      auto bytes_read = read_some(impl, buffers, ec);
+
+      io_service_.post(boost::bind(handler, ec, bytes_read)); 
+    };
+
+    io_service_.post(perform_read);
   }
 
 private:
@@ -203,8 +262,10 @@ private:
       const implementation_type& impl, load_function_type load,
       void* option, boost::system::error_code& ec) const;
 
-  std::string serial_line_simulation_buffer_in_{};
-  std::string serial_line_simulation_buffer_out_{};
+
+  implementation_type fake_serial_;
+  io_service& io_service_;
+  termios termios_storage;
 };
 
 } // namespace detail
