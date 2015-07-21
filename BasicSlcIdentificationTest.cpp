@@ -12,26 +12,32 @@ int main(int argc, char** argv) {
 
   using namespace pre::chrono::boost;
   using namespace boost::asio;
+
+  int tries = 5;
   io_service ios;
   basic_serial_port<mockup_serial_port_service> port{ios, "SLC1"};
   boost::thread t1([&port](){
     std::string buffer = "Hello";
 
-    while (true) {
+    size_t tries = 5;
+    while (tries > 0) {
       std::cout << "Writing to SLC BUS" << std::endl;
       port.write_some(boost::asio::buffer(buffer.data(), buffer.size()));
       boost::this_thread::sleep_for(100_ms);
+      --tries;
     }
   });
 
   boost::thread t2([&port](){
 
-    while (true) {
+    size_t tries = 5;
+    while (tries > 0) {
       std::cout << "Reading from SLC BUS" << std::endl;
       char buffer[255];
       auto bytes_read = boost::asio::read(port, boost::asio::buffer(buffer, 5));
       std::cout << "Read " << bytes_read << " bytes : " << buffer << std::endl;
       boost::this_thread::sleep_for(100_ms);
+      --tries;
     }
 
   });
