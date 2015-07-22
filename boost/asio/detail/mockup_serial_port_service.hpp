@@ -184,11 +184,10 @@ public:
       const ConstBufferSequence& buffers, Handler& handler)
   {
 
-    auto perform_write = [&impl, &buffers, &handler, this](){
+    auto perform_write = [&impl, buffers, handler, this]() mutable {
       boost::system::error_code ec{};
       auto bytes_written = write_some(impl, buffers, ec);
-
-      io_service_.post(boost::bind(handler, ec, bytes_written)); 
+      handler(ec, bytes_written);
     };
 
     io_service_.post(perform_write); 
@@ -237,10 +236,7 @@ public:
     auto perform_read = [&impl, buffers, handler, this]() mutable {
       boost::system::error_code ec{};
       auto bytes_read = read_some(impl, buffers, ec);
-      auto read_handler_wrapper = [handler, ec, bytes_read]() mutable {
-        handler(ec, bytes_read);
-      };
-      io_service_.post(read_handler_wrapper); 
+      handler(ec, bytes_read);
     };
 
     io_service_.post(perform_read);
