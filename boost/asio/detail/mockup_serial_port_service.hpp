@@ -172,6 +172,7 @@ public:
     auto end_bytes = boost::asio::buffers_iterator<ConstBufferSequence>::end(buffers); 
 
     std::copy(begin_bytes, end_bytes, std::back_inserter(*impl.serial_line_simulation_buffer_in_));
+    impl.ready_read_->notify_all();
     ec = boost::system::error_code();
     return std::distance(begin_bytes, end_bytes);
   }
@@ -198,20 +199,33 @@ public:
   size_t read_some(implementation_type& impl,
       const MutableBufferSequence& buffers, boost::system::error_code& ec)
   {
-    boost::recursive_mutex::scoped_lock lock{*impl.mutex_};
-
-    size_t read_count = 0;
-
-    for (auto buf : buffers) {
-      char* bytes = boost::asio::buffer_cast<char*>(buf);
-      auto bytes_to_read =  std::min(boost::asio::buffer_size(buf), impl.serial_line_simulation_buffer_in_->size());
-      memcpy(bytes, impl.serial_line_simulation_buffer_in_->data(), bytes_to_read); 
-      impl.serial_line_simulation_buffer_in_->erase(0, bytes_to_read);
-      read_count += bytes_to_read;
+    bool bytes_available = false;
+    { boost::recursive_mutex::scoped_lock lock{*impl.mutex_};
+      bytes_available = !impl.serial_line_simulation_buffer_in_->empty();
     }
 
-    ec = boost::system::error_code();
-    return read_count;
+    if (!bytes_available) {
+      // Wait for bytes to be available
+      boost::mutex mutex_wait{};
+      boost::mutex::scoped_lock wait_lock{mutex_wait};
+      impl.ready_read_->wait(wait_lock);
+    }
+
+    { boost::recursive_mutex::scoped_lock lock{*impl.mutex_};
+
+      size_t read_count = 0;
+
+      for (auto buf : buffers) {
+        char* bytes = boost::asio::buffer_cast<char*>(buf);
+        auto bytes_to_read =  std::min(boost::asio::buffer_size(buf), impl.serial_line_simulation_buffer_in_->size());
+        memcpy(bytes, impl.serial_line_simulation_buffer_in_->data(), bytes_to_read);
+        impl.serial_line_simulation_buffer_in_->erase(0, bytes_to_read);
+        read_count += bytes_to_read;
+      }
+
+      ec = boost::system::error_code();
+      return read_count;
+    }
   }
 
   // Start an asynchronous read. The buffer for the data being received must be
@@ -220,12 +234,13 @@ public:
   void async_read_some(implementation_type& impl,
       const MutableBufferSequence& buffers, Handler& handler)
   {
-
-    auto perform_read = [&impl, &buffers, &handler, this](){
+    auto perform_read = [&impl, buffers, handler, this]() mutable {
       boost::system::error_code ec{};
       auto bytes_read = read_some(impl, buffers, ec);
-
-      io_service_.post(boost::bind(handler, ec, bytes_read)); 
+      auto read_handler_wrapper = [handler, ec, bytes_read]() mutable {
+        handler(ec, bytes_read);
+      };
+      io_service_.post(read_handler_wrapper); 
     };
 
     io_service_.post(perform_read);

@@ -18,6 +18,7 @@ int main(int argc, char** argv) {
     io_service ios;
     basic_serial_port<mockup_serial_port_service> port{ios, "SLC1"};
     std::string buffer = "Hello";
+    boost::this_thread::sleep_for(500_ms);
 
     size_t tries = 5;
     while (tries > 0) {
@@ -32,18 +33,25 @@ int main(int argc, char** argv) {
     io_service ios;
     basic_serial_port<mockup_serial_port_service> port{ios, "SLC1"};
     size_t tries = 5;
+
+    char buffer[255];
     while (tries > 0) {
-      std::cout << "Reading from SLC BUS" << std::endl;
-      char buffer[255];
-      auto bytes_read = boost::asio::read(port, boost::asio::buffer(buffer, 5));
-      std::cout << "Read " << bytes_read << " bytes : " << buffer << std::endl;
-      boost::this_thread::sleep_for(100_ms);
+      std::cout << "Registering 5 bytes read from SLC BUS" << std::endl;
+      boost::asio::async_read(port, boost::asio::buffer(buffer, 5),
+        [&buffer](const boost::system::error_code& ec, std::size_t bytes_transferred) {
+          std::cout << "Read " << bytes_transferred << " bytes : " << buffer << std::endl;
+          boost::this_thread::sleep_for(100_ms);
+        }
+      );
+
       --tries;
     }
-
+    
+    ios.run();
   });
 
-  t1.join();
   t2.join();
+  t1.join();
+
   return 0;
 }
