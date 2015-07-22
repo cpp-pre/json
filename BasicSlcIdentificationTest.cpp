@@ -14,9 +14,9 @@ int main(int argc, char** argv) {
   using namespace boost::asio;
 
   int tries = 5;
-  io_service ios;
-  basic_serial_port<mockup_serial_port_service> port{ios, "SLC1"};
-  boost::thread t1([&port](){
+  boost::thread t1([](){
+    io_service ios;
+    basic_serial_port<mockup_serial_port_service> port{ios, "SLC1"};
     std::string buffer = "Hello";
 
     size_t tries = 5;
@@ -28,8 +28,9 @@ int main(int argc, char** argv) {
     }
   });
 
-  boost::thread t2([&port](){
-
+  boost::thread t2([](){
+    io_service ios;
+    basic_serial_port<mockup_serial_port_service> port{ios, "SLC1"};
     size_t tries = 5;
     while (tries > 0) {
       std::cout << "Reading from SLC BUS" << std::endl;

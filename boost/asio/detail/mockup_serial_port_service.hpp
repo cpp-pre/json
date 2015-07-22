@@ -9,6 +9,7 @@
 #include <boost/asio/detail/config.hpp>
 
 #include <string>
+#include <memory>
 #include <boost/bind.hpp>
 #include <boost/asio/error.hpp>
 #include <boost/asio/io_service.hpp>
@@ -37,12 +38,16 @@ public:
   // The dummy implementation type of the serial port.
   struct implementation_type {
     native_handle_type handle_ = -1;
-    std::string serial_line_simulation_buffer_in_{};
     volatile bool open_ = false;
     volatile bool cancelled_ = false;
 
-    boost::recursive_mutex mutex_;
-    boost::condition_variable ready_read_;
+    std::shared_ptr<std::string> serial_line_simulation_buffer_in_
+      = std::make_shared<std::string>();
+
+    std::shared_ptr<boost::recursive_mutex> mutex_ 
+      = std::make_shared<boost::recursive_mutex>();
+    std::shared_ptr<boost::condition_variable> ready_read_
+      = std::make_shared<boost::condition_variable>();
   };
 
   BOOST_ASIO_DECL mockup_serial_port_service(
@@ -54,7 +59,7 @@ public:
   // Construct a new serial port implementation.
   void construct(implementation_type& impl)
   {
-    impl.serial_line_simulation_buffer_in_.clear();
+    impl.serial_line_simulation_buffer_in_->clear();
   }
 
   // Move-construct a new serial port implementation.
@@ -75,8 +80,8 @@ public:
   // Destroy a serial port implementation.
   void destroy(implementation_type& impl)
   {
-    impl.serial_line_simulation_buffer_in_.clear();
-    impl.serial_line_simulation_buffer_in_.clear();
+    impl.serial_line_simulation_buffer_in_->clear();
+    impl.serial_line_simulation_buffer_in_->clear();
   }
 
   // Open the serial port using the specified device name.
@@ -94,14 +99,14 @@ public:
   // Determine whether the serial port is open.
   bool is_open(const implementation_type& impl) const
   {
-    return fake_serial_.open_;
+    return impl.open_;
   }
 
   // Destroy a serial port implementation.
   boost::system::error_code close(implementation_type& impl,
       boost::system::error_code& ec)
   {
-    fake_serial_.open_ = false;
+    impl.open_ = false;
     ec = boost::system::error_code();
     return ec;
   }
@@ -123,7 +128,7 @@ public:
     }
 
     impl.cancelled_ = true;
-    impl.ready_read_.notify_all();
+    impl.ready_read_->notify_all();
     ec = boost::system::error_code();
     return ec;
   }
@@ -161,12 +166,12 @@ public:
   size_t write_some(implementation_type& impl,
       const ConstBufferSequence& buffers, boost::system::error_code& ec)
   {
-    boost::recursive_mutex::scoped_lock lock{impl.mutex_};
+    boost::recursive_mutex::scoped_lock lock{*impl.mutex_};
 
     auto begin_bytes = boost::asio::buffers_iterator<ConstBufferSequence>::begin(buffers); 
     auto end_bytes = boost::asio::buffers_iterator<ConstBufferSequence>::end(buffers); 
 
-    std::copy(begin_bytes, end_bytes, std::back_inserter(impl.serial_line_simulation_buffer_in_));
+    std::copy(begin_bytes, end_bytes, std::back_inserter(*impl.serial_line_simulation_buffer_in_));
     ec = boost::system::error_code();
     return std::distance(begin_bytes, end_bytes);
   }
@@ -193,15 +198,15 @@ public:
   size_t read_some(implementation_type& impl,
       const MutableBufferSequence& buffers, boost::system::error_code& ec)
   {
-    boost::recursive_mutex::scoped_lock lock{impl.mutex_};
+    boost::recursive_mutex::scoped_lock lock{*impl.mutex_};
 
     size_t read_count = 0;
 
     for (auto buf : buffers) {
       char* bytes = boost::asio::buffer_cast<char*>(buf);
-      auto bytes_to_read =  std::min(boost::asio::buffer_size(buf), impl.serial_line_simulation_buffer_in_.size());
-      memcpy(bytes, impl.serial_line_simulation_buffer_in_.data(), bytes_to_read); 
-      impl.serial_line_simulation_buffer_in_.erase(0, bytes_to_read);
+      auto bytes_to_read =  std::min(boost::asio::buffer_size(buf), impl.serial_line_simulation_buffer_in_->size());
+      memcpy(bytes, impl.serial_line_simulation_buffer_in_->data(), bytes_to_read); 
+      impl.serial_line_simulation_buffer_in_->erase(0, bytes_to_read);
       read_count += bytes_to_read;
     }
 
@@ -263,7 +268,6 @@ private:
       void* option, boost::system::error_code& ec) const;
 
 
-  implementation_type fake_serial_;
   io_service& io_service_;
   termios termios_storage;
 };

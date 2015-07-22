@@ -8,12 +8,36 @@
 
 #include <boost/asio/detail/config.hpp>
 
+#include <memory>
 #include <cstring>
+#include <string>
+#include <map>
+
+#include <boost/thread/recursive_mutex.hpp>
+
 #include <boost/asio/detail/mockup_serial_port_service.hpp>
 
 namespace boost {
 namespace asio {
 namespace detail {
+
+  typedef std::map<std::string, mockup_serial_port_service::implementation_type>
+    mockup_device_map;
+
+  /**
+   * \brief static storage for mockup device, so that we can share implementation_type, 
+   *    and by the way receive buffer by the device name;
+   */
+  struct mockup_device_storage {
+    static size_t handle_count;
+    static mockup_device_map device_store;
+    
+    static boost::recursive_mutex mutex_;
+  };
+
+  size_t mockup_device_storage::handle_count = 0;
+  mockup_device_map mockup_device_storage::device_store{};
+  boost::recursive_mutex mockup_device_storage::mutex_;
 
 mockup_serial_port_service::mockup_serial_port_service(
     boost::asio::io_service& io_service)
@@ -29,17 +53,24 @@ boost::system::error_code mockup_serial_port_service::open(
     mockup_serial_port_service::implementation_type& impl,
     const std::string& device, boost::system::error_code& ec)
 {
+  boost::recursive_mutex::scoped_lock lock{mockup_device_storage::mutex_};
+
   if (is_open(impl))
   {
     ec = boost::asio::error::already_open;
     return ec;
   }
 
-  static int handle_count = 0;
-  ++handle_count;
-  impl.handle_ = handle_count;
-  impl.open_ = true;
-  impl.cancelled_ = false;
+  if (mockup_device_storage::device_store.find(device) == mockup_device_storage::device_store.end()) {
+    mockup_device_storage::device_store.emplace(device, impl);
+
+    mockup_device_storage::handle_count++;
+    impl.handle_ = mockup_device_storage::handle_count;
+    impl.open_ = true;
+    impl.cancelled_ = false;
+  } else {
+    impl = mockup_device_storage::device_store[device];
+  }
 
   ec = boost::system::error_code();
   return ec;
