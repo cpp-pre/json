@@ -10,6 +10,7 @@
 
 #include <string>
 #include <memory>
+#include <boost/chrono.hpp>
 #include <boost/bind.hpp>
 #include <boost/asio/error.hpp>
 #include <boost/asio/io_service.hpp>
@@ -37,13 +38,15 @@ public:
 
   // The dummy implementation type of the serial port.
   struct implementation_type {
+    // Thread specific values
     native_handle_type handle_ = -1;
-    volatile bool open_ = false;
-    volatile bool cancelled_ = false;
+    bool open_ = false;
+    bool cancelled_ = false;
 
+    // The buffer, it's mutex and condition_variable is shared by 
+    // multiple thread opening the same device name.
     std::shared_ptr<std::string> serial_line_simulation_buffer_in_
       = std::make_shared<std::string>();
-
     std::shared_ptr<boost::recursive_mutex> mutex_ 
       = std::make_shared<boost::recursive_mutex>();
     std::shared_ptr<boost::condition_variable> ready_read_
@@ -59,7 +62,6 @@ public:
   // Construct a new serial port implementation.
   void construct(implementation_type& impl)
   {
-    impl.serial_line_simulation_buffer_in_->clear();
   }
 
   // Move-construct a new serial port implementation.
@@ -78,10 +80,8 @@ public:
 //  }
 
   // Destroy a serial port implementation.
-  void destroy(implementation_type& impl)
+  void destroy(implementation_type& impl) 
   {
-    impl.serial_line_simulation_buffer_in_->clear();
-    impl.serial_line_simulation_buffer_in_->clear();
   }
 
   // Open the serial port using the specified device name.
@@ -198,16 +198,28 @@ public:
   size_t read_some(implementation_type& impl,
       const MutableBufferSequence& buffers, boost::system::error_code& ec)
   {
+    buffer_sequence_adapter<boost::asio::mutable_buffer,
+        MutableBufferSequence> bufs_adapted(buffers);
+    if (bufs_adapted.all_empty()) {
+      ec = boost::system::error_code();
+      return 0;
+    }
+
     bool bytes_available = false;
     { boost::recursive_mutex::scoped_lock lock{*impl.mutex_};
       bytes_available = !impl.serial_line_simulation_buffer_in_->empty();
     }
 
-    if (!bytes_available) {
+    while (!bytes_available) {
       // Wait for bytes to be available
       boost::mutex mutex_wait{};
       boost::mutex::scoped_lock wait_lock{mutex_wait};
-      impl.ready_read_->wait(wait_lock);
+      impl.ready_read_->wait_for(wait_lock, boost::chrono::milliseconds(5));
+
+      { boost::recursive_mutex::scoped_lock lock{*impl.mutex_};
+        bytes_available = !impl.serial_line_simulation_buffer_in_->empty();
+      }
+
     }
 
     { boost::recursive_mutex::scoped_lock lock{*impl.mutex_};
@@ -219,6 +231,7 @@ public:
         auto bytes_to_read =  std::min(boost::asio::buffer_size(buf), impl.serial_line_simulation_buffer_in_->size());
         memcpy(bytes, impl.serial_line_simulation_buffer_in_->data(), bytes_to_read);
         impl.serial_line_simulation_buffer_in_->erase(0, bytes_to_read);
+
         read_count += bytes_to_read;
       }
 

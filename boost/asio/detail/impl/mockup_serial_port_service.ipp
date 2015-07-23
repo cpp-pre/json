@@ -70,11 +70,17 @@ boost::system::error_code mockup_serial_port_service::open(
     impl.cancelled_ = false;
   } else {
     impl = mockup_device_storage::device_store[device];
+
+    mockup_device_storage::handle_count++;
+    impl.handle_ = mockup_device_storage::handle_count;
+    impl.open_ = true;
+    impl.cancelled_ = false;
   }
 
   ec = boost::system::error_code();
   return ec;
 }
+
 
 boost::system::error_code mockup_serial_port_service::do_set_option(
     mockup_serial_port_service::implementation_type& impl,
