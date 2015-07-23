@@ -63,19 +63,18 @@ boost::system::error_code mockup_serial_port_service::open(
 
   if (mockup_device_storage::device_store.find(device) == mockup_device_storage::device_store.end()) {
     mockup_device_storage::device_store.emplace(device, impl);
-
-    mockup_device_storage::handle_count++;
-    impl.handle_ = mockup_device_storage::handle_count;
-    impl.open_ = true;
-    impl.cancelled_ = false;
   } else {
     impl = mockup_device_storage::device_store[device];
-
-    mockup_device_storage::handle_count++;
-    impl.handle_ = mockup_device_storage::handle_count;
-    impl.open_ = true;
-    impl.cancelled_ = false;
   }
+
+  // Assign thread specific variables
+  mockup_device_storage::handle_count++;
+  impl.handle_ = mockup_device_storage::handle_count;
+  impl.open_ = true;
+  impl.cancelled_ = false;
+  impl.pending_read_handlers_->emplace(
+      std::addressof(io_service_), 
+      std::make_shared<std::deque<std::pair<boost::function<void ()>, io_service::work>>>());
 
   ec = boost::system::error_code();
   return ec;

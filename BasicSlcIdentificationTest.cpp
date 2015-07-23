@@ -5,6 +5,7 @@
 #include <boost/thread.hpp>
 
 #include <boost/asio.hpp>
+#include <boost/asio/steady_timer.hpp>
 #include <boost/asio/basic_serial_port.hpp>
 #include <boost/asio/mockup_serial_port_service.hpp>
 
@@ -12,8 +13,8 @@
 
 int main(int argc, char** argv) {
 
-  using namespace pre::chrono::boost;
   using namespace boost::asio;
+  using namespace pre::chrono::boost;
 
   {
     boost::thread t1([](){
@@ -66,6 +67,7 @@ int main(int argc, char** argv) {
   }
 
   {
+
     boost::thread producer([]() {
       io_service ios;
       basic_serial_port<mockup_serial_port_service> port{ios, "SLC0"};
@@ -78,11 +80,12 @@ int main(int argc, char** argv) {
         boost::asio::write(port, buffer(message.data(), message.size()));
         std::string message_end = ", and this ends here.||";
         boost::asio::write(port, buffer(message_end.data(), message_end.size()));
+        boost::this_thread::sleep_for(100_ms);
       }
 
     });
 
-    boost::thread reader([]() {
+    boost::thread consumer([]() {
       io_service ios;
       basic_serial_port<mockup_serial_port_service> port{ios, "SLC0"};
 
@@ -95,7 +98,6 @@ int main(int argc, char** argv) {
           std::cout << "message arrived of size " << bytes_read << std::endl;
 
           std::string received_message(bytes_read, '\0');
-          //receive_buf.commit(bytes_read);
           std::istream is(&receive_buf);
           is.readsome(&received_message[0], received_message.size());
           std::cout << "bytes_read are : " << bytes_read << ", stream input size  :" << receive_buf.size() << std::endl;
@@ -112,7 +114,54 @@ int main(int argc, char** argv) {
     });
 
     producer.join();
-    reader.join();
+    consumer.join();
+  }
+
+  {
+    boost::thread producer([]() {
+      io_service ios;
+      basic_serial_port<mockup_serial_port_service> port{ios, "SLC0"};
+      
+      for (size_t trie = 0 ; trie < 10; ++trie) {
+        std::cout << "Sending " << trie << std::endl;
+        std::string message = str(boost::format("This is a message %1% without end...") % trie);
+        boost::asio::write(port, buffer(message.data(), message.size()));
+        boost::this_thread::sleep_for(10_ms);
+      }
+
+    }); 
+
+    boost::thread safe_consumer([]() {
+      io_service ios;
+      basic_serial_port<mockup_serial_port_service> port{ios, "SLC0"};
+
+      streambuf receive_buf;
+
+      boost::function<void (const boost::system::error_code& ec, size_t bytes_read)> readHandler =
+        [&](const boost::system::error_code& ec, size_t bytes_read) {
+          std::cout << "message arrived of size " << bytes_read << " and error : " << ec << std::endl;
+
+          std::string received_message(bytes_read, '\0');
+          std::istream is(&receive_buf);
+          is.readsome(&received_message[0], received_message.size());
+        };
+
+      boost::asio::steady_timer timeout{ios};
+      timeout.expires_from_now(std::chrono::milliseconds(1000));
+      timeout.async_wait([&port](const boost::system::error_code& ec){
+        if (ec != boost::asio::error::operation_aborted) {
+          std::cout << "Cancelling all read !" << std::endl;
+          port.cancel();
+        }
+      });
+
+      boost::asio::async_read_until(port, receive_buf, "||", readHandler);
+
+      ios.run();
+    });
+
+    producer.join();
+    safe_consumer.join();
   }
 
   return 0;

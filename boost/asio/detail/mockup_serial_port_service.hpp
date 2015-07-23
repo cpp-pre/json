@@ -42,11 +42,25 @@ public:
     native_handle_type handle_ = -1;
     bool open_ = false;
     bool cancelled_ = false;
-
+    
     // The buffer, it's mutex and condition_variable is shared by 
     // multiple thread opening the same device name.
     std::shared_ptr<std::string> serial_line_simulation_buffer_in_
       = std::make_shared<std::string>();
+
+    std::shared_ptr<std::map<
+      io_service*,
+      std::shared_ptr<std::deque<
+        std::pair<boost::function<void ()>, io_service::work>
+      >>
+    >> pending_read_handlers_
+      = std::make_shared<std::map<
+        io_service*,
+        std::shared_ptr<std::deque<
+          std::pair<boost::function<void ()>, io_service::work>
+        >>
+      >>();
+
     std::shared_ptr<boost::recursive_mutex> mutex_ 
       = std::make_shared<boost::recursive_mutex>();
     std::shared_ptr<boost::condition_variable> ready_read_
@@ -129,6 +143,21 @@ public:
 
     impl.cancelled_ = true;
     impl.ready_read_->notify_all();
+
+
+    { boost::recursive_mutex::scoped_lock lock{*impl.mutex_};
+
+      auto pending_handlers = impl.pending_read_handlers_
+        ->at(std::addressof(io_service_));
+
+      while (!pending_handlers->empty()) {
+        // operation_aborted will be passed as they 
+        // will notice all was cancelled
+        io_service_.post(pending_handlers->back().first);
+        pending_handlers->pop_back();
+      }
+    }
+
     ec = boost::system::error_code();
     return ec;
   }
@@ -168,13 +197,28 @@ public:
   {
     boost::recursive_mutex::scoped_lock lock{*impl.mutex_};
 
-    auto begin_bytes = boost::asio::buffers_iterator<ConstBufferSequence>::begin(buffers); 
-    auto end_bytes = boost::asio::buffers_iterator<ConstBufferSequence>::end(buffers); 
+    if (impl.cancelled_) {
+      ec = boost::asio::error::operation_aborted;
+      return 0;
+    }
+
+    auto begin_bytes = boost::asio::buffers_iterator<ConstBufferSequence>::begin(buffers);
+    auto end_bytes = boost::asio::buffers_iterator<ConstBufferSequence>::end(buffers);
 
     std::copy(begin_bytes, end_bytes, std::back_inserter(*impl.serial_line_simulation_buffer_in_));
+    size_t bytes_transferred = std::distance(begin_bytes, end_bytes);
+
+    for (auto& pending_handler : *impl.pending_read_handlers_) {
+      while (!pending_handler.second->empty()) {
+        std::cout << "Launching read handler for " << pending_handler.first << std::endl;
+        pending_handler.first->post(pending_handler.second->back().first);
+        pending_handler.second->pop_back();
+      }
+    }
+
     impl.ready_read_->notify_all();
     ec = boost::system::error_code();
-    return std::distance(begin_bytes, end_bytes);
+    return bytes_transferred;
   }
 
   // Start an asynchronous write. The data being written must be valid for the
@@ -198,6 +242,7 @@ public:
   size_t read_some(implementation_type& impl,
       const MutableBufferSequence& buffers, boost::system::error_code& ec)
   {
+    // empy out buffer is a no-op.
     buffer_sequence_adapter<boost::asio::mutable_buffer,
         MutableBufferSequence> bufs_adapted(buffers);
     if (bufs_adapted.all_empty()) {
@@ -210,7 +255,7 @@ public:
       bytes_available = !impl.serial_line_simulation_buffer_in_->empty();
     }
 
-    while (!bytes_available) {
+    while ( (!bytes_available) && (!impl.cancelled_) ) {
       // Wait for bytes to be available
       boost::mutex mutex_wait{};
       boost::mutex::scoped_lock wait_lock{mutex_wait};
@@ -220,6 +265,11 @@ public:
         bytes_available = !impl.serial_line_simulation_buffer_in_->empty();
       }
 
+    }
+
+    if (impl.cancelled_) {
+      ec = boost::asio::error::operation_aborted;
+      return 0;
     }
 
     { boost::recursive_mutex::scoped_lock lock{*impl.mutex_};
@@ -246,13 +296,20 @@ public:
   void async_read_some(implementation_type& impl,
       const MutableBufferSequence& buffers, Handler& handler)
   {
-    auto perform_read = [&impl, buffers, handler, this]() mutable {
+
+    boost::function<void ()> perform_read = [&impl, buffers, handler, this]() mutable {
       boost::system::error_code ec{};
       auto bytes_read = read_some(impl, buffers, ec);
       handler(ec, bytes_read);
     };
 
-    io_service_.post(perform_read);
+    //io_service_.post(perform_read);
+    { boost::recursive_mutex::scoped_lock lock{*impl.mutex_};
+      std::cout << "Adding a pending_read_handler for " << &io_service_ << std::endl;
+      impl.pending_read_handlers_
+        ->at(std::addressof(io_service_))
+        ->push_front(std::make_pair(perform_read, io_service::work(io_service_)));
+    }
   }
 
 private:
