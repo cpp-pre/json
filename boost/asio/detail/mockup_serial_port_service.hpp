@@ -210,7 +210,6 @@ public:
 
     for (auto& pending_handler : *impl.pending_read_handlers_) {
       while (!pending_handler.second->empty()) {
-        std::cout << "Launching read handler for " << pending_handler.first << std::endl;
         pending_handler.first->post(pending_handler.second->back().first);
         pending_handler.second->pop_back();
       }
@@ -305,7 +304,6 @@ public:
 
     //io_service_.post(perform_read);
     { boost::recursive_mutex::scoped_lock lock{*impl.mutex_};
-      std::cout << "Adding a pending_read_handler for " << &io_service_ << std::endl;
       impl.pending_read_handlers_
         ->at(std::addressof(io_service_))
         ->push_front(std::make_pair(perform_read, io_service::work(io_service_)));
