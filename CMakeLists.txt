@@ -1,11 +1,14 @@
 cmake_minimum_required (VERSION 2.8.11)
 project (cpp-pre)
+enable_testing()
 
 set (pre_VERSION_MAJOR 1)
 set (pre_VERSION_MINOR 0)
 set (pre_VERSION_PATCH 0)
 
 set (PRE_VERSION "${pre_VERSION_MAJOR}.${pre_VERSION_MINOR}.${pre_VERSION_PATCH}")
+
+add_definitions(--std=c++11)
 
 # Boost
 set(BOOST_ALL_DYN_LINK ON)
@@ -41,3 +44,6 @@ install(FILES
     ${CMAKE_CURRENT_BINARY_DIR}/lib-${PROJECT_NAME}-config.cmake
     ${CMAKE_CURRENT_BINARY_DIR}/lib-${PROJECT_NAME}-config-version.cmake
     DESTINATION lib/cmake/lib-${PROJECT_NAME}-${PRE_VERSION})
+
+# Unit testing
+add_subdirectory(test)
