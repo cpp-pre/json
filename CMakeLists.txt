@@ -21,7 +21,7 @@ include_directories ( ${Boost_INCLUDE_DIRS} )
 include_directories( BEFORE ${CMAKE_CURRENT_LIST_DIR} )
 
 install(DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/pre DESTINATION include
-        FILES_MATCHING PATTERN "*.hpp")
+        FILES_MATCHING PATTERN "*.[ih]pp")
 
 include(CMakePackageConfigHelpers)
 set(INCLUDE_INSTALL_DIR include/)
