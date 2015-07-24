@@ -12,6 +12,7 @@
 #include <memory>
 #include <boost/chrono.hpp>
 #include <boost/bind.hpp>
+#include <boost/function.hpp>
 #include <boost/asio/error.hpp>
 #include <boost/asio/io_service.hpp>
 #include <boost/asio/serial_port_base.hpp>
@@ -38,6 +39,12 @@ public:
 
   // The dummy implementation type of the serial port.
   struct implementation_type {
+
+    // Each read handler that get registered, get's a work object associated,
+    // to avoid io_service.run() from returning until the handler can effectively 
+    // be called
+    typedef std::pair<boost::function<void ()>, io_service::work> read_handler_entry;
+
     // Thread specific values
     native_handle_type handle_ = -1;
     bool open_ = false;
@@ -48,21 +55,21 @@ public:
     std::shared_ptr<std::string> serial_line_simulation_buffer_in_
       = std::make_shared<std::string>();
 
+    // io_service associated stack of handler to call in case a write occurs.
     std::shared_ptr<std::map<
       io_service*,
-      std::shared_ptr<std::deque<
-        std::pair<boost::function<void ()>, io_service::work>
-      >>
+      std::shared_ptr<std::deque< read_handler_entry >>
     >> pending_read_handlers_
       = std::make_shared<std::map<
-        io_service*,
-        std::shared_ptr<std::deque<
-          std::pair<boost::function<void ()>, io_service::work>
-        >>
-      >>();
+          io_service*,
+          std::shared_ptr<std::deque< read_handler_entry >>
+        >>();
 
+    // Mutex to protect access the shared(_ptr) values
     std::shared_ptr<boost::recursive_mutex> mutex_ 
       = std::make_shared<boost::recursive_mutex>();
+
+    // Condition variable to come back from a blocking read or a cancel faster.
     std::shared_ptr<boost::condition_variable> ready_read_
       = std::make_shared<boost::condition_variable>();
   };
@@ -142,8 +149,6 @@ public:
     }
 
     impl.cancelled_ = true;
-    impl.ready_read_->notify_all();
-
 
     { boost::recursive_mutex::scoped_lock lock{*impl.mutex_};
 
@@ -157,6 +162,8 @@ public:
         pending_handlers->pop_back();
       }
     }
+
+    impl.ready_read_->notify_all();
 
     ec = boost::system::error_code();
     return ec;
@@ -302,7 +309,6 @@ public:
       handler(ec, bytes_read);
     };
 
-    //io_service_.post(perform_read);
     { boost::recursive_mutex::scoped_lock lock{*impl.mutex_};
       impl.pending_read_handlers_
         ->at(std::addressof(io_service_))
