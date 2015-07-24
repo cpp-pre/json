@@ -8,8 +8,7 @@ function(add_unit_test)
   cmake_parse_arguments(add_unit_test "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
   add_executable(test_${add_unit_test_NAME} 
-    ${add_unit_test_NAME}.cpp 
-    $<TARGET_OBJECTS:SUBSYSCOM_SLC_SERVER_OBJECT_FILES_WITHOUT_MAIN>)
+    ${add_unit_test_NAME}.cpp)
 
   target_link_libraries(test_${add_unit_test_NAME} 
     ${add_unit_test_LIBS})
@@ -27,15 +26,9 @@ find_package(Boost 1.55 COMPONENTS system thread log chrono filesystem
 include_directories(AFTER ${Boost_INCLUDE_DIRS})
 link_directories ( ${Boost_LIBRARY_DIRS} )
 
-include_directories(BEFORE ${CMAKE_CURRENT_LIST_DIR})
+include_directories(BEFORE ${CMAKE_SOURCE_DIR})
 
-add_unit_test(NAME BasicSlcIdentificationTest 
+add_unit_test(NAME asio_mockup_serial_port_service_test 
   LIBS 
   ${CMAKE_THREAD_LIBS_INIT}
-  ${Boost_LIBRARIES}
-  ${libWatchdogAccessor_LIBRARIES}
-  subsyscom-base-server
-  sauter-toolbox
-  ucfg
-  config
-  rt)
+  ${Boost_LIBRARIES})
