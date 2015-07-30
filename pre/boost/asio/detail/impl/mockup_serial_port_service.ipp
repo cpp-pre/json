@@ -29,15 +29,20 @@ namespace detail {
    *    and by the way receive buffer by the device name;
    */
   struct mockup_device_storage {
-    static size_t handle_count;
-    static mockup_device_map device_store;
+    size_t handle_count = 0 ;
+    mockup_device_map device_store{};
     
-    static boost::recursive_mutex mutex_;
+    boost::recursive_mutex mutex_;
   };
 
-  size_t mockup_device_storage::handle_count = 0;
-  mockup_device_map mockup_device_storage::device_store{};
-  boost::recursive_mutex mockup_device_storage::mutex_;
+  //size_t mockup_device_storage::handle_count = 0;
+  //mockup_device_map mockup_device_storage::device_store{};
+  //boost::recursive_mutex mockup_device_storage::mutex_;
+
+  static mockup_device_storage& mockup_storage() {
+    static mockup_device_storage store{};
+    return store;
+  }
 
 mockup_serial_port_service::mockup_serial_port_service(
     boost::asio::io_service& io_service)
@@ -53,7 +58,7 @@ boost::system::error_code mockup_serial_port_service::open(
     mockup_serial_port_service::implementation_type& impl,
     const std::string& device, boost::system::error_code& ec)
 {
-  boost::recursive_mutex::scoped_lock lock{mockup_device_storage::mutex_};
+  boost::recursive_mutex::scoped_lock lock{mockup_storage().mutex_};
 
   if (is_open(impl))
   {
@@ -61,15 +66,15 @@ boost::system::error_code mockup_serial_port_service::open(
     return ec;
   }
 
-  if (mockup_device_storage::device_store.find(device) == mockup_device_storage::device_store.end()) {
-    mockup_device_storage::device_store.emplace(device, impl);
+  if (mockup_storage().device_store.find(device) == mockup_storage().device_store.end()) {
+    mockup_storage().device_store.emplace(device, impl);
   } else {
-    impl = mockup_device_storage::device_store[device];
+    impl = mockup_storage().device_store[device];
   }
 
   // Assign thread specific variables
-  mockup_device_storage::handle_count++;
-  impl.handle_ = mockup_device_storage::handle_count;
+  mockup_storage().handle_count++;
+  impl.handle_ = mockup_storage().handle_count;
   impl.open_ = true;
   impl.cancelled_ = false;
   impl.pending_read_handlers_->emplace(
