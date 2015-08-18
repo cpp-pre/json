@@ -18,9 +18,7 @@ set (PRE_VERSION "${pre_VERSION_MAJOR}.${pre_VERSION_MINOR}.${pre_VERSION_PATCH}
 add_definitions(--std=c++11)
 
 # Boost
-set(Boost_USE_STATIC_LIBS ON)
 set(Boost_USE_MULTITHREADED ON)
-set(Boost_USE_STATIC_RUNTIME ON)
 hunter_add_package(Boost)
 find_package(Boost 1.54 REQUIRED) 
 include_directories ( ${Boost_INCLUDE_DIRS} )
