@@ -25,6 +25,9 @@ find_package(Threads REQUIRED)
 ## Boost
 set(Boost_USE_MULTITHREADED ON)
 #add_definitions(-DBOOST_LOG_DYN_LINK)
+add_definitions(-DBOOST_ALL_DYN_LINK
+                -DBOOST_LOG_DYN_LINK
+                -DBOOST_TEST_DYN_LINK)
 
 hunter_add_package(Boost COMPONENTS system thread log chrono filesystem  
   date_time iostreams log test)
