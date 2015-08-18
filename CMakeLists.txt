@@ -10,7 +10,7 @@ project (cpp-pre)
 enable_testing()
 
 set (pre_VERSION_MAJOR 1)
-set (pre_VERSION_MINOR 1)
+set (pre_VERSION_MINOR 2)
 set (pre_VERSION_PATCH 0)
 
 set (PRE_VERSION "${pre_VERSION_MAJOR}.${pre_VERSION_MINOR}.${pre_VERSION_PATCH}")
