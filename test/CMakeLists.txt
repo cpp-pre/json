@@ -23,12 +23,14 @@ endfunction(add_unit_test)
 find_package(Threads REQUIRED)
 
 ## Boost
-set(BOOST_ALL_DYN_LINK ON)
-set(Boost_USE_STATIC_LIBS OFF)
 set(Boost_USE_MULTITHREADED ON)
-set(Boost_USE_STATIC_RUNTIME OFF)
-add_definitions(-DBOOST_LOG_DYN_LINK)
+#add_definitions(-DBOOST_LOG_DYN_LINK)
+add_definitions(-DBOOST_ALL_DYN_LINK
+                -DBOOST_LOG_DYN_LINK
+                -DBOOST_TEST_DYN_LINK)
 
+hunter_add_package(Boost COMPONENTS system thread log chrono filesystem  
+  date_time iostreams log test)
 find_package(Boost 1.55 COMPONENTS system thread log chrono filesystem  
   date_time iostreams log unit_test_framework REQUIRED) 
 include_directories(AFTER ${Boost_INCLUDE_DIRS})
