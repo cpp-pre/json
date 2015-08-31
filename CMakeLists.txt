@@ -31,6 +31,7 @@ install(DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/pre DESTINATION include
 include(CMakePackageConfigHelpers)
 set(INCLUDE_INSTALL_DIR include/)
 configure_package_config_file(
+  ${cpp-pre_SOURCE_DIR}/cmake/modules/lib-${PROJECT_NAME}-config.cmake.in
   ${CMAKE_SOURCE_DIR}/cmake/modules/lib-${PROJECT_NAME}-config.cmake.in
   ${CMAKE_CURRENT_BINARY_DIR}/lib-${PROJECT_NAME}-config.cmake
   INSTALL_DESTINATION lib/cmake/lib-${PROJECT_NAME}-${PRE_VERSION}
