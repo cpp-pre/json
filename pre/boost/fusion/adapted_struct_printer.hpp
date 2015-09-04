@@ -141,6 +141,8 @@ namespace boost { namespace fusion {
         printer(value);
         return os;
     }
+
+    using std_containers_ostream_operators::operator<<;
   }
 
 }}

@@ -28,7 +28,6 @@ namespace boost { namespace fusion { namespace std_containers_ostream_operators 
 
 }
   
-  using std_containers_ostream_operators::operator<<;
 
 }}
 
