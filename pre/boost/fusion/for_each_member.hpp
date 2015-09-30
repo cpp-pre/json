@@ -38,7 +38,7 @@ namespace detail {
     >::value
   >::type* = nullptr>
   inline void
-  for_each_member_linear(First const& first, 
+  for_each_member_linear(First & first, 
       Last const& last,
       F const& f,
       Sequence& seq,
@@ -69,7 +69,7 @@ namespace detail {
     >::value
   >::type* = nullptr>
   inline void
-  for_each_member_linear(First const& first, 
+  for_each_member_linear(First & first, 
       Last const& last,
       F const& f,
       Sequence& seq,

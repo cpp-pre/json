@@ -163,6 +163,112 @@ namespace boost { namespace fusion {
       return json_object;
     }
 
+  }
+
+
+
+  namespace detail {
+
+    template<typename TDejsonize>
+    struct adapted_struct_dejsonize : public boost::static_visitor<> {
+
+        adapted_struct_dejsonize(TDejsonize& object, const nlohmann::json& json_object) 
+          : boost::static_visitor<>(),  _object(object), _json_object(json_object) {}
+
+        //template<class T, 
+        //  enable_if_is_adapted_struct_t<T>* = nullptr>
+        //void operator()(const char* name, T& value) const {
+        //  std::cout << "name is " << name << std::endl;
+        //  value = _object[name];
+        //}
+
+        template<class T, 
+          enable_if_is_adapted_struct_t<T>* = nullptr>
+        void operator()(T& value) const {
+          boost::fusion::for_each_member(value, *this);
+        }
+
+        //template<class T, 
+        //  enable_if_is_other_sequence_and_not_variant_t<T>* = nullptr>
+        //void operator()(const char* name, const T& value) const {
+        //  nlohmann::json json_subobject;
+        //  adapted_struct_jsonize subjsonizer(json_subobject);
+        //  subjsonizer(value);
+
+        //  _json_object[name] = json_subobject;
+        //}
+
+        //template<class T, 
+        //  enable_if_is_other_sequence_and_not_variant_t<T>* = nullptr>
+        //void operator()(const T& value) const {
+        //  boost::fusion::for_each(value, *this);
+        //  // HMMMMM ???
+        //}
+
+        //template<class T, 
+        //  enable_if_is_variant_t<T>* = nullptr>
+        //void operator()(const char* name, const T& value) const {
+        //  nlohmann::json json_subobject;
+        //  adapted_struct_jsonize subjsonizer(json_subobject);
+        //  subjsonizer(value);
+
+        //  _json_object[name] = json_subobject;
+        //}
+
+        //template<class T, 
+        //  enable_if_is_variant_t<T>* = nullptr>
+        //void operator()(const T& value) const {
+        //  boost::apply_visitor(*this, value);
+        //}
+
+        template<class T, 
+          enable_if_is_not_sequence_nor_variant_t<T>* = nullptr>
+        void operator()(const char* name, T& value) const {
+          std::cout << "name is " << name << std::endl;
+          value = _json_object[name].get<T>();
+        }
+
+        //template<class T, 
+        //  enable_if_is_not_sequence_nor_variant_t<T>* = nullptr>
+        //void operator()(const T& value) const {
+        //  _json_object = value;
+        //}
+
+        //template<class T, 
+        //  enable_if_is_container_t<T>* = nullptr>
+        //void operator()(const char* name, T& value) const {
+        //}
+
+        //template<class T, 
+        //  enable_if_is_container_t<T>* = nullptr>
+        //void operator()(const T& value) const {
+        //  for (const auto& each : value) {
+        //    nlohmann::json json_subobject;
+        //    adapted_struct_jsonize subjsonizer(json_subobject);
+        //    subjsonizer(each);
+        //    _json_object.push_back(json_subobject); 
+        //  }
+        //}
+        
+        private:
+          TDejsonize& _object;
+          const nlohmann::json& _json_object;
+        
+      };
+
+  }
+
+
+
+  namespace adapted_struct_dejsonize {
+    template<class T,
+      detail::enable_if_is_adapted_struct_t<T>* = nullptr>
+    T dejsonize(const nlohmann::json& json_object) {
+      T object;
+      detail::adapted_struct_dejsonize<T> dejsonizer(object, json_object);
+      dejsonizer(object);
+      return object;
+    }
 
   }
 

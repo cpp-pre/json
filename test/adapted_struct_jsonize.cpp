@@ -39,5 +39,14 @@ int main(int argc, char** argv) {
   auto json = boost::fusion::adapted_struct_jsonize::jsonize(instance);
   
   std::cout << json << std::endl;
+
+  nlohmann::json obj {
+    {"skill_name", "GML"},
+    {"experience", 10}
+  };
+
+  auto skill_parsed = boost::fusion::adapted_struct_dejsonize::dejsonize<skill>(obj);
+
+  std::cout << boost::fusion::adapted_struct_jsonize::jsonize(skill_parsed) << std::endl;
   return 0;
 }
