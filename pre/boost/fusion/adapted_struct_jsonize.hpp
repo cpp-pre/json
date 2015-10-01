@@ -163,6 +163,14 @@ namespace boost { namespace fusion {
       return json_object;
     }
 
+    template<class T, 
+      detail::enable_if_is_container_t<T>* = nullptr>
+    nlohmann::json jsonize(const T& value) {
+      nlohmann::json json_object;
+      detail::adapted_struct_jsonize jsonizer(json_object);
+      jsonizer(value);
+      return json_object;
+    }
   }
 
 
@@ -178,11 +186,12 @@ namespace boost { namespace fusion {
           enable_if_is_adapted_struct_t<T>* = nullptr>
         void operator()(const char* name, T& value) const {
 
-          if (_json_object.find(name)) {
-            // TODO: Go deep into object
+          if (_json_object.find(name) != std::end(_json_object)) {
+            adapted_struct_dejsonize dejsonizer(_json_object[name]);
+            dejsonizer(value);
           } else {
             throw std::runtime_error(
-              "The JSON Object misses the key " + std::string(name) + _json_object.dump());
+              "Missing key " + std::string(name) + " in JSON Object : " + _json_object.dump());
           }
         }
 
@@ -232,14 +241,19 @@ namespace boost { namespace fusion {
         template<class T, 
           enable_if_is_not_sequence_nor_variant_t<T>* = nullptr>
         void operator()(const char* name, T& value) const {
-          std::cout << "name is " << name << std::endl;
-          value = _json_object[name].get<T>();
+          if (_json_object.find(name) != std::end(_json_object)) {
+            value = _json_object[name].get<T>();
+          } else {
+            throw std::runtime_error(
+              "Missing key " + std::string(name) + " in JSON Object : " + _json_object.dump());
+          }
         }
 
         template<class T, 
           enable_if_is_not_sequence_nor_variant_t<T>* = nullptr>
         void operator()(T& value) const {
-          value = _json_object; // Implicit conversions from nlohmann.
+          //TODO: Better diagnostic, current exception is : std::exception::what: type must be number, but is string, we should reoutput the json object in this case. 
+          value = _json_object.get<T>();
         }
 
         template<class T, 
@@ -263,16 +277,25 @@ namespace boost { namespace fusion {
           }
         }
 
-//        template<class T, 
-//          enable_if_is_container_t<T>* = nullptr>
-//        void operator()(const T& value) const {
-//          for (const auto& each : value) {
-//            nlohmann::json json_subobject;
-//            adapted_struct_jsonize subjsonizer(json_subobject);
-//            subjsonizer(each);
-//            _json_object.push_back(json_subobject); 
-//          }
-//        }
+        template<class T, 
+          enable_if_is_container_t<T>* = nullptr>
+        void operator()(T& value) const {
+          if (_json_object.is_array()) {
+
+            value.clear(); //XXX: Needed to clear if already somehow full ?
+            // XXX: Not supported by all containers : value.reserve(array.size());
+            for (auto entry_json : _json_object) { 
+              typename T::value_type entry_deser;
+              adapted_struct_dejsonize dejsonizer(entry_json);
+              dejsonizer(entry_deser);
+              value.push_back(entry_deser);
+            }
+
+          } else {
+            throw std::runtime_error("Expected " + _json_object.dump() + " to be a json array.");
+          }
+
+        }
         
         private:
           const nlohmann::json& _json_object;
@@ -286,6 +309,15 @@ namespace boost { namespace fusion {
   namespace adapted_struct_dejsonize {
     template<class T,
       detail::enable_if_is_adapted_struct_t<T>* = nullptr>
+    T dejsonize(const nlohmann::json& json_object) {
+      T object;
+      detail::adapted_struct_dejsonize dejsonizer(json_object);
+      dejsonizer(object);
+      return object;
+    }
+
+    template<class T,
+      detail::enable_if_is_container_t<T>* = nullptr>
     T dejsonize(const nlohmann::json& json_object) {
       T object;
       detail::adapted_struct_dejsonize dejsonizer(json_object);
