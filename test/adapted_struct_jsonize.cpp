@@ -71,14 +71,14 @@ namespace datamodel {
 
   struct cleaner {
     std::string floor;
-    std::vector<std::string> rooms;
+    std::string room;
   };
 
 }
 
 BOOST_FUSION_ADAPT_STRUCT(datamodel::cleaner,
   floor,
-  rooms)
+  room)
 
 namespace datamodel {
 
@@ -307,15 +307,19 @@ int main(int argc, char** argv) {
     std::vector<datamodel::employee> employees {
       {"King", datamodel::cashier{"hardware", 1} },
       {"Blake", datamodel::security{true, "Krav Maga"} },
-      {"Martin", datamodel::cleaner{"5th floor", {"Toys", "Petshop", "Drugs", "Food"} } },
+      {"Martin", datamodel::cleaner{"5th floor", "Toys, Petshop, Drugs, Food" } },
       {"Ward", datamodel::cashier{"Food", 2} }
     };
 
     auto employees_json = boost::fusion::adapted_struct_jsonize::jsonize(employees);
     std::cout << employees_json << std::endl;
 
-    // auto employees_deserialized = boost::fusion::adapted_struct_dejsonize::dejsonize<std::vector<datamodel::employee>>(employees_json); 
-    // BOOST_ASSERT(employees == employees_deserialized);
+    auto employees_deserialized = boost::fusion::adapted_struct_dejsonize::dejsonize<std::vector<datamodel::employee>>(employees_json); 
+
+    auto employees_reserialized = boost::fusion::adapted_struct_jsonize::jsonize(employees_deserialized);
+    std::cout << employees_reserialized << std::endl;
+
+    BOOST_ASSERT(employees == employees_deserialized);
   }
 
   return 0;

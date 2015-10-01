@@ -1,6 +1,10 @@
 #ifndef BOOST_FUSION_ADAPTED_STRUCT_JSONIZE_HPP
 #define BOOST_FUSION_ADAPTED_STRUCT_JSONIZE_HPP
 
+#include <boost/exception_ptr.hpp>
+
+#include <boost/mpl/for_each.hpp>
+
 #include <boost/variant.hpp>
 #include <pre/boost/fusion/traits/is_boost_variant.hpp>
 #include <pre/boost/fusion/traits/is_container.hpp>
@@ -177,10 +181,10 @@ namespace boost { namespace fusion {
 
   namespace detail {
 
-    struct adapted_struct_dejsonize : public boost::static_visitor<> {
+    struct adapted_struct_dejsonize {
 
-        adapted_struct_dejsonize(const nlohmann::json& json_object) 
-          : boost::static_visitor<>(), _json_object(json_object) {}
+        adapted_struct_dejsonize(const nlohmann::json& json_object) : 
+          _json_object(json_object) {}
 
         template<class T, 
           enable_if_is_adapted_struct_t<T>* = nullptr>
@@ -222,21 +226,49 @@ namespace boost { namespace fusion {
         //  // HMMMMM ???
         //}
 
-        //template<class T, 
-        //  enable_if_is_variant_t<T>* = nullptr>
-        //void operator()(const char* name, const T& value) const {
-        //  nlohmann::json json_subobject;
-        //  adapted_struct_jsonize subjsonizer(json_subobject);
-        //  subjsonizer(value);
+        template<class T, 
+          enable_if_is_variant_t<T>* = nullptr>
+        void operator()(const char* name, T& value) const {
+          adapted_struct_dejsonize dejsonizer(_json_object[name]);
+          dejsonizer(value);
+        }
 
-        //  _json_object[name] = json_subobject;
-        //}
+        template<typename TVariant>
+        struct variant_checker {
+          
+          variant_checker(const nlohmann::json& json_object, TVariant& value) : _json_object(json_object), value(value) {
+          };
 
-        //template<class T, 
-        //  enable_if_is_variant_t<T>* = nullptr>
-        //void operator()(const T& value) const {
-        //  boost::apply_visitor(*this, value);
-        //}
+          template< typename U > void operator()(U& x) {
+            if (!successed) {
+              try {
+                adapted_struct_dejsonize dejsonizer(_json_object);
+                U test_value;
+                dejsonizer(test_value);
+                successed = true;
+                value = test_value;
+              } catch (...) { //XXX: LOGIC BASED ON Exceptions !!! ARgh
+                //std::cout << "ERROR" << std::endl;
+                //std::cout << boost::current_exception_diagnostic_information(true) << std::endl;
+              }
+            }
+          }
+
+          private:
+            TVariant &value;
+            const nlohmann::json& _json_object;
+            bool successed = false;
+        };
+
+        template<class T, 
+          enable_if_is_variant_t<T>* = nullptr>
+        void operator()(T& value) const {
+          //TODO: implement
+          //TODO: Check what is in the json object to see if there is all the field we need for one of the types
+
+          boost::mpl::for_each< typename T::types >( variant_checker<T>(_json_object, value) );
+          
+        }
 
         template<class T, 
           enable_if_is_not_sequence_nor_variant_t<T>* = nullptr>
