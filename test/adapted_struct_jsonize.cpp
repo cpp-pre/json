@@ -36,9 +36,9 @@ int main(int argc, char** argv) {
     {skill{"C++", 10}, skill{"GML", 20}, skill{"Linux", 2}}
   };
 
-  auto json = boost::fusion::adapted_struct_jsonize::jsonize(instance);
+  auto json_customer = boost::fusion::adapted_struct_jsonize::jsonize(instance);
   
-  std::cout << json << std::endl;
+  std::cout << json_customer << std::endl;
 
   nlohmann::json obj {
     {"skill_name", "GML"},
@@ -48,5 +48,15 @@ int main(int argc, char** argv) {
   auto skill_parsed = boost::fusion::adapted_struct_dejsonize::dejsonize<skill>(obj);
 
   std::cout << boost::fusion::adapted_struct_jsonize::jsonize(skill_parsed) << std::endl;
+
+  
+  auto customer_parsed = boost::fusion::adapted_struct_dejsonize::dejsonize<datamodel::customer>(json_customer);
+
+  auto json_customer_after_reserialize = boost::fusion::adapted_struct_jsonize::jsonize(instance);
+  
+  std::cout << json_customer_after_reserialize << std::endl;
+
+  BOOST_ASSERT(json_customer == json_customer_after_reserialize);
+
   return 0;
 }
