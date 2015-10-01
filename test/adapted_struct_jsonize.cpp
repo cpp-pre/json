@@ -13,6 +13,8 @@
 #include <boost/tuple/tuple.hpp>
 #include <boost/exception_ptr.hpp>
 
+#include <boost/variant.hpp>
+
 
 typedef size_t years;
 
@@ -26,6 +28,11 @@ namespace datamodel {
     years experience;
   };
 }
+
+BOOST_FUSION_ADAPT_STRUCT(datamodel::skill,
+    skill_name,
+    experience)
+
 
 BOOST_FUSION_DEFINE_STRUCT((datamodel), customer,
     (std::string, name)
@@ -55,15 +62,61 @@ namespace datamodel {
   };
 }
 
-BOOST_FUSION_ADAPT_STRUCT(datamodel::skill,
-    skill_name,
-    experience)
-
 BOOST_FUSION_ADAPT_STRUCT(datamodel::sales_assitant,
   nickname,
   salary,
   main_customer)
 
+namespace datamodel {
+
+  struct cleaner {
+    std::string floor;
+    std::vector<std::string> rooms;
+  };
+
+}
+
+BOOST_FUSION_ADAPT_STRUCT(datamodel::cleaner,
+  floor,
+  rooms)
+
+namespace datamodel {
+
+  struct cashier {
+    std::string section;
+    int checkout_number;
+  };
+
+}
+
+BOOST_FUSION_ADAPT_STRUCT(datamodel::cashier,
+  section,
+  checkout_number)
+
+namespace datamodel {
+
+  struct security {
+    bool has_a_weapon;
+    std::string fighting_tactic;
+  };
+
+  typedef boost::variant<cleaner, cashier, security> possible_responsibilities;
+}
+
+BOOST_FUSION_ADAPT_STRUCT(datamodel::security,
+  has_a_weapon,
+  fighting_tactic)
+
+namespace datamodel {
+  struct employee {
+    std::string name;
+    possible_responsibilities responsibility;
+  };
+}
+
+BOOST_FUSION_ADAPT_STRUCT(datamodel::employee,
+  name,
+  responsibility)
 
 int main(int argc, char** argv) {
   datamodel::customer instance {
@@ -249,6 +302,21 @@ int main(int argc, char** argv) {
     BOOST_ASSERT(skills == skills_deserialized);
   }
 
+  // Test boost variants
+  {
+    std::vector<datamodel::employee> employees {
+      {"King", datamodel::cashier{"hardware", 1} },
+      {"Blake", datamodel::security{true, "Krav Maga"} },
+      {"Martin", datamodel::cleaner{"5th floor", {"Toys", "Petshop", "Drugs", "Food"} } },
+      {"Ward", datamodel::cashier{"Food", 2} }
+    };
+
+    auto employees_json = boost::fusion::adapted_struct_jsonize::jsonize(employees);
+    std::cout << employees_json << std::endl;
+
+    // auto employees_deserialized = boost::fusion::adapted_struct_dejsonize::dejsonize<std::vector<datamodel::employee>>(employees_json); 
+    // BOOST_ASSERT(employees == employees_deserialized);
+  }
 
   return 0;
 }
