@@ -20,7 +20,7 @@ add_definitions(--std=c++11)
 # Boost
 set(Boost_USE_MULTITHREADED ON)
 hunter_add_package(Boost)
-find_package(Boost 1.54 REQUIRED) 
+find_package(Boost 1.58 REQUIRED) 
 include_directories ( ${Boost_INCLUDE_DIRS} )
 
 include_directories( BEFORE ${CMAKE_CURRENT_LIST_DIR} )

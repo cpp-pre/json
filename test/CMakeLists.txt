@@ -33,9 +33,9 @@ if (BUILD_SHARED_LIBS)
 endif(BUILD_SHARED_LIBS)
 
 hunter_add_package(Boost COMPONENTS system thread log chrono filesystem  
-  date_time iostreams log test)
-find_package(Boost 1.55 COMPONENTS system thread log chrono filesystem  
-  date_time iostreams log unit_test_framework REQUIRED) 
+  date_time iostreams log)
+find_package(Boost 1.58 COMPONENTS system thread log chrono filesystem  
+  date_time iostreams log REQUIRED) 
 include_directories(AFTER ${Boost_INCLUDE_DIRS})
 link_directories ( ${Boost_LIBRARY_DIRS} )
 
