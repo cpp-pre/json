@@ -1,5 +1,4 @@
 #define BOOST_TEST_MODULE asio_mockup_serial_port_service_test
-//#include <boost/test/unit_test.hpp>
 #include <boost/test/included/unit_test.hpp>
 
 #include <iostream>

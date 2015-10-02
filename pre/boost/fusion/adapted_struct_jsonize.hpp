@@ -158,17 +158,7 @@ namespace boost { namespace fusion {
   }
 
   namespace adapted_struct_jsonize {
-    template<class T, 
-      detail::enable_if_is_adapted_struct_t<T>* = nullptr>
-    nlohmann::json jsonize(const T& value) {
-      nlohmann::json json_object;
-      detail::adapted_struct_jsonize jsonizer(json_object);
-      jsonizer(value);
-      return json_object;
-    }
-
-    template<class T, 
-      detail::enable_if_is_container_t<T>* = nullptr>
+    template<class T>
     nlohmann::json jsonize(const T& value) {
       nlohmann::json json_object;
       detail::adapted_struct_jsonize jsonizer(json_object);
@@ -208,23 +198,6 @@ namespace boost { namespace fusion {
             throw std::runtime_error("The JSON Object " + _json_object.dump() + " isn't an object");
           }
         }
-
-        //template<class T, 
-        //  enable_if_is_other_sequence_and_not_variant_t<T>* = nullptr>
-        //void operator()(const char* name, const T& value) const {
-        //  nlohmann::json json_subobject;
-        //  adapted_struct_jsonize subjsonizer(json_subobject);
-        //  subjsonizer(value);
-
-        //  _json_object[name] = json_subobject;
-        //}
-
-        //template<class T, 
-        //  enable_if_is_other_sequence_and_not_variant_t<T>* = nullptr>
-        //void operator()(const T& value) const {
-        //  boost::fusion::for_each(value, *this);
-        //  // HMMMMM ???
-        //}
 
         template<class T, 
           enable_if_is_variant_t<T>* = nullptr>
@@ -336,27 +309,14 @@ namespace boost { namespace fusion {
 
   }
 
-
-
   namespace adapted_struct_dejsonize {
-    template<class T,
-      detail::enable_if_is_adapted_struct_t<T>* = nullptr>
+    template<class T>
     T dejsonize(const nlohmann::json& json_object) {
       T object;
       detail::adapted_struct_dejsonize dejsonizer(json_object);
       dejsonizer(object);
       return object;
     }
-
-    template<class T,
-      detail::enable_if_is_container_t<T>* = nullptr>
-    T dejsonize(const nlohmann::json& json_object) {
-      T object;
-      detail::adapted_struct_dejsonize dejsonizer(json_object);
-      dejsonizer(object);
-      return object;
-    }
-
   }
 
 
