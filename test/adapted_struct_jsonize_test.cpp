@@ -1,3 +1,6 @@
+#define BOOST_TEST_MODULE adapted_struct_jsonize_test
+#include <boost/test/included/unit_test.hpp>
+
 #include <iostream>
 
 #include <vector>
@@ -16,12 +19,13 @@
 #include <boost/variant.hpp>
 
 
-typedef size_t years;
 
 namespace datamodel {
 
   using boost::fusion::operator==;
   using boost::fusion::operator!=;
+
+  typedef size_t years;
 
   struct skill {
     std::string skill_name;
@@ -118,18 +122,28 @@ BOOST_FUSION_ADAPT_STRUCT(datamodel::employee,
   name,
   responsibility)
 
-int main(int argc, char** argv) {
-  datamodel::customer instance {
+
+BOOST_AUTO_TEST_CASE (adapted_struct_jsonize_test_composedtype) {
+
+  // Testing a customer structure
+  datamodel::customer customer {
     "Mr. Dupond",
     43,
     {1,5},
     {datamodel::skill{"C++", 10}, datamodel::skill{"GML", 20}, datamodel::skill{"Linux", 2}}
   };
 
-  auto json_customer = boost::fusion::adapted_struct_jsonize::jsonize(instance);
-  
+  auto json_customer = boost::fusion::adapted_struct_jsonize::jsonize(customer);
   std::cout << json_customer << std::endl;
 
+  auto customer_parsed = boost::fusion::adapted_struct_dejsonize::dejsonize<datamodel::customer>(json_customer);
+  BOOST_ASSERT(customer_parsed == customer);
+
+  auto json_customer_after_reserialize = boost::fusion::adapted_struct_jsonize::jsonize(customer);
+  std::cout << json_customer_after_reserialize << std::endl;
+  BOOST_ASSERT(json_customer == json_customer_after_reserialize);
+
+  // testing an adapted skill alone from plain json
   nlohmann::json obj {
     {"skill_name", "GML"},
     {"experience", 10}
@@ -137,69 +151,72 @@ int main(int argc, char** argv) {
 
   auto skill_parsed = boost::fusion::adapted_struct_dejsonize::dejsonize<datamodel::skill>(obj);
 
+  BOOST_ASSERT(skill_parsed.skill_name == "GML");
+  BOOST_ASSERT(skill_parsed.experience == 10);
   std::cout << boost::fusion::adapted_struct_jsonize::jsonize(skill_parsed) << std::endl;
+}
 
-  
-  auto customer_parsed = boost::fusion::adapted_struct_dejsonize::dejsonize<datamodel::customer>(json_customer);
+/**
+ * Test nested objects
+ */
+BOOST_AUTO_TEST_CASE (adapted_struct_jsonize_test_nested) {
+  datamodel::customer customer {
+    "Mr. Dupond",
+    43,
+    {1,5},
+    {datamodel::skill{"C++", 10}, datamodel::skill{"GML", 20}, datamodel::skill{"Linux", 2}}
+  };
 
-  auto json_customer_after_reserialize = boost::fusion::adapted_struct_jsonize::jsonize(instance);
-  
-  std::cout << json_customer_after_reserialize << std::endl;
+  datamodel::sales_assitant assistant{"Mr. Gold", 130000, customer};
+  auto json_sales_assistant = boost::fusion::adapted_struct_jsonize::jsonize(assistant);
+  std::cout << json_sales_assistant << std::endl;
 
-  BOOST_ASSERT(json_customer == json_customer_after_reserialize);
+  auto deser_assistant = boost::fusion::adapted_struct_dejsonize::dejsonize<datamodel::sales_assitant>(json_sales_assistant);
 
+  auto json_sales_assistant_reserialized = boost::fusion::adapted_struct_jsonize::jsonize(deser_assistant);
+  std::cout << json_sales_assistant_reserialized << std::endl;
 
-  // Test nested objects
-  {
-    datamodel::sales_assitant assistant{"Mr. Gold", 130000, instance};
-    auto json_sales_assistant = boost::fusion::adapted_struct_jsonize::jsonize(assistant);
-    std::cout << json_sales_assistant << std::endl;
+  BOOST_ASSERT(json_sales_assistant_reserialized == json_sales_assistant);
+}
 
-    auto deser_assistant = boost::fusion::adapted_struct_dejsonize::dejsonize<datamodel::sales_assitant>(json_sales_assistant);
+BOOST_AUTO_TEST_CASE (adapted_struct_jsonize_test_working_plain_json) {
+  auto json = R"(
+    {
+        "main_customer": {
+            "age": 43,
+            "friends_id": [
+                1,
+                5
+            ],
+            "name": "Mr. Dupond",
+            "skillset": [
+                {
+                    "experience": 10,
+                    "skill_name": "C++"
+                },
+                {
+                    "experience": 20,
+                    "skill_name": "GML"
+                },
+                {
+                    "experience": 2,
+                    "skill_name": "Linux"
+                }
+            ]
+        },
+        "nickname": "Mr. Gold",
+        "salary": 130000
+    }
 
-    auto json_sales_assistant_reserialized = boost::fusion::adapted_struct_jsonize::jsonize(deser_assistant);
-    std::cout << json_sales_assistant_reserialized << std::endl;
-    BOOST_ASSERT(json_sales_assistant_reserialized == json_sales_assistant);
-  }
+  )"_json;
 
-  // Test working objects
-  {
-    auto json = R"(
-      {
-          "main_customer": {
-              "age": 43,
-              "friends_id": [
-                  1,
-                  5
-              ],
-              "name": "Mr. Dupond",
-              "skillset": [
-                  {
-                      "experience": 10,
-                      "skill_name": "C++"
-                  },
-                  {
-                      "experience": 20,
-                      "skill_name": "GML"
-                  },
-                  {
-                      "experience": 2,
-                      "skill_name": "Linux"
-                  }
-              ]
-          },
-          "nickname": "Mr. Gold",
-          "salary": 130000
-      }
+  auto deser_assistant = boost::fusion::adapted_struct_dejsonize::dejsonize<datamodel::sales_assitant>(json);
 
-    )"_json;
+  auto json_sales_assistant_reserialized = boost::fusion::adapted_struct_jsonize::jsonize(deser_assistant);
+  std::cout << json_sales_assistant_reserialized << std::endl;
+}
 
-    auto deser_assistant = boost::fusion::adapted_struct_dejsonize::dejsonize<datamodel::sales_assitant>(json);
-
-    auto json_sales_assistant_reserialized = boost::fusion::adapted_struct_jsonize::jsonize(deser_assistant);
-    std::cout << json_sales_assistant_reserialized << std::endl;
-  }
-
+BOOST_AUTO_TEST_CASE (adapted_struct_jsonize_test_incorrect_plain_json) {
   // Test buggy keys
   try {
     auto json = R"(
@@ -283,44 +300,43 @@ int main(int argc, char** argv) {
     std::cout << boost::current_exception_diagnostic_information(true) << std::endl;
     BOOST_ASSERT(true);
   }
+}
 
-  {
-    std::vector<datamodel::skill> skills {
-      datamodel::skill{"C++", 0},
-      datamodel::skill{"Java", 0},
-      datamodel::skill{".Net", 0},
-      datamodel::skill{"Objective-C", 0},
-      datamodel::skill{"HTML", 0},
-      datamodel::skill{"SQL", 0},
-      datamodel::skill{"Project-Management", 0}
-    };
 
-    auto skills_json = boost::fusion::adapted_struct_jsonize::jsonize(skills);
-    std::cout << skills_json << std::endl;
+BOOST_AUTO_TEST_CASE (adapted_struct_jsonize_test_containers_direct) {
+  std::vector<datamodel::skill> skills {
+    datamodel::skill{"C++", 0},
+    datamodel::skill{"Java", 0},
+    datamodel::skill{".Net", 0},
+    datamodel::skill{"Objective-C", 0},
+    datamodel::skill{"HTML", 0},
+    datamodel::skill{"SQL", 0},
+    datamodel::skill{"Project-Management", 0}
+  };
 
-    auto skills_deserialized = boost::fusion::adapted_struct_dejsonize::dejsonize<std::vector<datamodel::skill>>(skills_json); 
-    BOOST_ASSERT(skills == skills_deserialized);
-  }
+  auto skills_json = boost::fusion::adapted_struct_jsonize::jsonize(skills);
+  std::cout << skills_json << std::endl;
 
-  // Test boost variants
-  {
-    std::vector<datamodel::employee> employees {
-      {"King", datamodel::cashier{"hardware", 1} },
-      {"Blake", datamodel::security{true, "Krav Maga"} },
-      {"Martin", datamodel::cleaner{"5th floor", "Toys, Petshop, Drugs, Food" } },
-      {"Ward", datamodel::cashier{"Food", 2} }
-    };
+  auto skills_deserialized = boost::fusion::adapted_struct_dejsonize::dejsonize<std::vector<datamodel::skill>>(skills_json); 
+  BOOST_ASSERT(skills == skills_deserialized);
+}
 
-    auto employees_json = boost::fusion::adapted_struct_jsonize::jsonize(employees);
-    std::cout << employees_json << std::endl;
+BOOST_AUTO_TEST_CASE (adapted_struct_jsonize_test_vairants) {
 
-    auto employees_deserialized = boost::fusion::adapted_struct_dejsonize::dejsonize<std::vector<datamodel::employee>>(employees_json); 
+  std::vector<datamodel::employee> employees {
+    {"King", datamodel::cashier{"hardware", 1} },
+    {"Blake", datamodel::security{true, "Krav Maga"} },
+    {"Martin", datamodel::cleaner{"5th floor", "Toys, Petshop, Drugs, Food" } },
+    {"Ward", datamodel::cashier{"Food", 2} }
+  };
 
-    auto employees_reserialized = boost::fusion::adapted_struct_jsonize::jsonize(employees_deserialized);
-    std::cout << employees_reserialized << std::endl;
+  auto employees_json = boost::fusion::adapted_struct_jsonize::jsonize(employees);
+  std::cout << employees_json << std::endl;
 
-    BOOST_ASSERT(employees == employees_deserialized);
-  }
+  auto employees_deserialized = boost::fusion::adapted_struct_dejsonize::dejsonize<std::vector<datamodel::employee>>(employees_json); 
 
-  return 0;
+  auto employees_reserialized = boost::fusion::adapted_struct_jsonize::jsonize(employees_deserialized);
+  std::cout << employees_reserialized << std::endl;
+
+  BOOST_ASSERT(employees == employees_deserialized);
 }

@@ -151,7 +151,7 @@ namespace boost { namespace fusion {
       }
       
       private:
-      nlohmann::json& _json_object;
+        nlohmann::json& _json_object;
       
     };
 
