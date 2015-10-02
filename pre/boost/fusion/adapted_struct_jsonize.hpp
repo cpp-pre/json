@@ -8,6 +8,7 @@
 #include <boost/variant.hpp>
 #include <pre/boost/fusion/traits/is_boost_variant.hpp>
 #include <pre/boost/fusion/traits/is_container.hpp>
+#include <pre/boost/fusion/traits/is_associative_container.hpp>
 #include <boost/fusion/include/tag_of.hpp>
 
 
@@ -26,6 +27,7 @@ namespace boost { namespace fusion {
     template<class T>
     using enable_if_is_not_sequence_nor_variant_t = typename std::enable_if<
       ! ( boost::fusion::traits::is_container<T>::value || 
+          boost::fusion::traits::is_associative_container<T>::value ||
           boost::fusion::traits::is_sequence<T>::value 
           || traits::is_boost_variant<T>::value)
     ,T>::type;
@@ -56,16 +58,21 @@ namespace boost { namespace fusion {
 
     template<class T>
     using enable_if_is_container_t = typename std::enable_if<
-      boost::fusion::traits::is_container<T>::value && !boost::fusion::traits::is_sequence<T>::value && !traits::is_boost_variant<T>::value
+      traits::is_container<T>::value
     ,T>::type;
+
+    template<class T>
+    using enable_if_is_associative_container_t = typename std::enable_if<
+      boost::fusion::traits::is_associative_container<T>::value 
+    ,T>::type;
+
 
     struct adapted_struct_jsonize : public boost::static_visitor<> {
 
       adapted_struct_jsonize(nlohmann::json& json_object) 
         : boost::static_visitor<>(),  _json_object(json_object) {}
 
-      template<class T, 
-        enable_if_is_adapted_struct_t<T>* = nullptr>
+      template<class T>
       void operator()(const char* name, const T& value) const {
         nlohmann::json json_subobject;
         adapted_struct_jsonize subjsonizer(json_subobject);
@@ -82,29 +89,9 @@ namespace boost { namespace fusion {
 
       template<class T, 
         enable_if_is_other_sequence_and_not_variant_t<T>* = nullptr>
-      void operator()(const char* name, const T& value) const {
-        nlohmann::json json_subobject;
-        adapted_struct_jsonize subjsonizer(json_subobject);
-        subjsonizer(value);
-
-        _json_object[name] = json_subobject;
-      }
-
-      template<class T, 
-        enable_if_is_other_sequence_and_not_variant_t<T>* = nullptr>
       void operator()(const T& value) const {
         boost::fusion::for_each(value, *this);
         // HMMMMM ???
-      }
-
-      template<class T, 
-        enable_if_is_variant_t<T>* = nullptr>
-      void operator()(const char* name, const T& value) const {
-        nlohmann::json json_subobject;
-        adapted_struct_jsonize subjsonizer(json_subobject);
-        subjsonizer(value);
-
-        _json_object[name] = json_subobject;
       }
 
       template<class T, 
@@ -115,28 +102,8 @@ namespace boost { namespace fusion {
 
       template<class T, 
         enable_if_is_not_sequence_nor_variant_t<T>* = nullptr>
-      void operator()(const char* name, const T& value) const {
-        nlohmann::json json_subobject;
-        adapted_struct_jsonize subjsonizer(json_subobject);
-        subjsonizer(value);
-
-        _json_object[name] = json_subobject;
-      }
-
-      template<class T, 
-        enable_if_is_not_sequence_nor_variant_t<T>* = nullptr>
       void operator()(const T& value) const {
         _json_object = value;
-      }
-
-      template<class T, 
-        enable_if_is_container_t<T>* = nullptr>
-      void operator()(const char* name, const T& value) const {
-        nlohmann::json json_subobject;
-        adapted_struct_jsonize subjsonizer(json_subobject);
-        subjsonizer(value);
-
-        _json_object[name] = json_subobject;
       }
 
       template<class T, 
@@ -149,6 +116,18 @@ namespace boost { namespace fusion {
           _json_object.push_back(json_subobject); 
         }
       }
+
+      template<class T, 
+        enable_if_is_associative_container_t<T>* = nullptr>
+      void operator()(const T& value) const {
+        for (const auto& each : value) {
+          nlohmann::json json_subobject;
+          adapted_struct_jsonize subjsonizer(json_subobject);
+          subjsonizer(each.second);
+          _json_object[each.first] = json_subobject; 
+        }
+      }
+
       
       private:
         nlohmann::json& _json_object;
@@ -300,6 +279,32 @@ namespace boost { namespace fusion {
             throw std::runtime_error("Expected " + _json_object.dump() + " to be a json array.");
           }
 
+        }
+
+        template<class T, 
+           enable_if_is_associative_container_t<T>* = nullptr>
+        void operator()(const char* name, T& value) const {
+          adapted_struct_dejsonize dejsonizer(_json_object[name]);
+          dejsonizer(value);
+        }
+
+        template<class T,
+          enable_if_is_associative_container_t<T>* = nullptr>
+        void operator()(T& value) const {
+          if (_json_object.is_object()) {
+
+            value.clear();
+
+            for (nlohmann::json::const_iterator it = _json_object.begin(); it != _json_object.end(); ++it) {
+              typename T::mapped_type entry_deser;
+              adapted_struct_dejsonize dejsonizer(it.value());
+              dejsonizer(entry_deser);
+              value[it.key()] = entry_deser;
+            }
+
+          } else {
+            throw std::runtime_error("Expected " + _json_object.dump() + " to be a json object.");
+          }
         }
         
         private:

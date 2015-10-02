@@ -111,16 +111,6 @@ BOOST_FUSION_ADAPT_STRUCT(datamodel::security,
   has_a_weapon,
   fighting_tactic)
 
-namespace datamodel {
-  struct employee {
-    std::string name;
-    possible_responsibilities responsibility;
-  };
-}
-
-BOOST_FUSION_ADAPT_STRUCT(datamodel::employee,
-  name,
-  responsibility)
 
 
 BOOST_AUTO_TEST_CASE (adapted_struct_jsonize_test_composedtype) {
@@ -321,6 +311,17 @@ BOOST_AUTO_TEST_CASE (adapted_struct_jsonize_test_containers_direct) {
   BOOST_ASSERT(skills == skills_deserialized);
 }
 
+namespace datamodel {
+  struct employee {
+    std::string name;
+    possible_responsibilities responsibility;
+  };
+}
+
+BOOST_FUSION_ADAPT_STRUCT(datamodel::employee,
+  name,
+  responsibility)
+
 BOOST_AUTO_TEST_CASE (adapted_struct_jsonize_test_vairants) {
 
   std::vector<datamodel::employee> employees {
@@ -339,4 +340,35 @@ BOOST_AUTO_TEST_CASE (adapted_struct_jsonize_test_vairants) {
   std::cout << employees_reserialized << std::endl;
 
   BOOST_ASSERT(employees == employees_deserialized);
+}
+
+namespace datamodel {
+
+  struct struct_with_a_map {
+    std::map<std::string, int> with_a_map;
+    std::map<std::string, skill> some_other_map;
+  };
+  
+}
+
+BOOST_FUSION_ADAPT_STRUCT(datamodel::struct_with_a_map, with_a_map, some_other_map)
+
+BOOST_AUTO_TEST_CASE(adapted_struct_jsonize_test_maps) {
+
+  datamodel::struct_with_a_map some{
+    {
+      {"hellO",12},
+      {"help", 15}
+    },
+    {
+      {"test", datamodel::skill{"C++", 10}}
+    }
+  };
+
+  auto some_json = boost::fusion::adapted_struct_jsonize::jsonize(some);
+  std::cout << some_json << std::endl; 
+
+  auto some_deserialized = boost::fusion::adapted_struct_dejsonize::dejsonize<datamodel::struct_with_a_map>(some_json);
+  
+  BOOST_ASSERT(some_deserialized == some); 
 }
