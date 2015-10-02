@@ -155,8 +155,7 @@ namespace boost { namespace fusion {
         adapted_struct_dejsonize(const nlohmann::json& json_object) : 
           _json_object(json_object) {}
 
-        template<class T, 
-          enable_if_is_adapted_struct_t<T>* = nullptr>
+        template<class T> 
         void operator()(const char* name, T& value) const {
 
           if (_json_object.find(name) != std::end(_json_object)) {
@@ -176,13 +175,6 @@ namespace boost { namespace fusion {
           } else {
             throw std::runtime_error("The JSON Object " + _json_object.dump() + " isn't an object");
           }
-        }
-
-        template<class T, 
-          enable_if_is_variant_t<T>* = nullptr>
-        void operator()(const char* name, T& value) const {
-          adapted_struct_dejsonize dejsonizer(_json_object[name]);
-          dejsonizer(value);
         }
 
         template<typename TVariant>
@@ -224,41 +216,9 @@ namespace boost { namespace fusion {
 
         template<class T, 
           enable_if_is_not_sequence_nor_variant_t<T>* = nullptr>
-        void operator()(const char* name, T& value) const {
-          if (_json_object.find(name) != std::end(_json_object)) {
-            value = _json_object[name].get<T>();
-          } else {
-            throw std::runtime_error(
-              "Missing key " + std::string(name) + " in JSON Object : " + _json_object.dump());
-          }
-        }
-
-        template<class T, 
-          enable_if_is_not_sequence_nor_variant_t<T>* = nullptr>
         void operator()(T& value) const {
           //TODO: Better diagnostic, current exception is : std::exception::what: type must be number, but is string, we should reoutput the json object in this case. 
           value = _json_object.get<T>();
-        }
-
-        template<class T, 
-          enable_if_is_container_t<T>* = nullptr>
-        void operator()(const char* name, T& value) const {
-
-          auto array = _json_object[name];
-          if (array.is_array()) {
-
-            value.clear(); //XXX: Needed to clear if already somehow full ?
-            // XXX: Not supported by all containers : value.reserve(array.size());
-            for (auto entry_json : array) { 
-              typename T::value_type entry_deser;
-              adapted_struct_dejsonize dejsonizer(entry_json);
-              dejsonizer(entry_deser);
-              value.push_back(entry_deser);
-            }
-
-          } else {
-            throw std::runtime_error("Expected " + std::string(name) + " to be a json array.");
-          }
         }
 
         template<class T, 
@@ -279,13 +239,6 @@ namespace boost { namespace fusion {
             throw std::runtime_error("Expected " + _json_object.dump() + " to be a json array.");
           }
 
-        }
-
-        template<class T, 
-           enable_if_is_associative_container_t<T>* = nullptr>
-        void operator()(const char* name, T& value) const {
-          adapted_struct_dejsonize dejsonizer(_json_object[name]);
-          dejsonizer(value);
         }
 
         template<class T,
