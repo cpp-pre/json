@@ -71,46 +71,6 @@ BOOST_FUSION_ADAPT_STRUCT(datamodel::sales_assitant,
   salary,
   main_customer)
 
-namespace datamodel {
-
-  struct cleaner {
-    std::string floor;
-    std::string room;
-  };
-
-}
-
-BOOST_FUSION_ADAPT_STRUCT(datamodel::cleaner,
-  floor,
-  room)
-
-namespace datamodel {
-
-  struct cashier {
-    std::string section;
-    int checkout_number;
-  };
-
-}
-
-BOOST_FUSION_ADAPT_STRUCT(datamodel::cashier,
-  section,
-  checkout_number)
-
-namespace datamodel {
-
-  struct security {
-    bool has_a_weapon;
-    std::string fighting_tactic;
-  };
-
-  typedef boost::variant<cleaner, cashier, security> possible_responsibilities;
-}
-
-BOOST_FUSION_ADAPT_STRUCT(datamodel::security,
-  has_a_weapon,
-  fighting_tactic)
-
 
 
 BOOST_AUTO_TEST_CASE (adapted_struct_jsonize_test_composedtype) {
@@ -310,6 +270,48 @@ BOOST_AUTO_TEST_CASE (adapted_struct_jsonize_test_containers_direct) {
   auto skills_deserialized = boost::fusion::adapted_struct_dejsonize::dejsonize<std::vector<datamodel::skill>>(skills_json); 
   BOOST_ASSERT(skills == skills_deserialized);
 }
+
+namespace datamodel {
+
+  struct cleaner {
+    std::string floor;
+    std::string room;
+  };
+
+}
+
+BOOST_FUSION_ADAPT_STRUCT(datamodel::cleaner,
+  floor,
+  room)
+
+namespace datamodel {
+
+  struct cashier {
+    std::string section;
+    int checkout_number;
+  };
+
+}
+
+BOOST_FUSION_ADAPT_STRUCT(datamodel::cashier,
+  section,
+  checkout_number)
+
+namespace datamodel {
+
+  struct security {
+    bool has_a_weapon;
+    std::string fighting_tactic;
+  };
+
+  typedef boost::variant<cleaner, cashier, security> possible_responsibilities;
+}
+
+BOOST_FUSION_ADAPT_STRUCT(datamodel::security,
+  has_a_weapon,
+  fighting_tactic)
+
+
 
 namespace datamodel {
   struct employee {
