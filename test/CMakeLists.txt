@@ -41,6 +41,10 @@ link_directories ( ${Boost_LIBRARY_DIRS} )
 
 include_directories(BEFORE ${CMAKE_SOURCE_DIR})
 
+# nlohmann-json
+hunter_add_package(nlohmann-json)
+find_package(nlohmann-json REQUIRED)
+
 add_unit_test(NAME asio_mockup_serial_port_service_test 
   LIBS 
   ${CMAKE_THREAD_LIBS_INIT}
@@ -48,4 +52,5 @@ add_unit_test(NAME asio_mockup_serial_port_service_test
 
 add_unit_test(NAME adapted_struct_printer)
 
-add_unit_test(NAME adapted_struct_jsonize_test)
+add_unit_test(NAME adapted_struct_jsonize_test
+  LIBS nlohmann-json::nlohmann-json)

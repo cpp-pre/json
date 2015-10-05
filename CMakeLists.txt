@@ -25,6 +25,10 @@ include_directories ( ${Boost_INCLUDE_DIRS} )
 
 include_directories( BEFORE ${CMAKE_CURRENT_LIST_DIR} )
 
+# nlohmann-json
+hunter_add_package(nlohmann-json)
+find_package(nlohmann-json REQUIRED)
+
 install(DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/pre DESTINATION include
         FILES_MATCHING PATTERN "*.[ih]pp")
 
