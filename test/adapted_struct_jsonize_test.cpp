@@ -19,6 +19,8 @@
 #include <boost/variant.hpp>
 
 
+#include <pre/json/traits/is_jsonizable.hpp>
+
 
 namespace datamodel {
 
@@ -71,9 +73,13 @@ BOOST_FUSION_ADAPT_STRUCT(datamodel::sales_assitant,
   salary,
   main_customer)
 
-
-
 BOOST_AUTO_TEST_CASE (adapted_struct_jsonize_test_composedtype) {
+
+  static_assert(pre::json::traits::is_jsonizable<datamodel::customer>::type::value, "datamodel::customer should be jsonizable.");
+  static_assert(pre::json::traits::is_jsonizable<int>::type::value, "int should be jsonizable.");
+  static_assert(pre::json::traits::is_jsonizable<std::string>::type::value, "std::string should be jsonizable.");
+  static_assert(pre::json::traits::is_jsonizable< std::map<std::string, int> >::type::value, "std::map<std::string,int> should be jsonizable.");
+  static_assert(pre::json::traits::is_jsonizable<std::map<int, int>>::type::value == false , "std::map<int,int> should NOT be jsonizable.");
 
   // Testing a customer structure
   datamodel::customer customer {
