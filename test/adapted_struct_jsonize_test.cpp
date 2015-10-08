@@ -73,13 +73,30 @@ BOOST_FUSION_ADAPT_STRUCT(datamodel::sales_assitant,
   salary,
   main_customer)
 
-BOOST_AUTO_TEST_CASE (adapted_struct_jsonize_test_composedtype) {
+BOOST_AUTO_TEST_CASE (adapted_struct_jsonize_test_traits) {
+
+  struct non_adapted_struct {
+    int dummy;
+    int dummy2;
+  };
 
   static_assert(pre::json::traits::is_jsonizable<datamodel::customer>::type::value, "datamodel::customer should be jsonizable.");
   static_assert(pre::json::traits::is_jsonizable<int>::type::value, "int should be jsonizable.");
+  static_assert(pre::json::traits::is_jsonizable<float>::type::value, "float should be jsonizable.");
+  static_assert(pre::json::traits::is_jsonizable<double>::type::value, "float should be jsonizable.");
   static_assert(pre::json::traits::is_jsonizable<std::string>::type::value, "std::string should be jsonizable.");
   static_assert(pre::json::traits::is_jsonizable< std::map<std::string, int> >::type::value, "std::map<std::string,int> should be jsonizable.");
+  static_assert(pre::json::traits::is_jsonizable< std::vector<std::string> >::type::value, "should NOT be jsonizable");
+  static_assert(pre::json::traits::is_jsonizable< std::vector<int> >::type::value, "should NOT be jsonizable");
+
   static_assert(pre::json::traits::is_jsonizable<std::map<int, int>>::type::value == false , "std::map<int,int> should NOT be jsonizable.");
+  static_assert(pre::json::traits::is_jsonizable<non_adapted_struct>::type::value == false , "non_adapted_struct should NOT be jsonizable.");
+  static_assert(pre::json::traits::is_jsonizable< std::vector<non_adapted_struct> >::type::value == false, "should NOT be jsonizable");
+
+}
+
+BOOST_AUTO_TEST_CASE (adapted_struct_jsonize_test_composedtype) {
+
 
   // Testing a customer structure
   datamodel::customer customer {
