@@ -213,7 +213,7 @@ private:
 } // namespace asio
 } // namespace boost
 
-#include <boost/asio/detail/pop_options.hpp>
+//#include <boost/asio/detail/pop_options.hpp>
 
 #endif // defined(BOOST_ASIO_HAS_SERIAL_PORT)
        //   || defined(GENERATING_DOCUMENTATION)
