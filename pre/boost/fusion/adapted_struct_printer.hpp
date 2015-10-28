@@ -134,7 +134,7 @@ namespace boost { namespace fusion {
 
   namespace adapted_struct_printer {
     template<class T, 
-      detail::enable_if_is_adapted_struct_t<T>* = nullptr>
+      detail::enable_if_is_adapted_struct_t<typename std::remove_volatile<T>::type >* = nullptr>
     inline std::ostream& operator<<(std::ostream& os, const T& value) {
         pre::iostreams::indenting_stream indentos(os);
         detail::adapted_struct_printer printer(indentos);
