@@ -261,7 +261,7 @@ namespace boost { namespace fusion {
         }
         
         private:
-          const nlohmann::json& _json_object;
+          const nlohmann::json& _json_object; // XXX: Invert to be the same as jsonizer
         
       };
 
