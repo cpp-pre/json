@@ -397,3 +397,47 @@ BOOST_AUTO_TEST_CASE(adapted_struct_jsonize_test_maps) {
   
   BOOST_ASSERT(some_deserialized == some); 
 }
+
+
+namespace datamodel {
+
+  enum class my_value_type : uint8_t {
+    TYPE1,
+    TYPE2
+  };
+
+  enum some_other {
+    ONE,
+    TWO,
+    THREE
+  };
+
+  struct some_value {
+    my_value_type type;
+    int value;
+    some_other enums_without_underlying;
+  };
+
+}
+
+BOOST_FUSION_ADAPT_STRUCT(datamodel::some_value,
+  type,
+  value,
+  enums_without_underlying)
+
+BOOST_AUTO_TEST_CASE (adapted_struct_jsonize_test_enums) {
+
+  datamodel::some_value val{datamodel::my_value_type::TYPE2, 12, datamodel::THREE};
+
+  auto val_json = boost::fusion::adapted_struct_jsonize::jsonize(val);
+  std::cout << val_json << std::endl;
+
+  auto val_deserialized = boost::fusion::adapted_struct_dejsonize::dejsonize<datamodel::some_value>(val_json); 
+
+  auto val_reserialized = boost::fusion::adapted_struct_jsonize::jsonize(val_deserialized);
+  std::cout << val_reserialized << std::endl;
+
+  BOOST_ASSERT(val == val_deserialized);
+}
+
+

@@ -11,6 +11,7 @@
 #include <pre/boost/fusion/traits/is_associative_container.hpp>
 #include <boost/fusion/include/tag_of.hpp>
 
+#include <pre/enums/to_underlying.hpp>
 
 #include <boost/fusion/include/is_sequence.hpp>
 #include <pre/boost/fusion/for_each_member.hpp>
@@ -25,11 +26,12 @@ namespace boost { namespace fusion {
 
   namespace detail {
     template<class T>
-    using enable_if_is_not_sequence_nor_variant_t = typename std::enable_if<
+    using enable_if_is_normal_value_t = typename std::enable_if<
       ! ( boost::fusion::traits::is_container<T>::value || 
           boost::fusion::traits::is_associative_container<T>::value ||
           boost::fusion::traits::is_sequence<T>::value 
-          || traits::is_boost_variant<T>::value)
+          || traits::is_boost_variant<T>::value
+          || std::is_enum<T>::value)
     ,T>::type;
 
     template<class T>
@@ -100,8 +102,14 @@ namespace boost { namespace fusion {
         boost::apply_visitor(*this, value);
       }
 
+      template<class T,
+        typename std::enable_if<std::is_enum<T>::value>::type* = nullptr>
+      void operator()(const T& value) const {
+        _json_object = pre::enums::to_underlying(value);
+      }
+
       template<class T, 
-        enable_if_is_not_sequence_nor_variant_t<T>* = nullptr>
+        enable_if_is_normal_value_t<T>* = nullptr>
       void operator()(const T& value) const {
         _json_object = value;
       }
@@ -214,8 +222,15 @@ namespace boost { namespace fusion {
           
         }
 
+        template<class T,
+          typename std::enable_if<std::is_enum<T>::value>::type* = nullptr>
+        void operator()(T& value) const {
+          // XXX : How could we safe range check enum assignement ?
+          value = static_cast<T>(_json_object.get<typename std::underlying_type<T>::type>());
+        }
+
         template<class T, 
-          enable_if_is_not_sequence_nor_variant_t<T>* = nullptr>
+          enable_if_is_normal_value_t<T>* = nullptr>
         void operator()(T& value) const {
           //TODO: Better diagnostic, current exception is : std::exception::what: type must be number, but is string, we should reoutput the json object in this case. 
           value = _json_object.get<T>();
