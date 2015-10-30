@@ -19,19 +19,39 @@
 #include <boost/fusion/include/for_each.hpp>
 #include <boost/fusion/include/boost_tuple.hpp>
 
+// XXX: Could we forward declare them ? to support them without depending explicitely on them ?
+#include <boost/chrono/duration.hpp>
+#include <chrono>
+
 #include <nlohmann/json.hpp>
+
+
+template <typename T>
+struct is_string : std::false_type {};
+
+template <typename charT, typename traits, typename Alloc>
+struct is_string<std::basic_string<charT, traits, Alloc> > : std::true_type {};
 
 namespace boost { namespace fusion {
 
 
   namespace detail {
+
     template<class T>
-    using enable_if_is_normal_value_t = typename std::enable_if<
-      ! ( boost::fusion::traits::is_container<T>::value || 
+    using enable_if_is_chrono_duration_t = typename std::enable_if< 
+      std::is_same<boost::chrono::duration<typename T::rep, typename T::period>, T>::value 
+      || std::is_same<std::chrono::duration<typename T::rep, typename T::period>, T>::value 
+    >::type;
+
+
+    template<class T>
+    using enable_if_is_directly_serializable_t = typename std::enable_if<
+      std::is_fundamental<T>::value || is_string<T>::value
+      /*! ( boost::fusion::traits::is_container<T>::value || 
           boost::fusion::traits::is_associative_container<T>::value ||
           boost::fusion::traits::is_sequence<T>::value 
           || traits::is_boost_variant<T>::value
-          || std::is_enum<T>::value)
+          || std::is_enum<T>::value)*/
     ,T>::type;
 
     template<class T>
@@ -67,6 +87,7 @@ namespace boost { namespace fusion {
     using enable_if_is_associative_container_t = typename std::enable_if<
       boost::fusion::traits::is_associative_container<T>::value 
     ,T>::type;
+
 
 
     struct adapted_struct_jsonize : public boost::static_visitor<> {
@@ -108,8 +129,14 @@ namespace boost { namespace fusion {
         _json_object = pre::enums::to_underlying(value);
       }
 
+      template<class T,
+        enable_if_is_chrono_duration_t<T>* = nullptr>
+      void operator()(const T& value) const {
+        _json_object = value.count();
+      }
+
       template<class T, 
-        enable_if_is_normal_value_t<T>* = nullptr>
+        enable_if_is_directly_serializable_t<T>* = nullptr>
       void operator()(const T& value) const {
         _json_object = value;
       }
@@ -229,8 +256,14 @@ namespace boost { namespace fusion {
           value = static_cast<T>(_json_object.get<typename std::underlying_type<T>::type>());
         }
 
+        template<class T,
+          enable_if_is_chrono_duration_t<T>* = nullptr>
+        void operator()(T& value) const {
+          value = T{_json_object.get<typename T::rep>()};
+        }
+
         template<class T, 
-          enable_if_is_normal_value_t<T>* = nullptr>
+          enable_if_is_directly_serializable_t<T>* = nullptr>
         void operator()(T& value) const {
           //TODO: Better diagnostic, current exception is : std::exception::what: type must be number, but is string, we should reoutput the json object in this case. 
           value = _json_object.get<T>();

@@ -440,4 +440,48 @@ BOOST_AUTO_TEST_CASE (adapted_struct_jsonize_test_enums) {
   BOOST_ASSERT(val == val_deserialized);
 }
 
+BOOST_AUTO_TEST_CASE (adapted_struct_jsonize_chrono) {
+
+  boost::chrono::milliseconds val{100};
+
+  auto val_json = boost::fusion::adapted_struct_jsonize::jsonize(val);
+  std::cout << val_json << std::endl;
+
+  auto val_deserialized = boost::fusion::adapted_struct_dejsonize::dejsonize<boost::chrono::milliseconds>(val_json); 
+
+  auto val_reserialized = boost::fusion::adapted_struct_jsonize::jsonize(val_deserialized);
+  std::cout << val_reserialized << std::endl;
+
+  BOOST_ASSERT(val == val_deserialized);
+}
+
+namespace datamodel {
+  struct some_time {
+    std::string label;
+    boost::chrono::milliseconds millis;
+    std::chrono::minutes mins;
+  };
+
+}
+
+BOOST_FUSION_ADAPT_STRUCT(datamodel::some_time,
+  label,
+  millis,
+  mins)
+
+BOOST_AUTO_TEST_CASE (adapted_struct_jsonize_chrono_composed) {
+
+  datamodel::some_time val{"my time", boost::chrono::milliseconds(100), std::chrono::minutes(43)};
+
+  auto val_json = boost::fusion::adapted_struct_jsonize::jsonize(val);
+  std::cout << val_json << std::endl;
+
+  auto val_deserialized = boost::fusion::adapted_struct_dejsonize::dejsonize<datamodel::some_time>(val_json); 
+
+  auto val_reserialized = boost::fusion::adapted_struct_jsonize::jsonize(val_deserialized);
+  std::cout << val_reserialized << std::endl;
+
+  BOOST_ASSERT(val == val_deserialized);
+}
+
 
