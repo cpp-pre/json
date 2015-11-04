@@ -1,5 +1,5 @@
-#ifndef PRE_BOOST_FUSION_TRAITS_IS_ASSOCIATIVE_CONTAINER_HPP
-#define PRE_BOOST_FUSION_TRAITS_IS_ASSOCIATIVE_CONTAINER_HPP
+#ifndef PRE_JSON_TRAITS_IS_ASSOCIATIVE_CONTAINER_HPP
+#define PRE_JSON_TRAITS_IS_ASSOCIATIVE_CONTAINER_HPP
 
 #include <map>
 #include <set>
@@ -7,7 +7,7 @@
 #include <unordered_set>
 
 
-namespace boost { namespace fusion { namespace traits {
+namespace pre { namespace json { namespace traits {
 
   /**
    * Credits to relaxx
@@ -61,6 +61,7 @@ namespace boost { namespace fusion { namespace traits {
 
   template <typename T, typename Hash, typename Pred, typename Alloc>
   struct is_unordered_container<std::unordered_set<T, Hash, Pred, Alloc>> : std::true_type{};
+
 }}}
 
 #endif

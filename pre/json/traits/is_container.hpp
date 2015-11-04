@@ -1,10 +1,10 @@
-#ifndef BOOST_FUSION_TRAITS_IS_CONTAINER_HPP
-#define BOOST_FUSION_TRAITS_IS_CONTAINER_HPP
+#ifndef PRE_JSON_TRAITS_IS_CONTAINER_HPP
+#define PRE_JSON_TRAITS_IS_CONTAINER_HPP
 
 #include <vector>
 #include <list>
 
-namespace boost { namespace fusion { namespace traits {
+namespace pre { namespace json { namespace traits {
 
   /**
    * \return whether the given Container is a standard container

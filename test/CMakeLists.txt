@@ -52,5 +52,5 @@ add_unit_test(NAME asio_mockup_serial_port_service_test
 
 add_unit_test(NAME adapted_struct_printer)
 
-add_unit_test(NAME adapted_struct_jsonize_test
+add_unit_test(NAME dejsonize_test
   LIBS nlohmann-json::nlohmann-json)
