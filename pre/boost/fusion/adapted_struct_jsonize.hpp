@@ -6,6 +6,7 @@
 #include <boost/mpl/for_each.hpp>
 
 #include <boost/variant.hpp>
+#include <boost/optional.hpp>
 #include <pre/boost/fusion/traits/is_boost_variant.hpp>
 #include <pre/boost/fusion/traits/is_container.hpp>
 #include <pre/boost/fusion/traits/is_associative_container.hpp>
@@ -135,6 +136,16 @@ namespace boost { namespace fusion {
         _json_object = value.count();
       }
 
+      template<class T>
+      void operator()(const boost::optional<T>& value) const {
+        if (value) {
+          adapted_struct_jsonize subjsonizer(_json_object);
+          subjsonizer(*value);
+        } else {
+          _json_object = nullptr;
+        }
+      }
+
       template<class T, 
         enable_if_is_directly_serializable_t<T>* = nullptr>
       void operator()(const T& value) const {
@@ -202,6 +213,27 @@ namespace boost { namespace fusion {
           }
         }
 
+        template<class T> 
+        void operator()(const char* name, boost::optional<T>& value) const {
+          // boost::optional doesn't need to be in the json object
+          if (_json_object.find(name) != std::end(_json_object)) {
+            adapted_struct_dejsonize dejsonizer(_json_object[name]);
+            dejsonizer(value);
+          }
+        }
+
+        template<class T>
+        void operator()(boost::optional<T>& value) const {
+          // boost::optional doesn't need to be in the json object
+          if (!_json_object.empty()) {
+            adapted_struct_dejsonize dejsonizer(_json_object);
+
+            T optional_value;
+            dejsonizer(optional_value);
+            value = optional_value;
+          }
+        }
+
         template<class T, 
           enable_if_is_adapted_struct_t<T>* = nullptr>
         void operator()(T& value) const {
@@ -261,6 +293,8 @@ namespace boost { namespace fusion {
         void operator()(T& value) const {
           value = T{_json_object.get<typename T::rep>()};
         }
+
+
 
         template<class T, 
           enable_if_is_directly_serializable_t<T>* = nullptr>

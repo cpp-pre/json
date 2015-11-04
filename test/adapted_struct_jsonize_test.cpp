@@ -484,4 +484,63 @@ BOOST_AUTO_TEST_CASE (adapted_struct_jsonize_chrono_composed) {
   BOOST_ASSERT(val == val_deserialized);
 }
 
+namespace datamodel {
+  struct with_optional_member {
+    boost::optional<double> field_optional; 
+    double other; 
+  };
+}
+
+BOOST_FUSION_ADAPT_STRUCT(datamodel::with_optional_member,
+  field_optional,
+  other)
+
+BOOST_AUTO_TEST_CASE (adapted_struct_jsonize_optional) {
+
+  boost::optional<std::string> val{"some text"};
+
+  auto val_json = boost::fusion::adapted_struct_jsonize::jsonize(val);
+  std::cout << val_json << std::endl;
+
+  auto val_deserialized = boost::fusion::adapted_struct_dejsonize::dejsonize<boost::optional<std::string>>(val_json); 
+
+  auto val_reserialized = boost::fusion::adapted_struct_jsonize::jsonize(val_deserialized);
+  std::cout << val_reserialized << std::endl;
+
+  BOOST_ASSERT(val == val_deserialized);
+}
+
+BOOST_AUTO_TEST_CASE (adapted_struct_jsonize_optional_member) {
+
+  {
+    datamodel::with_optional_member val;
+    val.field_optional = 12.32;
+    val.other = 13.21;
+
+    auto val_json = boost::fusion::adapted_struct_jsonize::jsonize(val);
+    std::cout << val_json << std::endl;
+
+    auto val_deserialized = boost::fusion::adapted_struct_dejsonize::dejsonize<datamodel::with_optional_member>(val_json); 
+
+    auto val_reserialized = boost::fusion::adapted_struct_jsonize::jsonize(val_deserialized);
+    std::cout << val_reserialized << std::endl;
+
+    BOOST_ASSERT(val == val_deserialized);
+  }
+
+  {
+    datamodel::with_optional_member val;
+    val.other = 43.21;
+
+    auto val_json = boost::fusion::adapted_struct_jsonize::jsonize(val);
+    std::cout << val_json << std::endl;
+
+    auto val_deserialized = boost::fusion::adapted_struct_dejsonize::dejsonize<datamodel::with_optional_member>(val_json); 
+
+    auto val_reserialized = boost::fusion::adapted_struct_jsonize::jsonize(val_deserialized);
+    std::cout << val_reserialized << std::endl;
+
+    BOOST_ASSERT(val == val_deserialized);
+  }
+}
 
