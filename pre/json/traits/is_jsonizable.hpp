@@ -9,10 +9,10 @@
 #include <type_traits>
 #include <string>
 
-#include <boost/fusion/include/is_sequence.hpp>
-#include <pre/boost/fusion/traits/is_boost_variant.hpp>
-#include <pre/boost/fusion/traits/is_container.hpp>
-#include <pre/boost/fusion/traits/is_associative_container.hpp>
+#include <pre/json/traits/is_boost_variant.hpp>
+#include <pre/json/traits/is_container.hpp>
+#include <pre/json/traits/is_associative_container.hpp>
+#include <pre/json/traits/is_string.hpp>
 
 namespace pre { namespace json { namespace traits {
 
@@ -28,7 +28,7 @@ namespace pre { namespace json { namespace traits {
   struct is_jsonizable<T, 
     typename std::enable_if<
       mpl::and_<
-        typename fusion::traits::is_container<T>::type,
+        typename traits::is_container<T>::type,
         typename is_jsonizable<typename T::value_type>::type
       >::value
     >::type> : std::true_type {};
@@ -38,7 +38,7 @@ namespace pre { namespace json { namespace traits {
   struct is_jsonizable<T, 
     typename std::enable_if<
       mpl::and_<
-        typename fusion::traits::is_associative_container<T>::type,
+        typename traits::is_associative_container<T>::type,
         typename std::is_convertible<typename T::key_type, std::string>::type,
         typename is_jsonizable<typename T::mapped_type>::type
       >::value
@@ -52,7 +52,7 @@ namespace pre { namespace json { namespace traits {
         typename fusion::traits::is_sequence<T>::type,
 
         // Any boost variant
-        typename fusion::traits::is_boost_variant<T>::type,
+        typename traits::is_boost_variant<T>::type,
 
         // Integral types
         typename mpl::or_<
