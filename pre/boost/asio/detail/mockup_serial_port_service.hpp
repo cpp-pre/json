@@ -9,6 +9,7 @@
 #include <boost/asio/detail/config.hpp>
 
 #include <string>
+#include <deque>
 #include <memory>
 #include <boost/chrono.hpp>
 #include <boost/bind.hpp>

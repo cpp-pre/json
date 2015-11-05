@@ -7,6 +7,7 @@
 
 #include <pre/detail/namespace_compatibility.hpp>
 
+#include <ostream>
 #include <streambuf>
 
 namespace pre { namespace iostreams {

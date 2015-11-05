@@ -5,6 +5,7 @@
 
 #include <boost/fusion/include/is_sequence.hpp>
 #include <boost/fusion/include/tag_of.hpp>
+#include <boost/fusion/include/struct.hpp>
 
 #include <pre/json/traits/is_boost_variant.hpp>
 #include <pre/json/traits/is_container.hpp>

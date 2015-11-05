@@ -27,7 +27,7 @@ namespace pre { namespace json { namespace detail {
       jsonizer subjsonizer(json_subobject);
       subjsonizer(value);
 
-      _json_object[name] = json_subobject;
+      _json_object[std::string(name)] = json_subobject;
     }
 
     template<class T, 
