@@ -6,8 +6,8 @@ C++11 header-only pre::boost companion library baked with love.
 
 ## Features
 
-  * [to\_json](#pre::json/pre::json::to_json) & [from\_json](#pre::json/pre::json::to_json) functions for **any custom or standard types & aggregate**.
-  * A [mockup serial port](#boost::asio::mockup_serial_port_service) working with boost::asio
+  * [to\_json](index.html#pre::json/pre::json::to_json) & [from\_json](index.html#pre::json/pre::json::to_json) functions for **any custom or standard types & aggregate**.
+  * A [mockup serial port](index.html#boost::asio::mockup_serial_port_service) working with boost::asio
   * safe cast from enums underlying\_type in the enum type.
   * std::chrono::duration & boost::chrono::duration suffixes for ms, sec... until C++14 is mainstream.
   * bytes & bits manipulation utilities
