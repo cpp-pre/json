@@ -149,7 +149,7 @@ BOOST_AUTO_TEST_CASE (nested) {
 }
 
 BOOST_AUTO_TEST_CASE (working_plain_json) {
-  auto json = R"(
+  std::string json = R"(
     {
         "main_customer": {
             "age": 43,
@@ -177,7 +177,7 @@ BOOST_AUTO_TEST_CASE (working_plain_json) {
         "salary": 130000
     }
 
-  )"_json;
+  )";
 
   auto deser_assistant = pre::json::from_json<datamodel::sales_assitant>(json);
 
