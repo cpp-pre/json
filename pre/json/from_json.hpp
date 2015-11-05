@@ -47,8 +47,8 @@ namespace pre { namespace json {
    *
    * ```
    *
-   *   - [Full example](../examples/from_json.cpp)
-   *   - [Extended examples](../test/dejsonize_test.cpp)
+   *   - [Full example](examples/from_json.cpp)
+   *   - [Extended examples](test/dejsonize_test.cpp)
    *
    * ### Supported types 
    *

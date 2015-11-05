@@ -42,8 +42,8 @@ namespace pre { namespace json {
    *  std::cout << pre::json::to_json(my_customer) << std::endl;
    * ```
    * 
-   *   - [Full example](../examples/to_json.cpp)
-   *   - [Extended examples](../test/dejsonize_test.cpp)
+   *   - [Full example](examples/to_json.cpp)
+   *   - [Extended examples](test/dejsonize_test.cpp)
    *
    * ### Supported types 
    *
