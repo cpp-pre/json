@@ -9,6 +9,7 @@
 #include <math.h>
 #include <stdexcept>
 #include <fstream>
+#include <boost/shared_ptr.hpp>
 #include <boost/cstdint.hpp>
 #include <boost/container/vector.hpp>
 #include <boost/container/map.hpp>
