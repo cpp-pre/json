@@ -4,6 +4,7 @@
 #include <boost/variant.hpp>
 #include <boost/optional.hpp>
 
+#include <boost/mpl/for_each.hpp>
 #include <boost/fusion/include/for_each.hpp>
 
 #include <pre/fusion/for_each_member.hpp>
@@ -24,7 +25,7 @@ namespace pre { namespace json { namespace detail {
     void operator()(const char* name, T& value) const {
 
       if (_json_object.find(name) != std::end(_json_object)) {
-        dejsonizer dejsonizer(_json_object[name]);
+        dejsonizer dejsonizer(_json_object.at(name));
         dejsonizer(value);
       } else {
         throw std::runtime_error(
@@ -36,7 +37,7 @@ namespace pre { namespace json { namespace detail {
     void operator()(const char* name, boost::optional<T>& value) const {
       // boost::optional doesn't need to be in the json object
       if (_json_object.find(name) != std::end(_json_object)) {
-        dejsonizer dejsonizer(_json_object[name]);
+        dejsonizer dejsonizer(_json_object.at(name));
         dejsonizer(value);
       }
     }
