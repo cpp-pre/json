@@ -26,7 +26,7 @@ The library is header only, but has dependencies on Boost 1.59.0 and nlohmann-js
 
 ### With hunter CMake Package manager
 Simply drop in your CMakeLists.txt the following : 
-```shell
+```cmake
 hunter_add_package(lib-cpp-pre)
 find_package(lib-cpp-pre 1.3.2 REQUIRED)
 include_directories(AFTER ${LIB_CPP_PRE_INCLUDE_DIRS})
