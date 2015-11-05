@@ -7,8 +7,8 @@ You can serialize anything to json.
 
 See : 
 
-  - [Full example](../examples/to_json.cpp)
-  - [Extended examples](../test/dejsonize_test.cpp)
+  - [Full example](examples/to_json.cpp)
+  - [Extended examples](test/dejsonize_test.cpp)
 
 ```cpp
   #include <iostream>
@@ -41,8 +41,8 @@ You can deserialize to any type from json.
 
 See : 
 
-  - [Full example](../examples/from_json.cpp)
-  - [Extended examples](../test/dejsonize_test.cpp)
+  - [Full example](examples/from_json.cpp)
+  - [Extended examples](test/dejsonize_test.cpp)
 
 ```cpp
  #include <iostream>

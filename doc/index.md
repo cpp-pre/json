@@ -45,7 +45,7 @@ cmake .. && make install
 - [BOOST\_FUSION\_ADAPT\_STRUCT auto type deduction](http://www.boost.org/doc/libs/release/libs/fusion/doc/html/fusion/adapted/adapt_struct.html) and we maitain it there.
 
 ## License
-Licensed under the MIT License, see [../LICENSE](LICENSE).
+Licensed under the MIT License, see [LICENSE](LICENSE).
 
 ## Contributors
 
