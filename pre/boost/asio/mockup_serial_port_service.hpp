@@ -25,7 +25,47 @@
 namespace boost {
 namespace asio {
 
-/// Default service implementation for a serial port.
+/* mockup_serial_port_service : A virtual serial port allowing to write cross platform unit tests of serial communicating application.
+ *
+ * This class can be used in your unit tests to simulate a [boost::asio::serial_port](http://www.boost.org/doc/libs/release/doc/html/boost_asio/reference/serial_port.html).
+ *
+ * ### Example
+ *
+ * ```cpp
+ *
+ *   using namespace boost::asio;
+
+ *   boost::thread simulate_writing_device([](){
+ *     io_service ios;
+ *     basic_serial_port<mockup_serial_port_service> port{ios, "my_fake_serial_port"};
+
+ *     const std::string message = "Hello";
+
+ *     for (;;) {
+ *      boost::asio::write(port, buffer(message.data(), message.size()));
+ *      boost::this_thread::sleep_for(boost::chrono::seconds(1));
+ *     }
+
+ *   });
+
+ *   boost::thread simulate_reading_device([](){
+ *     io_service ios;
+ *     basic_serial_port<mockup_serial_port_service> port{ios, "my_fake_serial_port"};
+ *     
+ *     for (;;) {
+ *       char message[5];
+ *       boost::asio::read(port, buffer(message, 5));
+ *       std::cout << "received : " << std::string(message, 5) << std::endl;
+ *     }
+
+ *   });
+ *
+ * ```
+ * 
+ *   - [Full example](../examples/boost_asio_mockup_serial_port.cpp)
+ *   - [Extended examples](../test/asio_mockup_serial_port_service_test.cpp)
+ *
+ */
 class mockup_serial_port_service
   : public boost::asio::detail::service_base<mockup_serial_port_service>
 {
