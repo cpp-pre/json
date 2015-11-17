@@ -31,6 +31,23 @@ namespace pre { namespace json { namespace detail {
       _json_object[std::string(name)] = json_subobject;
     }
 
+    template<class T>
+    void operator()(const char* name, const boost::optional<T>& value) const {
+      if (value != boost::none) {
+        this->operator()(name, value.get());
+      }
+    }
+
+    template<class T>
+    void operator()(const boost::optional<T>& value) const {
+      if (value != boost::none) {
+        jsonizer subjsonizer(_json_object);
+        subjsonizer(*value);
+      } else {
+        _json_object = nullptr;
+      }
+    }
+
     template<class T, 
       enable_if_is_adapted_struct_t<T>* = nullptr>
     void operator()(const T& value) const {
@@ -60,16 +77,6 @@ namespace pre { namespace json { namespace detail {
       enable_if_is_chrono_duration_t<T>* = nullptr>
     void operator()(const T& value) const {
       _json_object = value.count();
-    }
-
-    template<class T>
-    void operator()(const boost::optional<T>& value) const {
-      if (value) {
-        jsonizer subjsonizer(_json_object);
-        subjsonizer(*value);
-      } else {
-        _json_object = nullptr;
-      }
     }
 
     template<class T, 
