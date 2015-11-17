@@ -1,6 +1,8 @@
 cmake_minimum_required (VERSION 2.8.11)
 
 include("cmake/HunterGate.cmake")
+set(HUNTER_ROOT ${CMAKE_CURRENT_LIST_DIR}/hunter) # Override hunter package collection with patched one avail as submodule
+include("cmake/HunterGate.cmake")
 HunterGate(
     URL "https://github.com/ruslo/hunter/archive/v0.12.13.tar.gz"
     SHA1 "3c0b858f586675fd1c4e3042015e328ec41b6a01"
