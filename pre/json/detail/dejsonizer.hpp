@@ -86,8 +86,8 @@ namespace pre { namespace json { namespace detail {
       }
 
       private:
-        TVariant &value;
         const nlohmann::json& _json_object;
+        TVariant &value;
         bool successed = false;
     };
 
