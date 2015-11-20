@@ -288,7 +288,7 @@ function(hunter_gate_download dir)
 
   hunter_gate_status_debug("Run generate")
   execute_process(
-      COMMAND "${CMAKE_COMMAND}" "-H${dir}" "-B${build_dir}"
+      COMMAND "${CMAKE_COMMAND}" "-H${dir}" "-B${build_dir}" "-G${CMAKE_GENERATOR}"
       WORKING_DIRECTORY "${dir}"
       RESULT_VARIABLE download_result
       ${logging_params}
@@ -377,16 +377,16 @@ macro(HunterGate)
     string(COMPARE NOTEQUAL "${HUNTER_GATE_GLOBAL}" "" _have_global)
     string(COMPARE NOTEQUAL "${HUNTER_GATE_FILEPATH}" "" _have_filepath)
 
+    if(_have_unparsed)
+      hunter_gate_user_error(
+          "HunterGate unparsed arguments: ${HUNTER_GATE_UNPARSED_ARGUMENTS}"
+      )
+    endif()
     if(_empty_sha1)
       hunter_gate_user_error("SHA1 suboption of HunterGate is mandatory")
     endif()
     if(_empty_url)
       hunter_gate_user_error("URL suboption of HunterGate is mandatory")
-    endif()
-    if(_have_unparsed)
-      hunter_gate_user_error(
-          "HunterGate unparsed arguments: ${HUNTER_GATE_UNPARSED_ARGUMENTS}"
-      )
     endif()
     if(_have_global)
       if(HUNTER_GATE_LOCAL)
@@ -495,3 +495,4 @@ macro(HunterGate)
     set_property(GLOBAL PROPERTY HUNTER_GATE_DONE YES)
   endif()
 endmacro()
+
