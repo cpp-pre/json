@@ -4,10 +4,12 @@
 #include <iostream>
 
 #include <boost/format.hpp>
-
 #include <boost/thread.hpp>
 
-#include <boost/asio.hpp>
+#include <boost/asio/io_service.hpp>
+#include <boost/asio/write.hpp>
+#include <boost/asio/read.hpp>
+#include <boost/asio/read_until.hpp>
 #include <boost/asio/steady_timer.hpp>
 #include <boost/asio/basic_serial_port.hpp>
 #include <pre/boost/asio/mockup_serial_port_service.hpp>

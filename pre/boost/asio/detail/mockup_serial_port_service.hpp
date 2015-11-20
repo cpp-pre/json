@@ -318,6 +318,11 @@ public:
   }
 
 private:
+
+#ifdef _WIN32
+	struct termios {};
+#endif
+
   // Function pointer type for storing a serial port option.
   typedef boost::system::error_code (*store_function_type)(
       const void*, termios&, boost::system::error_code&);

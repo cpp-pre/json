@@ -45,10 +45,17 @@ include_directories(BEFORE ${CMAKE_SOURCE_DIR})
 hunter_add_package(nlohmann-json)
 find_package(nlohmann-json REQUIRED)
 
+set (platform_specific_lib)
+if(WIN32)
+ add_definitions(-DWIN32_LEAN_AND_MEAN)
+ set (platform_specific_lib ws2_32)
+endif()
+
 add_unit_test(NAME asio_mockup_serial_port_service_test 
   LIBS 
   ${CMAKE_THREAD_LIBS_INIT}
-  ${Boost_LIBRARIES})
+  ${Boost_LIBRARIES}
+  ${platform_specific_lib})
 
 add_unit_test(NAME dejsonize_test
   LIBS nlohmann-json::nlohmann-json)
