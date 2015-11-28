@@ -1,9 +1,9 @@
-#ifndef BOOST_FUSION_TRAITS_IS_BOOST_VARIANT_HPP
-#define BOOST_FUSION_TRAITS_IS_BOOST_VARIANT_HPP
+#ifndef PRE_JSON_TRAITS_IS_BOOST_VARIANT_HPP
+#define PRE_JSON_TRAITS_IS_BOOST_VARIANT_HPP
 
 #include <boost/variant.hpp>
 
-namespace boost { namespace fusion { namespace traits {
+namespace pre { namespace json { namespace traits {
 
   /**
    * \return whether the given Container is a standard container

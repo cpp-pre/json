@@ -1,5 +1,5 @@
-#ifndef BOOST_FUSION_FOR_EACH_MEMBER_HPP
-#define BOOST_FUSION_FOR_EACH_MEMBER_HPP
+#ifndef PRE_FUSION_FOR_EACH_MEMBER_HPP
+#define PRE_FUSION_FOR_EACH_MEMBER_HPP
 
 #include <type_traits>
 #include <functional>
@@ -18,9 +18,10 @@
 #include <boost/fusion/include/tag_of.hpp>
 #include <boost/mpl/bool.hpp>
 
-namespace boost { namespace fusion {
+namespace pre { namespace fusion {
 
 namespace detail {
+
 
   template <typename First, typename Last, typename F, typename Sequence>
   inline void
@@ -38,14 +39,14 @@ namespace detail {
     >::value
   >::type* = nullptr>
   inline void
-  for_each_member_linear(First const& first, 
+  for_each_member_linear(First & first, 
       Last const& last,
       F const& f,
       Sequence& seq,
       boost::mpl::false_) {
 
       f(
-				extension::struct_member_name<
+				boost::fusion::extension::struct_member_name<
 					typename std::remove_cv< typename First::seq_type>::type , First::index::value
 				>::call(), 
 				*first
@@ -56,7 +57,7 @@ namespace detail {
           last,
           f,
           seq,
-          result_of::equal_to< typename result_of::next<First>::type, Last>()
+          boost::fusion::result_of::equal_to< typename boost::fusion::result_of::next<First>::type, Last>()
       );
   }
 
@@ -69,20 +70,20 @@ namespace detail {
     >::value
   >::type* = nullptr>
   inline void
-  for_each_member_linear(First const& first, 
+  for_each_member_linear(First & first, 
       Last const& last,
       F const& f,
       Sequence& seq,
       boost::mpl::false_) {
 
-      auto index = result_of::distance<
-                     typename result_of::begin<Sequence>::type, 
+      auto index = boost::fusion::result_of::distance<
+                     typename boost::fusion::result_of::begin<Sequence>::type, 
                      First
                    >::type::value; 
       std::string name =  typeid(decltype(*first)).name();
 
       f(
-				str(format("%1% (%2%)") % index % name ).data(), 
+				str(boost::format("%1% (%2%)") % index % name ).data(), 
 				*first
 			);
 
@@ -91,7 +92,7 @@ namespace detail {
           last,
           f,
           seq,
-          result_of::equal_to< typename result_of::next<First>::type, Last>()
+          boost::fusion::result_of::equal_to< typename boost::fusion::result_of::next<First>::type, Last>()
       );
   }
 
@@ -100,13 +101,13 @@ namespace detail {
   for_each_member(Sequence& seq, F const& f) {
 
     detail::for_each_member_linear(
-      fusion::begin(seq), 
-      fusion::end(seq), 
+      boost::fusion::begin(seq), 
+      boost::fusion::end(seq), 
       f, 
       seq,
-      result_of::equal_to<
-        typename result_of::begin<Sequence>::type, 
-        typename result_of::end<Sequence>::type>()
+      boost::fusion::result_of::equal_to<
+        typename boost::fusion::result_of::begin<Sequence>::type, 
+        typename boost::fusion::result_of::end<Sequence>::type>()
     );
   }
 

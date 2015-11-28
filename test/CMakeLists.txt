@@ -24,24 +24,38 @@ find_package(Threads REQUIRED)
 
 ## Boost
 set(Boost_USE_MULTITHREADED ON)
-#add_definitions(-DBOOST_LOG_DYN_LINK)
-add_definitions(-DBOOST_ALL_DYN_LINK
-                -DBOOST_LOG_DYN_LINK
-                -DBOOST_TEST_DYN_LINK)
+
+if (BUILD_SHARED_LIBS)
+  set(Boost_USE_STATIC_LIBS OFF)
+  add_definitions(-DBOOST_ALL_DYN_LINK
+                  -DBOOST_LOG_DYN_LINK
+                  -DBOOST_TEST_DYN_LINK)
+endif(BUILD_SHARED_LIBS)
 
 hunter_add_package(Boost COMPONENTS system thread log chrono filesystem  
-  date_time iostreams log test)
-find_package(Boost 1.55 COMPONENTS system thread log chrono filesystem  
-  date_time iostreams log unit_test_framework REQUIRED) 
+  date_time iostreams log)
+find_package(Boost 1.59 COMPONENTS system thread log chrono filesystem  
+  date_time iostreams log REQUIRED) 
 include_directories(AFTER ${Boost_INCLUDE_DIRS})
 link_directories ( ${Boost_LIBRARY_DIRS} )
 
 include_directories(BEFORE ${CMAKE_SOURCE_DIR})
 
+# nlohmann-json
+hunter_add_package(nlohmann-json)
+find_package(nlohmann-json REQUIRED)
+
+set (platform_specific_lib)
+if(WIN32)
+ add_definitions(-DWIN32_LEAN_AND_MEAN)
+ set (platform_specific_lib ws2_32)
+endif()
+
 add_unit_test(NAME asio_mockup_serial_port_service_test 
   LIBS 
   ${CMAKE_THREAD_LIBS_INIT}
-  ${Boost_LIBRARIES})
+  ${Boost_LIBRARIES}
+  ${platform_specific_lib})
 
-add_unit_test(NAME adapted_struct_printer)
-
+add_unit_test(NAME dejsonize_test
+  LIBS nlohmann-json::nlohmann-json)
