@@ -3,6 +3,7 @@
 
 #include <boost/variant.hpp>
 #include <boost/optional.hpp>
+#include <boost/type_index.hpp>
 
 #include <boost/fusion/include/for_each.hpp>
 
@@ -51,6 +52,7 @@ namespace pre { namespace json { namespace detail {
     template<class T, 
       enable_if_is_adapted_struct_t<T>* = nullptr>
     void operator()(const T& value) const {
+      _json_object["struct"] = boost::typeindex::type_id<T>().pretty_name();
       pre::fusion::for_each_member(value, *this);
     }
 
