@@ -103,18 +103,17 @@ BOOST_AUTO_TEST_CASE (composedtype) {
   };
 
   auto json_customer = pre::json::to_json(customer);
-  std::cout << json_customer << std::endl;
+  std::cout << json_customer.dump(2) << std::endl;
 
   auto customer_parsed = pre::json::from_json<datamodel::customer>(json_customer);
   BOOST_ASSERT(customer_parsed == customer);
 
   auto json_customer_after_reserialize = pre::json::to_json(customer);
-  std::cout << json_customer_after_reserialize << std::endl;
+  std::cout << json_customer_after_reserialize.dump(2) << std::endl;
   BOOST_ASSERT(json_customer == json_customer_after_reserialize);
 
   // testing an adapted skill alone from plain json
   nlohmann::json obj {
-    {"struct", "datamodel::skill"},
     {"skill_name", "GML"},
     {"experience", 10}
   };
@@ -123,7 +122,7 @@ BOOST_AUTO_TEST_CASE (composedtype) {
 
   BOOST_ASSERT(skill_parsed.skill_name == "GML");
   BOOST_ASSERT(skill_parsed.experience == 10);
-  std::cout << pre::json::to_json(skill_parsed) << std::endl;
+  std::cout << pre::json::to_json(skill_parsed).dump(2) << std::endl;
 }
 
 /**
@@ -139,12 +138,12 @@ BOOST_AUTO_TEST_CASE (nested) {
 
   datamodel::sales_assitant assistant{"Mr. Gold", 130000, customer};
   auto json_sales_assistant = pre::json::to_json(assistant);
-  std::cout << json_sales_assistant << std::endl;
+  std::cout << json_sales_assistant.dump(2) << std::endl;
 
   auto deser_assistant = pre::json::from_json<datamodel::sales_assitant>(json_sales_assistant);
 
   auto json_sales_assistant_reserialized = pre::json::to_json(deser_assistant);
-  std::cout << json_sales_assistant_reserialized << std::endl;
+  std::cout << json_sales_assistant_reserialized.dump(2) << std::endl;
 
   BOOST_ASSERT(json_sales_assistant_reserialized == json_sales_assistant);
 }
@@ -152,9 +151,7 @@ BOOST_AUTO_TEST_CASE (nested) {
 BOOST_AUTO_TEST_CASE (working_plain_json) {
   std::string json = R"(
     {
-        "struct": "datamodel::sales_assitant",
         "main_customer": {
-            "struct": "datamodel::customer",
             "age": 43,
             "friends_id": [
                 1,
@@ -163,17 +160,14 @@ BOOST_AUTO_TEST_CASE (working_plain_json) {
             "name": "Mr. Dupond",
             "skillset": [
                 {
-                    "struct": "datamodel::skill",
                     "experience": 10,
                     "skill_name": "C++"
                 },
                 {
-                    "struct": "datamodel::skill",
                     "experience": 20,
                     "skill_name": "GML"
                 },
                 {
-                    "struct": "datamodel::skill",
                     "experience": 2,
                     "skill_name": "Linux"
                 }
@@ -188,7 +182,7 @@ BOOST_AUTO_TEST_CASE (working_plain_json) {
   auto deser_assistant = pre::json::from_json<datamodel::sales_assitant>(json);
 
   auto json_sales_assistant_reserialized = pre::json::to_json(deser_assistant);
-  std::cout << json_sales_assistant_reserialized << std::endl;
+  std::cout << json_sales_assistant_reserialized.dump(2) << std::endl;
 }
 
 BOOST_AUTO_TEST_CASE (incorrect_plain_json) {
@@ -196,9 +190,7 @@ BOOST_AUTO_TEST_CASE (incorrect_plain_json) {
   try {
     auto json = R"(
       {
-          "struct": "datamodel::sales_assitant",
           "main_customer": {
-              "struct": "datamodel::customer",
               "BUGGYKEYage": 43,
               "friends_id": [
                   1,
@@ -207,17 +199,14 @@ BOOST_AUTO_TEST_CASE (incorrect_plain_json) {
               "name": "Mr. Dupond",
               "skillset": [
                   {
-                      "struct": "datamodel::skill",
                       "experience": 10,
                       "skill_name": "C++"
                   },
                   {
-                      "struct": "datamodel::skill",
                       "experience": 20,
                       "skill_name": "GML"
                   },
                   {
-                      "struct": "datamodel::skill",
                       "experience": 2,
                       "skill_name": "Linux"
                   }
@@ -244,7 +233,6 @@ BOOST_AUTO_TEST_CASE (incorrect_plain_json) {
     auto json = R"(
       {
           "main_customer": {
-              "struct": "datamodel::customer",
               "age": "He is 43 years old, does it fit in an integer ?",
               "friends_id": [
                   1,
@@ -253,17 +241,14 @@ BOOST_AUTO_TEST_CASE (incorrect_plain_json) {
               "name": "Mr. Dupond",
               "skillset": [
                   {
-                      "struct": "datamodel::skill",
                       "experience": 10,
                       "skill_name": "C++"
                   },
                   {
-                      "struct": "datamodel::skill",
                       "experience": 20,
                       "skill_name": "GML"
                   },
                   {
-                      "struct": "datamodel::skill",
                       "experience": 2,
                       "skill_name": "Linux"
                   }
@@ -299,7 +284,7 @@ BOOST_AUTO_TEST_CASE (containers_direct) {
   };
 
   auto skills_json = pre::json::to_json(skills);
-  std::cout << skills_json << std::endl;
+  std::cout << skills_json.dump(2) << std::endl;
 
   auto skills_deserialized = pre::json::from_json<std::vector<datamodel::skill>>(skills_json); 
   BOOST_ASSERT(skills == skills_deserialized);
@@ -368,12 +353,12 @@ BOOST_AUTO_TEST_CASE (vairants) {
   };
 
   auto employees_json = pre::json::to_json(employees);
-  std::cout << employees_json << std::endl;
+  std::cout << employees_json.dump(2) << std::endl;
 
   auto employees_deserialized = pre::json::from_json<std::vector<datamodel::employee>>(employees_json); 
 
   auto employees_reserialized = pre::json::to_json(employees_deserialized);
-  std::cout << employees_reserialized << std::endl;
+  std::cout << employees_reserialized.dump(2) << std::endl;
 
   BOOST_ASSERT(employees == employees_deserialized);
 }
@@ -402,7 +387,7 @@ BOOST_AUTO_TEST_CASE(maps) {
   };
 
   auto some_json = pre::json::to_json(some);
-  std::cout << some_json << std::endl; 
+  std::cout << some_json.dump(2) << std::endl; 
 
   auto some_deserialized = pre::json::from_json<datamodel::struct_with_a_map>(some_json);
   
@@ -441,12 +426,12 @@ BOOST_AUTO_TEST_CASE (enums) {
   datamodel::some_value val{datamodel::my_value_type::TYPE2, 12, datamodel::THREE};
 
   auto val_json = pre::json::to_json(val);
-  std::cout << val_json << std::endl;
+  std::cout << val_json.dump(2) << std::endl;
 
   auto val_deserialized = pre::json::from_json<datamodel::some_value>(val_json); 
 
   auto val_reserialized = pre::json::to_json(val_deserialized);
-  std::cout << val_reserialized << std::endl;
+  std::cout << val_reserialized.dump(2) << std::endl;
 
   BOOST_ASSERT(val == val_deserialized);
 }
@@ -456,12 +441,12 @@ BOOST_AUTO_TEST_CASE (adapted_struct_jsonize_chrono) {
   boost::chrono::milliseconds val{100};
 
   auto val_json = pre::json::to_json(val);
-  std::cout << val_json << std::endl;
+  std::cout << val_json.dump(2) << std::endl;
 
   auto val_deserialized = pre::json::from_json<boost::chrono::milliseconds>(val_json); 
 
   auto val_reserialized = pre::json::to_json(val_deserialized);
-  std::cout << val_reserialized << std::endl;
+  std::cout << val_reserialized.dump(2) << std::endl;
 
   BOOST_ASSERT(val == val_deserialized);
 }
@@ -485,12 +470,12 @@ BOOST_AUTO_TEST_CASE (adapted_struct_jsonize_chrono_composed) {
   datamodel::some_time val{"my time", boost::chrono::milliseconds(100), std::chrono::minutes(43)};
 
   auto val_json = pre::json::to_json(val);
-  std::cout << val_json << std::endl;
+  std::cout << val_json.dump(2) << std::endl;
 
   auto val_deserialized = pre::json::from_json<datamodel::some_time>(val_json); 
 
   auto val_reserialized = pre::json::to_json(val_deserialized);
-  std::cout << val_reserialized << std::endl;
+  std::cout << val_reserialized.dump(2) << std::endl;
 
   BOOST_ASSERT(val == val_deserialized);
 }
@@ -511,12 +496,12 @@ BOOST_AUTO_TEST_CASE (optional) {
   boost::optional<std::string> val{"some text"};
 
   auto val_json = pre::json::to_json(val);
-  std::cout << val_json << std::endl;
+  std::cout << val_json.dump(2) << std::endl;
 
   auto val_deserialized = pre::json::from_json<boost::optional<std::string>>(val_json); 
 
   auto val_reserialized = pre::json::to_json(val_deserialized);
-  std::cout << val_reserialized << std::endl;
+  std::cout << val_reserialized.dump(2) << std::endl;
 
   BOOST_ASSERT(val == val_deserialized);
 }
@@ -529,12 +514,12 @@ BOOST_AUTO_TEST_CASE (optional_member) {
     val.other = 13.21;
 
     auto val_json = pre::json::to_json(val);
-    std::cout << val_json << std::endl;
+    std::cout << val_json.dump(2) << std::endl;
 
     auto val_deserialized = pre::json::from_json<datamodel::with_optional_member>(val_json); 
 
     auto val_reserialized = pre::json::to_json(val_deserialized);
-    std::cout << val_reserialized << std::endl;
+    std::cout << val_reserialized.dump(2) << std::endl;
 
     BOOST_ASSERT(val == val_deserialized);
   }
@@ -544,12 +529,12 @@ BOOST_AUTO_TEST_CASE (optional_member) {
     val.other = 43.21;
 
     auto val_json = pre::json::to_json(val);
-    std::cout << val_json << std::endl;
+    std::cout << val_json.dump(2) << std::endl;
 
     auto val_deserialized = pre::json::from_json<datamodel::with_optional_member>(val_json); 
 
     auto val_reserialized = pre::json::to_json(val_deserialized);
-    std::cout << val_reserialized << std::endl;
+    std::cout << val_reserialized.dump(2) << std::endl;
 
     BOOST_ASSERT(val == val_deserialized);
   }

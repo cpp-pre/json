@@ -21,7 +21,9 @@ namespace pre { namespace json { namespace detail {
   struct jsonizer : public boost::static_visitor<> {
 
     jsonizer(nlohmann::json& json_object) 
-      : boost::static_visitor<>(),  _json_object(json_object) {}
+      : boost::static_visitor<>(),
+      _json_object(json_object),
+      _disambiguate_struct(false) {}
 
     template<class T>
     void operator()(const char* name, const T& value) const {
@@ -52,7 +54,11 @@ namespace pre { namespace json { namespace detail {
     template<class T, 
       enable_if_is_adapted_struct_t<T>* = nullptr>
     void operator()(const T& value) const {
-      _json_object["struct"] = boost::typeindex::type_id<T>().pretty_name();
+
+      if (_disambiguate_struct) {
+        _json_object["struct"] = boost::typeindex::type_id<T>().pretty_name();
+        _disambiguate_struct = false; // Do it only once in hierarchy
+      }
       pre::fusion::for_each_member(value, *this);
     }
 
@@ -66,6 +72,8 @@ namespace pre { namespace json { namespace detail {
     template<class T, 
       enable_if_is_variant_t<T>* = nullptr>
     void operator()(const T& value) const {
+      // struct has to be disambiguated in case of variant.
+      _disambiguate_struct = true; 
       boost::apply_visitor(*this, value);
     }
 
@@ -112,6 +120,7 @@ namespace pre { namespace json { namespace detail {
     
     private:
       nlohmann::json& _json_object;
+      mutable bool _disambiguate_struct;
     
   };
 
