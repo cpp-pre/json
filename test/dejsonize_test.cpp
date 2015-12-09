@@ -114,6 +114,7 @@ BOOST_AUTO_TEST_CASE (composedtype) {
 
   // testing an adapted skill alone from plain json
   nlohmann::json obj {
+    {"struct", "datamodel::skill"},
     {"skill_name", "GML"},
     {"experience", 10}
   };
@@ -151,7 +152,9 @@ BOOST_AUTO_TEST_CASE (nested) {
 BOOST_AUTO_TEST_CASE (working_plain_json) {
   std::string json = R"(
     {
+        "struct": "datamodel::sales_assitant",
         "main_customer": {
+            "struct": "datamodel::customer",
             "age": 43,
             "friends_id": [
                 1,
@@ -160,14 +163,17 @@ BOOST_AUTO_TEST_CASE (working_plain_json) {
             "name": "Mr. Dupond",
             "skillset": [
                 {
+                    "struct": "datamodel::skill",
                     "experience": 10,
                     "skill_name": "C++"
                 },
                 {
+                    "struct": "datamodel::skill",
                     "experience": 20,
                     "skill_name": "GML"
                 },
                 {
+                    "struct": "datamodel::skill",
                     "experience": 2,
                     "skill_name": "Linux"
                 }
@@ -190,7 +196,9 @@ BOOST_AUTO_TEST_CASE (incorrect_plain_json) {
   try {
     auto json = R"(
       {
+          "struct": "datamodel::sales_assitant",
           "main_customer": {
+              "struct": "datamodel::customer",
               "BUGGYKEYage": 43,
               "friends_id": [
                   1,
@@ -199,14 +207,17 @@ BOOST_AUTO_TEST_CASE (incorrect_plain_json) {
               "name": "Mr. Dupond",
               "skillset": [
                   {
+                      "struct": "datamodel::skill",
                       "experience": 10,
                       "skill_name": "C++"
                   },
                   {
+                      "struct": "datamodel::skill",
                       "experience": 20,
                       "skill_name": "GML"
                   },
                   {
+                      "struct": "datamodel::skill",
                       "experience": 2,
                       "skill_name": "Linux"
                   }
@@ -233,6 +244,7 @@ BOOST_AUTO_TEST_CASE (incorrect_plain_json) {
     auto json = R"(
       {
           "main_customer": {
+              "struct": "datamodel::customer",
               "age": "He is 43 years old, does it fit in an integer ?",
               "friends_id": [
                   1,
@@ -241,14 +253,17 @@ BOOST_AUTO_TEST_CASE (incorrect_plain_json) {
               "name": "Mr. Dupond",
               "skillset": [
                   {
+                      "struct": "datamodel::skill",
                       "experience": 10,
                       "skill_name": "C++"
                   },
                   {
+                      "struct": "datamodel::skill",
                       "experience": 20,
                       "skill_name": "GML"
                   },
                   {
+                      "struct": "datamodel::skill",
                       "experience": 2,
                       "skill_name": "Linux"
                   }

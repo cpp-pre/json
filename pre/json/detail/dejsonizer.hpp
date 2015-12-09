@@ -3,6 +3,7 @@
 
 #include <boost/variant.hpp>
 #include <boost/optional.hpp>
+#include <boost/type_index.hpp>
 
 #include <boost/mpl/for_each.hpp>
 #include <boost/fusion/include/for_each.hpp>
@@ -57,10 +58,13 @@ namespace pre { namespace json { namespace detail {
     template<class T, 
       enable_if_is_adapted_struct_t<T>* = nullptr>
     void operator()(T& value) const {
-      if (_json_object.is_object()) {
+      auto struct_it = _json_object.find("struct");
+      if ( (_json_object.is_object()) &&
+          (struct_it != _json_object.end()) &&
+          ( *struct_it == boost::typeindex::type_id<T>().pretty_name()) ) {
         pre::fusion::for_each_member(value, *this);
       } else {
-        throw std::runtime_error("The JSON Object " + _json_object.dump() + " isn't an object");
+        throw std::runtime_error("The JSON Object " + _json_object.dump() + " isn't an object that we can map to an internal type");
       }
     }
 
