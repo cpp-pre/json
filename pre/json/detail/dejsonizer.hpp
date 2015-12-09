@@ -58,10 +58,7 @@ namespace pre { namespace json { namespace detail {
     template<class T, 
       enable_if_is_adapted_struct_t<T>* = nullptr>
     void operator()(T& value) const {
-      auto struct_it = _json_object.find("struct");
-      if ( (_json_object.is_object()) &&
-          (struct_it != _json_object.end()) &&
-          ( *struct_it == boost::typeindex::type_id<T>().pretty_name()) ) {
+      if (_json_object.is_object()) {
         pre::fusion::for_each_member(value, *this);
       } else {
         throw std::runtime_error("The JSON Object " + _json_object.dump() + " isn't an object that we can map to an internal type");
@@ -76,16 +73,17 @@ namespace pre { namespace json { namespace detail {
 
       template< typename U > void operator()(U& x) {
         if (!successed) {
-          try {
-            dejsonizer dejsonizer(_json_object);
-            U test_value;
-            dejsonizer(test_value);
-            successed = true;
-            value = test_value;
-          } catch (...) { //XXX: LOGIC BASED ON Exceptions !!! ARgh
-            //std::cout << "ERROR" << std::endl;
-            //std::cout << boost::current_exception_diagnostic_information(true) << std::endl;
-          }
+            auto struct_it = _json_object.find("struct");
+            
+            if ( (struct_it != _json_object.end()) && 
+                (*struct_it == boost::typeindex::type_id<U>().pretty_name()) ) {
+
+              dejsonizer dejsonizer(_json_object);
+              U test_value;
+              dejsonizer(test_value);
+              successed = true;
+              value = test_value;
+            }
         }
       }
 
