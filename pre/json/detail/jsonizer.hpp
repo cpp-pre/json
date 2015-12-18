@@ -15,6 +15,7 @@
 #include <pre/enums/to_underlying.hpp>
 
 //TODO: What about tuples ?
+//TODO: What about normal union?
 
 namespace pre { namespace json { namespace detail {
 
