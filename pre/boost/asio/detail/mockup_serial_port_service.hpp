@@ -128,6 +128,7 @@ public:
   boost::system::error_code close(implementation_type& impl,
       boost::system::error_code& ec)
   {
+    cancel(impl, ec);
     impl.open_ = false;
     ec = boost::system::error_code();
     return ec;
