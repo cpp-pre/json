@@ -4,7 +4,7 @@
 
 #include <iostream>
 #include <type_traits>
-#include <pre/lambda/function_traits.hpp>
+#include <pre/type_traits/function_traits.hpp>
 
 
 BOOST_AUTO_TEST_CASE (function_traits_test_lambda) {
@@ -13,7 +13,7 @@ BOOST_AUTO_TEST_CASE (function_traits_test_lambda) {
                             return int{23} ;
                         };
 
-    typedef pre::lambda::function_traits<decltype(my_lambda)> my_lambda_types;
+    typedef pre::type_traits::function_traits<decltype(my_lambda)> my_lambda_types;
 
     auto is_same =  std::is_same< my_lambda_types::result_type, int>::value;
 
@@ -36,7 +36,7 @@ BOOST_AUTO_TEST_CASE (function_traits_test_lambda) {
     is_same = std::is_same<my_lambda_types::function_type , expected_function_type>::value;
     BOOST_ASSERT_MSG(is_same, " function type  ist not as expected");
 
-    auto std_function = pre::lambda::to_std_function(my_lambda);
+    auto std_function = pre::type_traits::to_std_function(my_lambda);
 
     BOOST_ASSERT_MSG(std_function(true, int{42}, double{3.14}, std::string{"Hello World"}) == 23 , " call to std::funtion is wrong");
 }
@@ -52,7 +52,7 @@ BOOST_AUTO_TEST_CASE (function_traits_test_lambda_copy_captures) {
       return capture_int + capture_double;
     };
 
-    typedef pre::lambda::function_traits<decltype(my_lambda_copy_capture)> my_lambda_types;
+    typedef pre::type_traits::function_traits<decltype(my_lambda_copy_capture)> my_lambda_types;
 
     auto is_same =  std::is_same< my_lambda_types::result_type, double>::value;
 
@@ -74,7 +74,7 @@ BOOST_AUTO_TEST_CASE (function_traits_test_lambda_copy_captures) {
     typedef std::function<int(bool, int, double, std::string)> expected_function_type;
     is_same = std::is_same<my_lambda_types::function_type , expected_function_type>::value;
     BOOST_ASSERT_MSG(!is_same, " function type  ist not as expected with capture it is different");
-    auto std_function = pre::lambda::to_std_function(my_lambda_copy_capture);
+    auto std_function = pre::type_traits::to_std_function(my_lambda_copy_capture);
 
     BOOST_ASSERT_MSG(std_function(true, int{42}, double{3.14}, std::string{"Hello World"}) == (42+12.3) , " call to std::funtion is wrong");
 }
@@ -89,7 +89,7 @@ BOOST_AUTO_TEST_CASE (function_traits_test_lambda_ref_captures) {
       return capture_int + capture_double;
     };
 
-    typedef pre::lambda::function_traits<decltype(my_lambda_ref_capture)> my_lambda_types;
+    typedef pre::type_traits::function_traits<decltype(my_lambda_ref_capture)> my_lambda_types;
 
     auto is_same =  std::is_same< my_lambda_types::result_type, double>::value;
 
@@ -112,8 +112,34 @@ BOOST_AUTO_TEST_CASE (function_traits_test_lambda_ref_captures) {
     is_same = std::is_same<my_lambda_types::function_type , expected_function_type>::value;
     BOOST_ASSERT_MSG(!is_same, " function type  ist not as expected with capture it is different");
 
-    auto std_function = pre::lambda::to_std_function(my_lambda_ref_capture);
+    auto std_function = pre::type_traits::to_std_function(my_lambda_ref_capture);
 
     BOOST_ASSERT_MSG(std_function(true, int{42}, double{3.14}, std::string{"Hello World"}) == (42+12.3) , " call to std::funtion is wrong");
 }
 
+
+int function_to_instrospect(const std::string& name, double score) {
+  return score * 2;
+}
+
+BOOST_AUTO_TEST_CASE (function_traits_test_freestandingfunctions) {
+  
+  typedef pre::type_traits::function_traits<decltype(function_to_instrospect)> introspector;
+
+    BOOST_ASSERT_MSG(introspector::arity == 2 , " function arity is wrong");
+    BOOST_ASSERT_MSG(
+      (std::is_same<introspector::result_type, int>::value),
+      " return type wasn't correclty extracted");
+
+    BOOST_ASSERT_MSG(
+      (std::is_same<introspector::arg<0>, const std::string&>::value),
+      " 1st argument should be detected as const std::string&");
+
+    BOOST_ASSERT_MSG(
+      (std::is_same<introspector::arg<1>, double>::value),
+      " 2nd argument should be detected as double");
+
+    auto std_function = pre::type_traits::to_std_function(function_to_instrospect);
+
+    BOOST_ASSERT_MSG(std_function(std::string{"Hello World"}, 21.00d) == 42 , " call to std::funtion is wrong");
+}
