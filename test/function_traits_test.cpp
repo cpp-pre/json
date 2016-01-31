@@ -13,7 +13,7 @@ BOOST_AUTO_TEST_CASE (function_traits_test_lambda) {
                             return int{23} ;
                         };
 
-    typedef pre::function_traits<decltype(my_lambda)> my_lambda_types;
+    typedef pre::lambda::function_traits<decltype(my_lambda)> my_lambda_types;
 
     auto is_same =  std::is_same< my_lambda_types::result_type, int>::value;
 
@@ -36,7 +36,7 @@ BOOST_AUTO_TEST_CASE (function_traits_test_lambda) {
     is_same = std::is_same<my_lambda_types::function_type , expected_function_type>::value;
     BOOST_ASSERT_MSG(is_same, " function type  ist not as expected");
 
-    auto std_function = pre::to_std_function(my_lambda);
+    auto std_function = pre::lambda::to_std_function(my_lambda);
 
     BOOST_ASSERT_MSG(std_function(true, int{42}, double{3.14}, std::string{"Hello World"}) == 23 , " call to std::funtion is wrong");
 }
@@ -52,7 +52,7 @@ BOOST_AUTO_TEST_CASE (function_traits_test_lambda_copy_captures) {
       return capture_int + capture_double;
     };
 
-    typedef pre::function_traits<decltype(my_lambda_copy_capture)> my_lambda_types;
+    typedef pre::lambda::function_traits<decltype(my_lambda_copy_capture)> my_lambda_types;
 
     auto is_same =  std::is_same< my_lambda_types::result_type, double>::value;
 
@@ -74,7 +74,7 @@ BOOST_AUTO_TEST_CASE (function_traits_test_lambda_copy_captures) {
     typedef std::function<int(bool, int, double, std::string)> expected_function_type;
     is_same = std::is_same<my_lambda_types::function_type , expected_function_type>::value;
     BOOST_ASSERT_MSG(!is_same, " function type  ist not as expected with capture it is different");
-    auto std_function = pre::to_std_function(my_lambda_copy_capture);
+    auto std_function = pre::lambda::to_std_function(my_lambda_copy_capture);
 
     BOOST_ASSERT_MSG(std_function(true, int{42}, double{3.14}, std::string{"Hello World"}) == (42+12.3) , " call to std::funtion is wrong");
 }
@@ -89,7 +89,7 @@ BOOST_AUTO_TEST_CASE (function_traits_test_lambda_ref_captures) {
       return capture_int + capture_double;
     };
 
-    typedef pre::function_traits<decltype(my_lambda_ref_capture)> my_lambda_types;
+    typedef pre::lambda::function_traits<decltype(my_lambda_ref_capture)> my_lambda_types;
 
     auto is_same =  std::is_same< my_lambda_types::result_type, double>::value;
 
@@ -112,7 +112,7 @@ BOOST_AUTO_TEST_CASE (function_traits_test_lambda_ref_captures) {
     is_same = std::is_same<my_lambda_types::function_type , expected_function_type>::value;
     BOOST_ASSERT_MSG(!is_same, " function type  ist not as expected with capture it is different");
 
-    auto std_function = pre::to_std_function(my_lambda_ref_capture);
+    auto std_function = pre::lambda::to_std_function(my_lambda_ref_capture);
 
     BOOST_ASSERT_MSG(std_function(true, int{42}, double{3.14}, std::string{"Hello World"}) == (42+12.3) , " call to std::funtion is wrong");
 }

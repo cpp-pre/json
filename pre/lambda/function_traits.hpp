@@ -39,7 +39,7 @@
 #include <tuple>
 
 
-namespace pre {
+namespace pre { namespace lambda {
     
     
   template<typename F>
@@ -74,7 +74,7 @@ namespace pre {
   }
   
 
-} //pre
+}}
 
 
 #endif /*PRE_TRAITS_FUNCTION_TRAITS_HPP*/
