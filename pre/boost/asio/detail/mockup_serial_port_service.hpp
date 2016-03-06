@@ -27,6 +27,14 @@
 #include <boost/thread/condition_variable.hpp>
 #include <boost/thread/recursive_mutex.hpp>
 
+#if defined(GENERATING_DOCUMENTATION)
+# define BOOST_ASIO_OPTION_STORAGE implementation_defined
+#elif defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
+# define BOOST_ASIO_OPTION_STORAGE DCB
+#else
+# define BOOST_ASIO_OPTION_STORAGE termios
+#endif
+
 namespace boost {
 namespace asio {
 namespace detail {
@@ -320,18 +328,14 @@ public:
 
 private:
 
-#ifdef _WIN32
-	struct termios {};
-#endif
-
   // Function pointer type for storing a serial port option.
   typedef boost::system::error_code (*store_function_type)(
-      const void*, termios&, boost::system::error_code&);
+      const void*, BOOST_ASIO_OPTION_STORAGE&, boost::system::error_code&);
 
   // Helper function template to store a serial port option.
   template <typename SettableSerialPortOption>
   static boost::system::error_code store_option(const void* option,
-      termios& storage, boost::system::error_code& ec)
+      BOOST_ASIO_OPTION_STORAGE& storage, boost::system::error_code& ec)
   {
     return static_cast<const SettableSerialPortOption*>(option)->store(
         storage, ec);
@@ -344,12 +348,12 @@ private:
 
   // Function pointer type for loading a serial port option.
   typedef boost::system::error_code (*load_function_type)(
-      void*, const termios&, boost::system::error_code&);
+      void*, const BOOST_ASIO_OPTION_STORAGE&, boost::system::error_code&);
 
   // Helper function template to load a serial port option.
   template <typename GettableSerialPortOption>
   static boost::system::error_code load_option(void* option,
-      const termios& storage, boost::system::error_code& ec)
+      const BOOST_ASIO_OPTION_STORAGE& storage, boost::system::error_code& ec)
   {
     return static_cast<GettableSerialPortOption*>(option)->load(storage, ec);
   }
@@ -361,7 +365,7 @@ private:
 
 
   io_service& io_service_;
-  termios termios_storage;
+  BOOST_ASIO_OPTION_STORAGE termios_storage;
 };
 
 } // namespace detail
