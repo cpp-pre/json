@@ -35,7 +35,7 @@ namespace pre { namespace type_traits {
   *     std::cout << "my_lambda argument 3 type is "  << typeid(my_lambda_types::arg<3>).name()        << std::endl;
   *     std::cout << "my_lambda function type is "    << typeid(my_lambda_types::function_type).name() << std::endl;
   *
-  *     auto std_function = pre::to_std_function(my_lambda);
+  *     auto std_function = pre::type_traits::to_std_function(my_lambda);
   *
   *     std::cout << "my_lambda called as std::function "  << std_function(true, int{42}, double{3.14}, std::string{"Hello World"}) << std::endl;
   *
@@ -48,12 +48,16 @@ namespace pre { namespace type_traits {
   struct function_traits;
 
   template<typename F> 
-  struct function_traits<F, detail::disable_if_is_function_t<F> > 
+  struct function_traits<F, detail::enable_if_is_lambda_t<F> > 
     : public detail::function_traits_impl<decltype(&F::operator())> {};
 
   template<typename F>
   struct function_traits<F, detail::enable_if_is_function_t<F> >
     : public detail::function_traits_impl<typename std::remove_pointer<F>::type> {};
+
+  template<typename F>
+  struct function_traits<F, detail::enable_if_is_function_member_pointer_t<F> >
+    : public detail::function_traits_impl_member<F> {};
 
   template <class T>
   auto to_std_function (T t) -> typename function_traits<T>::function_type  {
@@ -64,4 +68,4 @@ namespace pre { namespace type_traits {
 }}
 
 
-#endif /*PRE_TRAITS_FUNCTION_TRAITS_HPP*/
+#endif /*PRE_TYPE_TRAITS_FUNCTION_TRAITS_HPP*/

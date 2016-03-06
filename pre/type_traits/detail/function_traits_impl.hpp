@@ -14,58 +14,72 @@
 namespace pre { namespace type_traits { namespace detail {
 
     template<typename F>
-    using disable_if_is_function_t = 
-      typename std::enable_if< not std::is_function< typename std::remove_pointer<F>::type >::value >::type;
+    using enable_if_is_lambda_t = 
+      typename std::enable_if< 
+        not std::is_function< typename std::remove_pointer<F>::type >::value
+        && not std::is_member_function_pointer< F >::value
+      >::type;
 
     template<typename F>
     using enable_if_is_function_t = 
-      typename std::enable_if< std::is_function< typename std::remove_pointer<F>::type >::value >::type;
+      typename std::enable_if< 
+        std::is_function< typename std::remove_pointer<F>::type >::value
+        && not std::is_member_function_pointer< F >::value
+      >::type;
+
+    template<typename F>
+    using enable_if_is_function_member_pointer_t = 
+      typename std::enable_if< 
+        std::is_member_function_pointer< F >::value
+      >::type;
+
+
+    template<typename ReturnType, typename... Args>
+    struct function_traits_api {
+      enum {
+          arity = sizeof...(Args)
+      };
+
+      using result_type = ReturnType;
+
+      using function_type = std::function<ReturnType(Args...)>;
+
+    private:
+      template<size_t i>
+      struct arg_ {
+          typedef typename std::tuple_element<i, std::tuple<Args...>>::type type;
+      };
+
+    public:
+      template<size_t i>
+      using arg = typename arg_<i>::type;
+    };
 
     template<typename... FunctionSignature>
     struct function_traits_impl;
+   
+    template<typename... FunctionSignature>
+    struct function_traits_impl_member;
 
     template<typename ReturnType, typename... Args>
-    struct function_traits_impl<ReturnType(Args...)> {
-      enum {
-          arity = sizeof...(Args)
-      };
-
-      using result_type = ReturnType;
-
-      using function_type = std::function<ReturnType(Args...)>;
-
-    private:
-      template<size_t i>
-      struct arg_ {
-          typedef typename std::tuple_element<i, std::tuple<Args...>>::type type;
-      };
-
-    public:
-      template<size_t i>
-      using arg = typename arg_<i>::type;
-    };
-
+    struct function_traits_impl<ReturnType(Args...)>
+      : public function_traits_api<ReturnType, Args...>
+    {};
 
     template<typename ClassType, typename ReturnType, typename... Args>
-    struct function_traits_impl<ReturnType(ClassType::*)(Args...) const> {
-      enum {
-          arity = sizeof...(Args)
-      };
+    struct function_traits_impl<ReturnType(ClassType::*)(Args...) const> 
+      : public function_traits_api<ReturnType, Args...>
+    {};
 
-      using result_type = ReturnType;
+    template<typename ClassType, typename ReturnType, typename... Args>
+    struct function_traits_impl_member<ReturnType(ClassType::*)(Args...)> 
+      : public function_traits_api<ReturnType, ClassType, Args...>
+    {};
 
-      using function_type = std::function<ReturnType(Args...)>;
-
-    private:
-      template<size_t i>
-      struct arg_ {
-          typedef typename std::tuple_element<i, std::tuple<Args...>>::type type;
-      };
-
-    public:
-      template<size_t i>
-      using arg = typename arg_<i>::type;
-    };
+    template<typename ClassType, typename ReturnType, typename... Args>
+    struct function_traits_impl_member<ReturnType(ClassType::*)(Args...) const> 
+      : public function_traits_api<ReturnType, ClassType, Args...>
+    {};
 
 }}}
 

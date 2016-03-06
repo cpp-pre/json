@@ -143,3 +143,70 @@ BOOST_AUTO_TEST_CASE (function_traits_test_freestandingfunctions) {
 
     BOOST_ASSERT_MSG(std_function(std::string{"Hello World"}, 21.00d) == 42 , " call to std::funtion is wrong");
 }
+
+class some_class {
+  public:
+  int member_to_introspect(const std::string& name, double score) const {
+    return score * 2;
+  }
+
+  int nonconst_member_to_introspect(const std::string& name, double score) {
+    return score * 2;
+  }
+};
+
+BOOST_AUTO_TEST_CASE (function_traits_test_memberfunctions) {
+
+  {
+    typedef pre::type_traits::function_traits<decltype(&some_class::member_to_introspect)> introspector;
+
+      BOOST_ASSERT_MSG(introspector::arity == 3 , " function arity is wrong");
+      BOOST_ASSERT_MSG(
+        (std::is_same<introspector::result_type, int>::value),
+        " return type wasn't correclty extracted");
+
+     BOOST_ASSERT_MSG(
+        (std::is_same<introspector::arg<0>, some_class>::value),
+        " 1st argument should be detected as const std::string&");
+
+      BOOST_ASSERT_MSG(
+        (std::is_same<introspector::arg<1>, const std::string&>::value),
+        " 1st argument should be detected as const std::string&");
+
+      BOOST_ASSERT_MSG(
+        (std::is_same<introspector::arg<2>, double>::value),
+        " 2nd argument should be detected as double");
+
+      auto std_function = pre::type_traits::to_std_function(&some_class::member_to_introspect);
+      
+      const some_class instance{};
+      BOOST_ASSERT_MSG(std_function(instance, std::string{"Hello World"}, 21.00d) == 42 , " call to std::funtion is wrong");
+  }
+
+
+  {
+    typedef pre::type_traits::function_traits<decltype(&some_class::nonconst_member_to_introspect)> introspector;
+
+      BOOST_ASSERT_MSG(introspector::arity == 3 , " function arity is wrong");
+      BOOST_ASSERT_MSG(
+        (std::is_same<introspector::result_type, int>::value),
+        " return type wasn't correclty extracted");
+
+     BOOST_ASSERT_MSG(
+        (std::is_same<introspector::arg<0>, some_class>::value),
+        " 1st argument should be detected as const std::string&");
+
+      BOOST_ASSERT_MSG(
+        (std::is_same<introspector::arg<1>, const std::string&>::value),
+        " 1st argument should be detected as const std::string&");
+
+      BOOST_ASSERT_MSG(
+        (std::is_same<introspector::arg<2>, double>::value),
+        " 2nd argument should be detected as double");
+
+      auto std_function = pre::type_traits::to_std_function(&some_class::nonconst_member_to_introspect);
+      
+      some_class instance{};
+      BOOST_ASSERT_MSG(std_function(instance, std::string{"Hello World"}, 21.00d) == 42 , " call to std::funtion is wrong");
+  }
+}
