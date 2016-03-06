@@ -18,6 +18,7 @@ namespace pre { namespace type_traits {
   * #include <iostream>
   * #include <typeinfo>
   * #include <pre/traits/function_traits.hpp>
+  * #include <pre/functional/to_std_function.hpp>
   *
   * int main() {
   *
@@ -25,7 +26,7 @@ namespace pre { namespace type_traits {
   *                             return int{0} ;
   *                         };
   *
-  *     typedef pre::function_traits<decltype(my_lambda)> my_lambda_types;
+  *     typedef pre::type_traits::function_traits<decltype(my_lambda)> my_lambda_types;
   *
   *     std::cout << "my_lambda number of arguments " << my_lambda_types::arity                        << std::endl;
   *     std::cout << "my_lambda return type is "      << typeid(my_lambda_types::result_type).name()   << std::endl;
@@ -35,7 +36,7 @@ namespace pre { namespace type_traits {
   *     std::cout << "my_lambda argument 3 type is "  << typeid(my_lambda_types::arg<3>).name()        << std::endl;
   *     std::cout << "my_lambda function type is "    << typeid(my_lambda_types::function_type).name() << std::endl;
   *
-  *     auto std_function = pre::type_traits::to_std_function(my_lambda);
+  *     auto std_function = pre::functional::to_std_function(my_lambda);
   *
   *     std::cout << "my_lambda called as std::function "  << std_function(true, int{42}, double{3.14}, std::string{"Hello World"}) << std::endl;
   *
@@ -58,11 +59,6 @@ namespace pre { namespace type_traits {
   template<typename F>
   struct function_traits<F, detail::enable_if_is_function_member_pointer_t<F> >
     : public detail::function_traits_impl_member<F> {};
-
-  template <class T>
-  auto to_std_function (T t) -> typename function_traits<T>::function_type  {
-    return typename function_traits<T>::function_type(t);
-  }
   
 
 }}

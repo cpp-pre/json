@@ -5,6 +5,7 @@
 #include <iostream>
 #include <type_traits>
 #include <pre/type_traits/function_traits.hpp>
+#include <pre/functional/to_std_function.hpp>
 
 
 BOOST_AUTO_TEST_CASE (function_traits_test_lambda) {
@@ -36,7 +37,7 @@ BOOST_AUTO_TEST_CASE (function_traits_test_lambda) {
     is_same = std::is_same<my_lambda_types::function_type , expected_function_type>::value;
     BOOST_ASSERT_MSG(is_same, " function type  ist not as expected");
 
-    auto std_function = pre::type_traits::to_std_function(my_lambda);
+    auto std_function = pre::functional::to_std_function(my_lambda);
 
     BOOST_ASSERT_MSG(std_function(true, int{42}, double{3.14}, std::string{"Hello World"}) == 23 , " call to std::funtion is wrong");
 }
@@ -74,7 +75,7 @@ BOOST_AUTO_TEST_CASE (function_traits_test_lambda_copy_captures) {
     typedef std::function<int(bool, int, double, std::string)> expected_function_type;
     is_same = std::is_same<my_lambda_types::function_type , expected_function_type>::value;
     BOOST_ASSERT_MSG(!is_same, " function type  ist not as expected with capture it is different");
-    auto std_function = pre::type_traits::to_std_function(my_lambda_copy_capture);
+    auto std_function = pre::functional::to_std_function(my_lambda_copy_capture);
 
     BOOST_ASSERT_MSG(std_function(true, int{42}, double{3.14}, std::string{"Hello World"}) == (42+12.3) , " call to std::funtion is wrong");
 }
@@ -112,7 +113,7 @@ BOOST_AUTO_TEST_CASE (function_traits_test_lambda_ref_captures) {
     is_same = std::is_same<my_lambda_types::function_type , expected_function_type>::value;
     BOOST_ASSERT_MSG(!is_same, " function type  ist not as expected with capture it is different");
 
-    auto std_function = pre::type_traits::to_std_function(my_lambda_ref_capture);
+    auto std_function = pre::functional::to_std_function(my_lambda_ref_capture);
 
     BOOST_ASSERT_MSG(std_function(true, int{42}, double{3.14}, std::string{"Hello World"}) == (42+12.3) , " call to std::funtion is wrong");
 }
@@ -139,7 +140,7 @@ BOOST_AUTO_TEST_CASE (function_traits_test_freestandingfunctions) {
       (std::is_same<introspector::arg<1>, double>::value),
       " 2nd argument should be detected as double");
 
-    auto std_function = pre::type_traits::to_std_function(function_to_instrospect);
+    auto std_function = pre::functional::to_std_function(function_to_instrospect);
 
     BOOST_ASSERT_MSG(std_function(std::string{"Hello World"}, 21.00d) == 42 , " call to std::funtion is wrong");
 }
@@ -177,7 +178,7 @@ BOOST_AUTO_TEST_CASE (function_traits_test_memberfunctions) {
         (std::is_same<introspector::arg<2>, double>::value),
         " 2nd argument should be detected as double");
 
-      auto std_function = pre::type_traits::to_std_function(&some_class::member_to_introspect);
+      auto std_function = pre::functional::to_std_function(&some_class::member_to_introspect);
       
       const some_class instance{};
       BOOST_ASSERT_MSG(std_function(instance, std::string{"Hello World"}, 21.00d) == 42 , " call to std::funtion is wrong");
@@ -204,7 +205,7 @@ BOOST_AUTO_TEST_CASE (function_traits_test_memberfunctions) {
         (std::is_same<introspector::arg<2>, double>::value),
         " 2nd argument should be detected as double");
 
-      auto std_function = pre::type_traits::to_std_function(&some_class::nonconst_member_to_introspect);
+      auto std_function = pre::functional::to_std_function(&some_class::nonconst_member_to_introspect);
       
       some_class instance{};
       BOOST_ASSERT_MSG(std_function(instance, std::string{"Hello World"}, 21.00d) == 42 , " call to std::funtion is wrong");
