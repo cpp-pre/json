@@ -3,8 +3,8 @@ cmake_minimum_required (VERSION 2.8.11)
 include("cmake/HunterGate.cmake")
 #set(HUNTER_ROOT ${CMAKE_CURRENT_LIST_DIR}/hunter) # Override hunter package collection with patched one avail as submodule
 HunterGate(
-    URL "https://github.com/ruslo/hunter/archive/v0.12.26.tar.gz"
-    SHA1 "fb52c562bc5d8b48278cc2a84b0de682014adae5"
+    URL "https://github.com/ruslo/hunter/archive/v0.14.12.tar.gz"
+    SHA1 "2d444140db0d53393b5490604006bb4f4896a444"
 )
 
 project (cpp-pre)
@@ -12,7 +12,7 @@ enable_testing()
 
 set (pre_VERSION_MAJOR 1)
 set (pre_VERSION_MINOR 3)
-set (pre_VERSION_PATCH 3)
+set (pre_VERSION_PATCH 5)
 
 set (PRE_VERSION "${pre_VERSION_MAJOR}.${pre_VERSION_MINOR}.${pre_VERSION_PATCH}")
 
@@ -21,7 +21,7 @@ add_definitions(--std=c++11)
 # Boost
 set(Boost_USE_MULTITHREADED ON)
 hunter_add_package(Boost)
-find_package(Boost 1.58 REQUIRED)
+find_package(Boost 1.59 REQUIRED)
 include_directories ( ${Boost_INCLUDE_DIRS} )
 
 include_directories( BEFORE ${CMAKE_CURRENT_LIST_DIR} )
