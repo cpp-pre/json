@@ -32,6 +32,7 @@ if (BUILD_SHARED_LIBS)
                   -DBOOST_TEST_DYN_LINK)
 endif(BUILD_SHARED_LIBS)
 
+
 hunter_add_package(Boost COMPONENTS system thread log chrono filesystem  
   date_time iostreams log)
 find_package(Boost 1.58 COMPONENTS system thread log chrono filesystem

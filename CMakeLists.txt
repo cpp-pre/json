@@ -18,7 +18,15 @@ set (PRE_VERSION "${pre_VERSION_MAJOR}.${pre_VERSION_MINOR}.${pre_VERSION_PATCH}
 
 add_definitions(--std=c++11)
 
+if(MSVC)
+  add_definitions(-DNOMINMAX)
+endif()
+
 # Boost
+if(MSVC)
+  add_definitions(-DBOOST_ALL_NO_LIB=1)
+endif()
+
 set(Boost_USE_MULTITHREADED ON)
 hunter_add_package(Boost)
 find_package(Boost 1.59 REQUIRED)

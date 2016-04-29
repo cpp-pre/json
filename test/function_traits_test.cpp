@@ -142,7 +142,7 @@ BOOST_AUTO_TEST_CASE (function_traits_test_freestandingfunctions) {
 
     auto std_function = pre::functional::to_std_function(function_to_instrospect);
 
-    BOOST_ASSERT_MSG(std_function(std::string{"Hello World"}, 21.00d) == 42 , " call to std::funtion is wrong");
+    BOOST_ASSERT_MSG(std_function(std::string{"Hello World"}, 21.00) == 42 , " call to std::funtion is wrong");
 }
 
 class some_class {
@@ -181,7 +181,7 @@ BOOST_AUTO_TEST_CASE (function_traits_test_memberfunctions) {
       auto std_function = pre::functional::to_std_function(&some_class::member_to_introspect);
       
       const some_class instance{};
-      BOOST_ASSERT_MSG(std_function(instance, std::string{"Hello World"}, 21.00d) == 42 , " call to std::funtion is wrong");
+      BOOST_ASSERT_MSG(std_function(instance, std::string{"Hello World"}, 21.00) == 42 , " call to std::funtion is wrong");
   }
 
 
@@ -208,6 +208,6 @@ BOOST_AUTO_TEST_CASE (function_traits_test_memberfunctions) {
       auto std_function = pre::functional::to_std_function(&some_class::nonconst_member_to_introspect);
       
       some_class instance{};
-      BOOST_ASSERT_MSG(std_function(instance, std::string{"Hello World"}, 21.00d) == 42 , " call to std::funtion is wrong");
+      BOOST_ASSERT_MSG(std_function(instance, std::string{"Hello World"}, 21.00) == 42 , " call to std::funtion is wrong");
   }
 }

@@ -16,15 +16,15 @@ namespace pre { namespace type_traits { namespace detail {
     template<typename F>
     using enable_if_is_lambda_t = 
       typename std::enable_if< 
-        not std::is_function< typename std::remove_pointer<F>::type >::value
-        && not std::is_member_function_pointer< F >::value
+        ! std::is_function< typename std::remove_pointer<F>::type >::value
+        && ! std::is_member_function_pointer< F >::value
       >::type;
 
     template<typename F>
     using enable_if_is_function_t = 
       typename std::enable_if< 
         std::is_function< typename std::remove_pointer<F>::type >::value
-        && not std::is_member_function_pointer< F >::value
+        && ! std::is_member_function_pointer< F >::value
       >::type;
 
     template<typename F>
