@@ -2,6 +2,7 @@
 #define PRE_BOOST_ASIO_FLUSH_HPP
 
 #include <boost/asio/serial_port.hpp>
+#include <pre/boost/asio/mockup_serial_port_service.hpp>
 
 namespace boost { namespace asio {
 
@@ -32,6 +33,13 @@ namespace boost { namespace asio {
       error = boost::system::error_code(errno,
           boost::asio::error::get_system_category());
     }
+  }
+
+  void flush_serial_port(
+    basic_serial_port<mockup_serial_port_service>&,
+    flush_type,
+    boost::system::error_code& error) {
+    error = boost::system::error_code();
   }
 
 }}

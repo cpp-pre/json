@@ -12,6 +12,10 @@
 #include <boost/asio/read_until.hpp>
 #include <boost/asio/steady_timer.hpp>
 #include <boost/asio/basic_serial_port.hpp>
+
+#include <pre/boost/asio/flush.hpp>
+#include <pre/boost/asio/get_bytes_available.hpp>
+
 #include <pre/boost/asio/mockup_serial_port_service.hpp>
 
 #include <pre/chrono/chrono_suffixes.hpp>
@@ -43,6 +47,7 @@ BOOST_AUTO_TEST_CASE (asio_mockup_serial_port_service_test_simplereadwrite) {
         if (tries > 0) {
           std::cout << "Write done, scheduling next write" << std::endl;
           boost::asio::async_write(port, boost::asio::buffer(buffer.data(), buffer.size()), write_handler);
+
         } else {
           std::cout << "Write done, finishing" << std::endl;
         }
@@ -65,6 +70,7 @@ BOOST_AUTO_TEST_CASE (asio_mockup_serial_port_service_test_simplereadwrite) {
         std::cout << "Registering 5 bytes read from SLC BUS" << std::endl;
         boost::asio::async_read(port, boost::asio::buffer(buffer, 5),
           [try_count, tries, &buffer, &called](const boost::system::error_code& ec, std::size_t bytes_transferred) {
+
             std::cout << "Read " << bytes_transferred << " bytes : " << buffer << std::endl;
             BOOST_ASSERT(bytes_transferred == 5);
             BOOST_ASSERT(!ec);
@@ -119,6 +125,7 @@ BOOST_AUTO_TEST_CASE (asio_mockup_serial_port_service_test_simplereadwrite) {
       io_service ios;
       basic_serial_port<mockup_serial_port_service> port{ios, "SLC0"};
 
+
       streambuf receive_buf;
 
       size_t retries = try_count;
@@ -159,6 +166,10 @@ BOOST_AUTO_TEST_CASE (asio_mockup_serial_port_service_test_simplereadwrite) {
         std::cout << "Sending " << trie << std::endl;
         std::string message = str(boost::format("This is a message %1% without end...") % trie);
         auto bytes = boost::asio::write(port, buffer(message.data(), message.size()));
+
+        boost::system::error_code ec{};
+        boost::asio::flush_serial_port(port, boost::asio::flush_both, ec);
+
         BOOST_ASSERT(bytes == message.size());
         boost::this_thread::sleep_for(10_ms);
       }
@@ -188,6 +199,10 @@ BOOST_AUTO_TEST_CASE (asio_mockup_serial_port_service_test_simplereadwrite) {
       });
 
       boost::asio::async_read_until(port, receive_buf, "||", readHandler);
+
+      // just testing if it compiles
+      BOOST_TEST_REQUIRE(boost::asio::get_bytes_available(port) == 0);
+
 
       ios.run();
     });
