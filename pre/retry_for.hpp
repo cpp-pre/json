@@ -31,7 +31,7 @@ namespace pre {
      * \return Whether the callback succeeded or not.
      */
     template< class Rep, class Period >
-    bool retry_for(
+    inline bool retry_for(
         const std::chrono::duration<Rep, Period>& total_time,
         const std::chrono::duration<Rep, Period>& time_step,
         std::function<bool (void)> retried_func) {
@@ -56,7 +56,7 @@ namespace pre {
      *          const std::chrono::duration<Rep, Period>& , std::function<bool (void)>)).
      */
     template< class Rep, class Period >
-    bool retry_for(
+    inline bool retry_for(
         const std::chrono::duration<Rep, Period>& total_time,
         const std::chrono::duration<Rep, Period>& time_step,
         const std::chrono::duration<Rep, Period>& initial_blackout,
