@@ -38,7 +38,7 @@ namespace pre {
       assert(time_step.count()!=0);
       assert(total_time.count() >= time_step.count());
 
-      auto iterations = total_time.count() / time_step.count();
+      size_t iterations = total_time.count() / time_step.count();
       for(size_t p=0; p <iterations; p++) {
         if(retried_func()) { return true; }
 
