@@ -38,7 +38,7 @@ namespace pre { namespace variant {
 
       template< class U >
       Result operator()(const U&) const { 
-        return typename TraitMetafunction<U>::type{};
+        return TraitMetafunction<U>::type::value;
       }
 
 

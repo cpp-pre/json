@@ -19,6 +19,11 @@ function(add_unit_test)
 
 endfunction(add_unit_test) 
 
+if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  # Disable auto_ptr errors
+  add_definitions(-Wno-deprecated-declarations) 
+endif()
+
 ## Multithreading support
 find_package(Threads REQUIRED)
 
@@ -67,3 +72,6 @@ add_unit_test(NAME function_traits_test
   ${Boost_LIBRARIES}
   ${platform_specific_lib})
   
+add_unit_test(NAME retry_for
+  LIBS ${CMAKE_THREAD_LIBS_INIT}
+  ${Boost_LIBRARIES})
