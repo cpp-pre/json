@@ -41,8 +41,6 @@ namespace pre {
       size_t iterations = total_time.count() / time_step.count();
       for(size_t p=0; p <iterations; p++) {
         if(retried_func()) { return true; }
-
-        //sleep won't be monotonic for portability purposes - should be ok with bootloader flash.
         std::this_thread::sleep_for(time_step);
       }
       return false;
