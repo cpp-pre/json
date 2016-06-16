@@ -66,6 +66,22 @@ namespace pre { namespace bytes {
 
         return out;
     }
+    
+    /**
+     * \brief Converts any given byte string to a corresponding hexadecimal number in a string.
+     * \param hex byte string
+     */
+    inline std::string to_hexstring(const std::string& hex) {
+        std::vector<char> bytes;
+        for (unsigned int i = 0; i < hex.length(); i += 2) {
+        std::string byteString = hex.substr(i, 2);
+        char byte = (char) strtol(byteString.c_str(), NULL, 16);
+        bytes.push_back(byte);
+        }
+        std::string bb(bytes.begin(),bytes.end());
+        return bb;
+    }
+    
 
     /**
      * \brief Convers the given byte array of the given length to a corresponding binary number in a string.
