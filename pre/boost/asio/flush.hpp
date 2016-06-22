@@ -6,11 +6,17 @@
 
 namespace boost { namespace asio {
 
+#if defined(BOOST_ASIO_WINDOWS)
+  const size_t TCIFLUSH = 0;
+  const size_t TCOFLUSH = 1;
+  const size_t TCIOFLUSH = 2;
+#endif
+
   /// @brief Different ways a serial port may be flushed.
   enum flush_type
   {
     flush_receive = TCIFLUSH,
-    flush_send = TCIOFLUSH,
+    flush_send = TCOFLUSH,
     flush_both = TCIOFLUSH
   };
 
@@ -24,6 +30,10 @@ namespace boost { namespace asio {
     flush_type what,
     boost::system::error_code& error)
   {
+#if defined(BOOST_ASIO_WINDOWS)
+    // On windows it's a noop for now.
+    error = boost::system::error_code();
+#else 
     if (0 == ::tcflush(serial_port.native_handle(), what))
     {
       error = boost::system::error_code();
@@ -33,6 +43,7 @@ namespace boost { namespace asio {
       error = boost::system::error_code(errno,
           boost::asio::error::get_system_category());
     }
+#endif
   }
 
   void flush_serial_port(
