@@ -5,9 +5,10 @@
 
 namespace pre { namespace json {
 
-  /* Serialize to a JSON object any C++ object of any type, even your own types. 
-   * @T Any of the Supported Types.
-   * @value A value adapted with [BOOST\_FUSION\_ADAPT\_STRUCT](http://www.boost.org/doc/libs/release/libs/fusion/doc/html/fusion/adapted/adapt_struct.html).
+  /**
+   * \brief Serialize to a JSON object any C++ object of any type, even your own types. 
+   * \param T Any of the Supported Types.
+   * \param value A value adapted with [BOOST\_FUSION\_ADAPT\_STRUCT](http://www.boost.org/doc/libs/release/libs/fusion/doc/html/fusion/adapted/adapt_struct.html).
    *        This value can be any aggregate with nested aggregate or any C++ types.
    *
    * Serialize to a JSON object any C++ object of any type, even your own types. 
@@ -16,7 +17,7 @@ namespace pre { namespace json {
    *
    * ### Example 
    *  
-   * ```cpp
+   * \code{.cpp}
    *   #include <iostream>
    *   #include <pre/json/to_json.hpp> 
    *  
@@ -40,10 +41,10 @@ namespace pre { namespace json {
    *  };
    *
    *  std::cout << pre::json::to_json(my_customer) << std::endl;
-   * ```
+   * \endcode
    * 
-   *   - [Full example](examples/to_json.cpp)
-   *   - [Extended examples](test/dejsonize_test.cpp)
+   *   - [Full example](../examples/to_json.cpp)
+   *   - [Extended examples](../test/dejsonize_test.cpp)
    *
    * ### Supported types 
    *
@@ -58,7 +59,7 @@ namespace pre { namespace json {
    *   - [std::chrono::duration](http://en.cppreference.com/w/cpp/chrono/duration)
    *
    *
-   * @return An [nlohmann::json](https://github.com/nlohmann/json/) object directly streamable to std::cout or convertible to string.
+   * \return An [nlohmann::json](https://github.com/nlohmann/json/) object directly streamable to std::cout or convertible to string.
    */
   template<class T>
   nlohmann::json to_json(const T& value) {

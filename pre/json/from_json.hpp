@@ -5,9 +5,10 @@
 
 namespace pre { namespace json {
 
-  /* Deserialize any json object or value in a C++ type.
-   * @T The result type wanted from the deserialization. that will be filled from the given json_object.
-   * @serialized_json json to deserialize
+  /**
+   * \brief Deserialize any json object or value in a C++ type.
+   * \param T The result type wanted from the deserialization. that will be filled from the given json_object.
+   * \param serialized_json json to deserialize
    *
    * Deserialize any json object or value in a C++ type.
    *
@@ -20,7 +21,7 @@ namespace pre { namespace json {
    * 
    * ### Example
    *  
-   * ```cpp
+   * \code{.cpp}
    *  #include <iostream>
    *  #include <pre/json/from_json.hpp> 
    *  
@@ -45,10 +46,10 @@ namespace pre { namespace json {
    *  std::cout << "Customer " << my_customer.name << " spent " <<
    *    my_customer.money_spent << std::endl;
    *
-   * ```
+   * \endcode
    *
-   *   - [Full example](examples/from_json.cpp)
-   *   - [Extended examples](test/dejsonize_test.cpp)
+   *   - [Full example](../examples/from_json.cpp)
+   *   - [Extended examples](../test/dejsonize_test.cpp)
    *
    * ### Supported types 
    *
@@ -62,7 +63,7 @@ namespace pre { namespace json {
    *   - [boost::chrono::duration](http://www.boost.org/doc/libs/release/doc/html/chrono.html)
    *   - [std::chrono::duration](http://en.cppreference.com/w/cpp/chrono/duration)
    *
-   * @return the type wanted if it succeed find all member and value in the json.
+   * \return the type wanted if it succeed find all member and value in the json.
    */
   template<class T>
   T from_json(const std::string& serialized_json) {
@@ -73,7 +74,8 @@ namespace pre { namespace json {
     return object;
   }
 
-  /* Same as pre::json::from_json(const std::string&) but directly with a JSON.
+  /**
+   * \brief Same as pre::json::from_json(const std::string&) but directly with a JSON.
    */
   template<class T>
   T from_json(const nlohmann::json& json_object) {

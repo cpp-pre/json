@@ -11,10 +11,11 @@
 
 namespace pre { namespace type_traits {
     
- /* Provides access to lambda and functions arity, return type, arguments type and access as std::function type:
-  * @F The function, function pointer or lambda type to introspect, pass it as decltype(your_lambda).
+ /**
+  * \brief Provides access to lambda and functions arity, return type, arguments type and access as std::function type:
+  * \param F The function, function pointer or lambda type to introspect, pass it as decltype(your_lambda).
   *
-  * ```cpp
+  * \code{.cpp}
   * #include <iostream>
   * #include <typeinfo>
   * #include <pre/traits/function_traits.hpp>
@@ -42,7 +43,7 @@ namespace pre { namespace type_traits {
   *
   *     return 0;
   * }
-  * ```
+  * \endcode
   * 
   */
   template<typename F, typename = void>

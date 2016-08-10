@@ -1,5 +1,5 @@
-#ifndef SWISSARMYKNIFE_RANGE_ERASE_IF_HPP
-#define SWISSARMYKNIFE_RANGE_ERASE_IF_HPP
+#ifndef PRE_RANGE_ERASE_IF_HPP
+#define PRE_RANGE_ERASE_IF_HPP
 
 #include <pre/detail/namespace_compatibility.hpp>
 

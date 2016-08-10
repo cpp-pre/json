@@ -1,14 +1,14 @@
-#<cldoc:Tutorial to or from json>
-
+Tutorial to or from json
+========================
 With pre::json you can serialize or deserialize any C++ Type to JSON, even composite and aggregate types.
 
-#<cldoc:Tutorial to or from json::Serialize anything>
+## Serialize anything
 You can serialize anything to json.
 
 See : 
 
-  - [Full example](examples/to_json.cpp)
-  - [Extended examples](test/dejsonize_test.cpp)
+  - [Full example](../examples/to_json.cpp)
+  - [Extended examples](../test/dejsonize_test.cpp)
 
 ```cpp
   #include <iostream>
@@ -36,13 +36,13 @@ See :
  std::cout << pre::json::to_json(my_customer) << std::endl;
 ```
 
-#<cldoc:Tutorial to or from json::Deserialize anything>
+## Deserialize anything
 You can deserialize to any type from json.
 
 See : 
 
-  - [Full example](examples/from_json.cpp)
-  - [Extended examples](test/dejsonize_test.cpp)
+  - [Full example](../examples/from_json.cpp)
+  - [Extended examples](../test/dejsonize_test.cpp)
 
 ```cpp
  #include <iostream>
