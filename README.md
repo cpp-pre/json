@@ -21,7 +21,9 @@ We always deprecate our own implementation when the Boost community finally acce
 That's why we named it pre, like pre::boost.
 
 ## Getting started
-The library is header only, but has dependencies on Boost 1.59.0 and nlohmann-json.
+The library is header only, but has dependencies on :
+  * Boost 1.60.0
+  * nlohmann-json
 
 ### With hunter CMake Package manager
 Simply drop in your CMakeLists.txt the following : 
@@ -36,7 +38,7 @@ You can install these dependencies yourself, and then install the library this w
 ```shell
 mkdir build/
 cd build/
-cmake .. && make install
+cmake .. -DHUNTER_ENABLED=OFF && make install
 ```
 
 ## What we already brought to Boost

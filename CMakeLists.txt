@@ -1,20 +1,25 @@
-cmake_minimum_required (VERSION 2.8.11)
+cmake_minimum_required (VERSION 3.5.0)
 
 include("cmake/HunterGate.cmake")
-#set(HUNTER_ROOT ${CMAKE_CURRENT_LIST_DIR}/hunter) # Override hunter package collection with patched one avail as submodule
 HunterGate(
     URL "https://github.com/ruslo/hunter/archive/v0.14.12.tar.gz"
     SHA1 "2d444140db0d53393b5490604006bb4f4896a444"
 )
 
 project (cpp-pre)
-enable_testing()
 
 set (pre_VERSION_MAJOR 1)
 set (pre_VERSION_MINOR 3)
-set (pre_VERSION_PATCH 5)
+set (pre_VERSION_PATCH 8)
 
 set (PRE_VERSION "${pre_VERSION_MAJOR}.${pre_VERSION_MINOR}.${pre_VERSION_PATCH}")
+
+# Compile unit tests
+option(UNIT_TESTS "Enable Unit Testing" OFF)
+
+if (UNIT_TESTS)
+  enable_testing()
+endif()
 
 add_definitions(--std=c++11)
 
@@ -49,10 +54,6 @@ configure_package_config_file(
   INSTALL_DESTINATION lib/cmake/lib-${PROJECT_NAME}-${PRE_VERSION}
   PATH_VARS INCLUDE_INSTALL_DIR)
 
-#configure_file(${CMAKE_SOURCE_DIR}/cmake/modules/lib-${PROJECT_NAME}-config.cmake.in
-#    ${CMAKE_CURRENT_BINARY_DIR}/lib-${PROJECT_NAME}-config.cmake
-#    @ONLY)
-
 write_basic_package_version_file(
     ${CMAKE_CURRENT_BINARY_DIR}/lib-${PROJECT_NAME}-config-version.cmake
     VERSION ${PRE_VERSION}
@@ -64,4 +65,6 @@ install(FILES
     DESTINATION lib/cmake/lib-${PROJECT_NAME}-${PRE_VERSION})
 
 # Unit testing
-add_subdirectory(test)
+if (UNIT_TESTS)
+  add_subdirectory(test)
+endif()
