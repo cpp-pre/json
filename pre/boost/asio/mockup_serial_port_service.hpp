@@ -25,13 +25,14 @@
 namespace boost {
 namespace asio {
 
-/* mockup_serial_port_service : A virtual serial port allowing to write cross platform unit tests of serial communicating application.
+/**
+ * \brief mockup_serial_port_service : A virtual serial port allowing to write cross platform unit tests of serial communicating application.
  *
  * This class can be used in your unit tests to simulate a [boost::asio::serial_port](http://www.boost.org/doc/libs/release/doc/html/boost_asio/reference/serial_port.html).
  *
  * ### Example
  *
- * ```cpp
+ * \code{.cpp}
  *
  *   using namespace boost::asio;
 
@@ -60,7 +61,7 @@ namespace asio {
 
  *   });
  *
- * ```
+ * \endcode
  * 
  *   - [Full example](../examples/boost_asio_mockup_serial_port.cpp)
  *   - [Extended examples](../test/asio_mockup_serial_port_service_test.cpp)

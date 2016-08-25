@@ -212,3 +212,74 @@ BOOST_AUTO_TEST_CASE (asio_mockup_serial_port_service_test_simplereadwrite) {
   }
 
 }
+
+BOOST_AUTO_TEST_CASE(test_isolated_cancellation) {
+
+  using namespace boost::asio;
+  using namespace pre::chrono::boost;
+
+
+  boost::thread producer([]() {
+    io_service ios;
+    basic_serial_port<mockup_serial_port_service> port{ios, "SLC0"};
+    
+    for (size_t trie = 0 ; trie < 10; ++trie) {
+      boost::this_thread::sleep_for(200_ms);
+      std::string message = str(boost::format("This is message %1% ...||") % trie);
+      std::cout << "Sending " << message << std::endl;
+      auto bytes = boost::asio::write(port, buffer(message.data(), message.size()));
+
+      boost::system::error_code ec{};
+      boost::asio::flush_serial_port(port, boost::asio::flush_both, ec);
+
+      BOOST_ASSERT(bytes == message.size());
+    }
+
+  }); 
+
+  boost::thread safe_consumer([]() {
+    io_service ios;
+    basic_serial_port<mockup_serial_port_service> port{ios, "SLC0"};
+
+    streambuf receive_buf;
+
+
+    boost::function<void (const boost::system::error_code& ec, size_t bytes_read)> readHandler =
+      [&](const boost::system::error_code& ec, size_t bytes_read) {
+
+        if (ec == boost::asio::error::operation_aborted) {
+          std::cout << "Read was cancelled !" << std::endl;
+        } else {
+
+          std::string data{buffers_begin(receive_buf.data()), buffers_end(receive_buf.data())};
+          receive_buf.consume(bytes_read);
+          std::cout << "Read was : " << bytes_read  << ", data: " << data << std::endl;
+        }
+
+      };
+
+    for (size_t i = 0; i < 20; ++i) {
+
+      std::cout << "waiting the " << i << "th time..." << std::endl;
+      boost::asio::steady_timer timeout{ios};
+      timeout.expires_from_now(std::chrono::milliseconds(100));
+      timeout.async_wait([&port](const boost::system::error_code& ec){
+        if (ec != boost::asio::error::operation_aborted) {
+          std::cout << "Cancelling current read !" << std::endl;
+          port.cancel();
+        }
+      });
+      boost::asio::async_read_until(port, receive_buf, "||", readHandler);
+      ios.reset();
+      ios.run();
+    }
+
+    // just testing if it compiles
+    BOOST_TEST_REQUIRE(boost::asio::get_bytes_available(port) == 0);
+
+
+  });
+
+  producer.join();
+  safe_consumer.join();
+}
