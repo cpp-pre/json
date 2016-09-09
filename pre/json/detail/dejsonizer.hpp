@@ -15,6 +15,8 @@
 #include <pre/json/detail/sfinae_enabler.hpp>
 #include <pre/enums/to_underlying.hpp>
 
+#include <pre/variant/for_each_type.hpp>
+
 namespace pre { namespace json { namespace detail {
 
   struct dejsonizer {
@@ -71,7 +73,7 @@ namespace pre { namespace json { namespace detail {
       variant_checker(const nlohmann::json& json_object, TVariant& value) : _json_object(json_object), value(value) {
       };
 
-      template< typename U > void operator()(U& x) {
+      template< typename U > void operator()(U&& x) {
         if (!successed) {
             auto struct_it = _json_object.find("struct");
             
@@ -96,7 +98,7 @@ namespace pre { namespace json { namespace detail {
     template<class T, 
       enable_if_is_variant_t<T>* = nullptr>
     void operator()(T& value) const {
-      boost::mpl::for_each< typename T::types >( variant_checker<T>(_json_object, value) );
+      pre::variant::for_each_type( value, variant_checker<T>(_json_object, value) );
     }
 
     template<class T,

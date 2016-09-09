@@ -4,6 +4,8 @@
 #include <boost/variant.hpp>
 #include <boost/type_index.hpp>
 
+#include <pre/variant/apply_visitor.hpp>
+
 namespace pre { namespace variant {
 
   namespace detail {
@@ -24,7 +26,7 @@ namespace pre { namespace variant {
    */
   template<class InspectedVariant>
   inline std::string get_type_name(const InspectedVariant& variant) {
-    return boost::apply_visitor(detail::get_type_name_visitor{}, variant);
+    return apply_visitor(detail::get_type_name_visitor{}, variant);
   }
 
 }}

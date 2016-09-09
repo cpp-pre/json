@@ -18,7 +18,6 @@ namespace pre { namespace variant {
           !assignable_from<ResultVariant, U>::value
         >::type* = nullptr
       > ResultVariant operator()(const U& u) const {
-        //std::cout << "Cannot assign incompatible : " << typeid(U).name() << std::endl;
         return ResultVariant{}; //XXX: how to inform about this ? Variant is always non-empty, we cannot tel it failed. Optional ?
       }
 
@@ -27,7 +26,6 @@ namespace pre { namespace variant {
           assignable_from<ResultVariant, U>::value
         >::type* = nullptr
       > ResultVariant operator()(const U& u) const { 
-        //std::cout << "assigning compatible : " << typeid(U).name() << std::endl;
         return ResultVariant{u};
       }
     };
