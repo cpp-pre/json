@@ -343,7 +343,7 @@ BOOST_FUSION_ADAPT_STRUCT(datamodel::employee,
   name,
   responsibility)
 
-BOOST_AUTO_TEST_CASE (vairants) {
+BOOST_AUTO_TEST_CASE (boost_variant) {
 
   std::vector<datamodel::employee> employees {
     {"King", datamodel::cashier{"hardware", 1} },
@@ -540,3 +540,73 @@ BOOST_AUTO_TEST_CASE (optional_member) {
   }
 }
 
+
+namespace datamodel {
+  typedef mapbox::util::variant<cleaner, cashier, security> possible_responsibilities_mapbox;
+
+  struct with_mapbox_variant{
+    possible_responsibilities_mapbox responsibility;
+    boost::optional<possible_responsibilities_mapbox> additional_responsibility;
+  };
+}
+
+BOOST_FUSION_ADAPT_STRUCT(datamodel::with_mapbox_variant,
+  responsibility,
+  additional_responsibility)
+
+
+BOOST_AUTO_TEST_CASE (mapbox_variant_simple) {
+
+  {
+    using datamodel::with_mapbox_variant;
+    using datamodel::possible_responsibilities_mapbox;
+    using datamodel::cashier;
+    using datamodel::cleaner;
+    using datamodel::security;
+
+    with_mapbox_variant val{cashier{"hardware", 1} } ;
+
+    auto val_json = pre::json::to_json(val);
+    std::cout << val_json.dump(2) << std::endl;
+
+    auto val_deserialized = pre::json::from_json<decltype(val)>(val_json); 
+
+    auto val_reserialized = pre::json::to_json(val_deserialized);
+    std::cout << val_reserialized.dump(2) << std::endl;
+
+    BOOST_ASSERT(val == val_deserialized);
+  }
+
+
+}
+
+
+BOOST_AUTO_TEST_CASE (mapbox_variant) {
+
+  {
+    using datamodel::with_mapbox_variant;
+    using datamodel::possible_responsibilities_mapbox;
+    using datamodel::cashier;
+    using datamodel::cleaner;
+    using datamodel::security;
+
+    std::vector<with_mapbox_variant> val {
+      with_mapbox_variant{cashier{"hardware", 1} },
+      with_mapbox_variant{security{true, "Krav Maga"}, possible_responsibilities_mapbox{cleaner{"Entrance", "Doors" }}},
+      with_mapbox_variant{cleaner{"5th floor", "Toys, Petshop, Drugs, Food" } },
+      with_mapbox_variant{cashier{"Food", 2} }
+    };
+
+    auto val_json = pre::json::to_json(val);
+    std::cout << val_json.dump(2) << std::endl;
+
+    auto val_deserialized = pre::json::from_json<decltype(val)>(val_json); 
+
+    auto val_reserialized = pre::json::to_json(val_deserialized);
+    std::cout << val_reserialized.dump(2) << std::endl;
+
+    BOOST_ASSERT(val == val_deserialized);
+  }
+
+
+}

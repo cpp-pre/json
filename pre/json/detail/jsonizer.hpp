@@ -13,6 +13,7 @@
 
 #include <pre/json/detail/sfinae_enabler.hpp>
 #include <pre/enums/to_underlying.hpp>
+#include <pre/variant/apply_visitor.hpp>
 
 //TODO: What about tuples ?
 //TODO: What about normal union?
@@ -75,7 +76,7 @@ namespace pre { namespace json { namespace detail {
     void operator()(const T& value) const {
       // struct has to be disambiguated in case of variant.
       _disambiguate_struct = true; 
-      boost::apply_visitor(*this, value);
+      pre::variant::apply_visitor(*this, value);
     }
 
     template<class T,
