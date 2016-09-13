@@ -13,7 +13,7 @@ namespace pre { namespace variant {
    */
   template<class T, class... Types>
   inline bool is_active_type(const boost::variant<Types...>& variant) {
-    return boost::get<T>(std::addressof(variant)) != nullptr;
+    return ::boost::get<T>(std::addressof(variant)) != nullptr;
   }
 
   /**

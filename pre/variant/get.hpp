@@ -6,8 +6,8 @@
 
 namespace pre { namespace variant { 
 
-  using boost::get; 
-  using mapbox::util::get; 
+  using ::boost::get; 
+  using ::mapbox::util::get; 
 
 }}
 

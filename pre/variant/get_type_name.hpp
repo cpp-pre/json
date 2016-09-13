@@ -13,7 +13,7 @@ namespace pre { namespace variant {
     struct get_type_name_visitor : public boost::static_visitor<std::string> {
       template<class U>
       std::string operator()(const U&) const { 
-        return boost::typeindex::type_id<U>().pretty_name();
+        return ::boost::typeindex::type_id<U>().pretty_name();
       }
     };
 

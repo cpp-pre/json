@@ -10,7 +10,7 @@
 
 namespace pre { namespace variant { namespace detail {
 
-  namespace mpl = boost::mpl;
+  namespace mpl = ::boost::mpl;
 
   template <class VariantType, class T, class Enable = void> 
   struct assignable_from;
