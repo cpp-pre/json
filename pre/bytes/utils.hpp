@@ -75,7 +75,7 @@ namespace pre { namespace bytes {
         uint8_t ch = 0x00;
         size_t i = 0; 
 
-        if (bytes == NULL || length <= 0)
+        if (bytes.size() == 0)
             return std::string("");
 
         /**
@@ -191,7 +191,7 @@ namespace pre { namespace bytes {
      * \brief Converts a string of hexadecimal number into a binary buffer of this valeu
      * \param hex byte string
      */
-    inline std::string from_hexstring(const std::string& hex) {
+    inline std::string buffer_from_hexstring(const std::string& hex) {
         std::vector<char> bytes;
         for (unsigned int i = 0; i < hex.length(); i += 2) {
         std::string byteString = hex.substr(i, 2);
