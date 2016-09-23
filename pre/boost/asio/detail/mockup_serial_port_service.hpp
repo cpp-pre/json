@@ -13,6 +13,7 @@
 #include <memory>
 #include <boost/chrono.hpp>
 #include <boost/bind.hpp>
+#include <boost/make_unique.hpp>
 #include <boost/function.hpp>
 #include <boost/asio/error.hpp>
 #include <boost/asio/io_service.hpp>
@@ -52,7 +53,7 @@ public:
     // Each read handler that get registered, get's a work object associated,
     // to avoid io_service.run() from returning until the handler can effectively 
     // be called
-    typedef std::pair<boost::function<void ()>, io_service::work> read_handler_entry;
+    typedef std::pair<boost::function<void ()>, std::unique_ptr<io_service::work>> read_handler_entry;
 
     // Thread specific values
     native_handle_type handle_ = -1;
@@ -225,10 +226,18 @@ public:
     std::copy(begin_bytes, end_bytes, std::back_inserter(*impl.serial_line_simulation_buffer_in_));
     size_t bytes_transferred = std::distance(begin_bytes, end_bytes);
 
-    for (auto& pending_handler : *impl.pending_read_handlers_) {
-      while (!pending_handler.second->empty()) {
-        pending_handler.first->post(pending_handler.second->back().first);
-        pending_handler.second->pop_back();
+    // Iterating on the map of io_services
+    for (auto& pending_ioservice : *impl.pending_read_handlers_) {
+      
+      // Iterating over std::deque< read_handler_entry >
+      if (pending_ioservice.first != std::addressof(io_service_)) {
+        for (auto iter = pending_ioservice.second->begin(); 
+          iter != pending_ioservice.second->end();
+          iter = pending_ioservice.second->erase(iter)) {
+          auto& pending_read_handler = iter->first;
+
+          pending_ioservice.first->post(pending_read_handler);
+        }
       }
     }
 
@@ -322,7 +331,7 @@ public:
     { boost::recursive_mutex::scoped_lock lock{*impl.mutex_};
       impl.pending_read_handlers_
         ->at(std::addressof(io_service_))
-        ->push_front(std::make_pair(perform_read, io_service::work(io_service_)));
+        ->push_front(std::make_pair(perform_read, boost::make_unique<io_service::work>(io_service_)));
     }
   }
 
