@@ -49,9 +49,6 @@ include_directories ( ${Boost_INCLUDE_DIRS} )
 
 include_directories( BEFORE ${CMAKE_CURRENT_LIST_DIR} )
 
-# mapbox variant
-include_directories(BEFORE /opt/libs/variant/include/)
-
 # nlohmann-json
 hunter_add_package(nlohmann-json)
 find_package(nlohmann-json REQUIRED)
