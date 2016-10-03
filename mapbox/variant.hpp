@@ -580,7 +580,7 @@ public:
         helper_type::copy(old.type_index, &old.data, &data);
     }
 
-    VARIANT_INLINE variant(variant<Types...>&& old) noexcept(std::is_nothrow_move_constructible<std::tuple<Types...>>::value)
+    VARIANT_INLINE variant(variant<Types...>&& old) //noexcept(std::is_nothrow_move_constructible<std::tuple<Types...>>::value)
         : type_index(old.type_index)
     {
         helper_type::move(old.type_index, &old.data, &data);
