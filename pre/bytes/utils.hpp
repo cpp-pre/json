@@ -68,18 +68,41 @@ namespace pre { namespace bytes {
     }
     
     /**
-     * \brief Converts any given byte string to a corresponding hexadecimal number in a string.
-     * \param hex byte string
+     * \brief Convers the given byte array of the given length to a corresponding hexadecimal number in a human readable string.
+     * \param bytes buffer of bytes
      */
-    inline std::string to_hexstring(const std::string& hex) {
-        std::vector<char> bytes;
-        for (unsigned int i = 0; i < hex.length(); i += 2) {
-        std::string byteString = hex.substr(i, 2);
-        char byte = (char) strtol(byteString.c_str(), NULL, 16);
-        bytes.push_back(byte);
+    inline std::string to_hexstring(const std::string& bytes) {
+        uint8_t ch = 0x00;
+        size_t i = 0; 
+
+        if (bytes.size() == 0)
+            return std::string("");
+
+        /**
+         * Constant array which can be used to convert hex strings to real nibbles.
+         */
+        const char nibbleToChar[] = {'0', '1', '2', '3', '4', '5',
+                                     '6', '7', '8', '9', 'a', 'b',
+                                     'c', 'd', 'e', 'f'};
+	
+        std::string out;
+        out.reserve(bytes.size()*2);
+        while (i < bytes.size()) {
+	    
+            ch = (bytes[i] & 0xF0); // Strip off high nibble
+            ch = (ch >> NIBBLE_BITS); // shift the bits down
+            ch = (ch & 0x0F); // must do this is high order bit is on!
+	    
+            out.push_back(nibbleToChar[ch]); // convert the nibble to a String Character
+
+            ch = (bytes[i] & 0x0F); // Strip off low nibble 
+	    
+            out.push_back(nibbleToChar[ch]); // convert the nibble to a String Character
+	    
+            i++;
         }
-        std::string bb(bytes.begin(),bytes.end());
-        return bb;
+
+        return out;
     }
     
 
@@ -162,6 +185,21 @@ namespace pre { namespace bytes {
         }
         
         return result;
+    }
+
+    /**
+     * \brief Converts a string of hexadecimal number into a binary buffer of this valeu
+     * \param hex byte string
+     */
+    inline std::string buffer_from_hexstring(const std::string& hex) {
+        std::vector<char> bytes;
+        for (unsigned int i = 0; i < hex.length(); i += 2) {
+        std::string byteString = hex.substr(i, 2);
+        char byte = (char) strtol(byteString.c_str(), NULL, 16);
+        bytes.push_back(byte);
+        }
+        std::string bb(bytes.begin(),bytes.end());
+        return bb;
     }
 
     /**

@@ -79,7 +79,7 @@ boost::system::error_code mockup_serial_port_service::open(
   impl.cancelled_ = false;
   impl.pending_read_handlers_->emplace(
       std::addressof(io_service_), 
-      std::make_shared<std::deque<std::pair<boost::function<void ()>, io_service::work>>>());
+      std::make_shared<std::deque<implementation_type::read_handler_entry>>());
 
   ec = boost::system::error_code();
   return ec;

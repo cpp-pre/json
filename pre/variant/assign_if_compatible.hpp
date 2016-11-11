@@ -2,8 +2,8 @@
 #define PRE_VARIANT_ASSIGN_IF_COMPATIBLE_HPP
 
 #include <type_traits> 
-#include <boost/variant.hpp>
 
+#include <pre/variant/apply_visitor.hpp>
 #include <pre/json/traits/is_boost_variant.hpp>
 #include <pre/variant/detail/assignable_from.hpp>
 
@@ -18,7 +18,6 @@ namespace pre { namespace variant {
           !assignable_from<ResultVariant, U>::value
         >::type* = nullptr
       > ResultVariant operator()(const U& u) const {
-        //std::cout << "Cannot assign incompatible : " << typeid(U).name() << std::endl;
         return ResultVariant{}; //XXX: how to inform about this ? Variant is always non-empty, we cannot tel it failed. Optional ?
       }
 
@@ -27,7 +26,6 @@ namespace pre { namespace variant {
           assignable_from<ResultVariant, U>::value
         >::type* = nullptr
       > ResultVariant operator()(const U& u) const { 
-        //std::cout << "assigning compatible : " << typeid(U).name() << std::endl;
         return ResultVariant{u};
       }
     };
@@ -51,11 +49,11 @@ namespace pre { namespace variant {
   template<class Result, class InspectedVariant,
     typename std::enable_if< 
       pre::json::traits::is_boost_variant<InspectedVariant>::value
-      && pre::json::traits::is_boost_variant<Result>::value 
+      || mapbox::traits::is_mapbox_variant<Result>::value 
     >::type* = nullptr
   > 
   inline Result assign_if_compatible(const InspectedVariant& variant) {
-    return boost::apply_visitor(detail::assign_if_compatible_visitor<Result>{}, variant);
+    return apply_visitor(detail::assign_if_compatible_visitor<Result>{}, variant);
   }
 
 }}

@@ -11,6 +11,7 @@
 #include <pre/json/traits/is_container.hpp>
 #include <pre/json/traits/is_associative_container.hpp>
 #include <pre/json/traits/is_string.hpp>
+#include <mapbox/traits/is_mapbox_variant.hpp>
 
 // XXX: Could we forward declare them ? to support them without depending explicitely on them ?
 #include <boost/chrono/duration.hpp>
@@ -50,7 +51,8 @@ namespace pre { namespace json { namespace detail {
 
     template<class T>
     using enable_if_is_variant_t = typename std::enable_if<
-      traits::is_boost_variant<T>::value
+         traits::is_boost_variant<T>::value
+      || mapbox::traits::is_mapbox_variant<T>::value 
     ,T>::type;
 
     template<class T>

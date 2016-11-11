@@ -6,14 +6,17 @@
 
 #include <pre/json/traits/is_boost_variant.hpp>
 #include <pre/variant/detail/assignable_from.hpp>
+#include <pre/variant/apply_visitor.hpp>
+
+#include <mapbox/traits/is_mapbox_variant.hpp>
+
 
 namespace pre { namespace variant { 
 
   namespace detail {
+    
     template<class ResultVariant, template<class T> class TraitMetafunction>
     struct get_trait_visitor : public boost::static_visitor<ResultVariant> {
-
-      
 
       template< class U, 
         typename boost::disable_if<
@@ -66,20 +69,22 @@ namespace pre { namespace variant {
    */
   template<class Result, template<class T> class TraitMetafunction, class InspectedVariant,
     typename std::enable_if< 
-      pre::json::traits::is_boost_variant<Result>::value 
+         pre::json::traits::is_boost_variant<Result>::value 
+      || mapbox::traits::is_mapbox_variant<Result>::value 
     >::type* = nullptr
   > 
   inline Result get_trait(const InspectedVariant& variant) {
-    return boost::apply_visitor(detail::get_trait_visitor<Result, TraitMetafunction>{}, variant);
+    return apply_visitor(detail::get_trait_visitor<Result, TraitMetafunction>{}, variant);
   }
 
   template<class Result, template<class T> class TraitMetafunction, class InspectedVariant,
     typename std::enable_if< 
-      !pre::json::traits::is_boost_variant<Result>::value 
+      !pre::json::traits::is_boost_variant<Result>::value && 
+      !mapbox::traits::is_mapbox_variant<Result>::value 
     >::type* = nullptr
   >
   inline Result get_trait(const InspectedVariant& variant) {
-    return boost::apply_visitor(detail::get_value_trait_visitor<Result, TraitMetafunction>{}, variant);
+    return apply_visitor(detail::get_value_trait_visitor<Result, TraitMetafunction>{}, variant);
   }
   
 }}

@@ -201,7 +201,7 @@ BOOST_AUTO_TEST_CASE (asio_mockup_serial_port_service_test_simplereadwrite) {
       boost::asio::async_read_until(port, receive_buf, "||", readHandler);
 
       // just testing if it compiles
-      BOOST_TEST_REQUIRE(boost::asio::get_bytes_available(port) == 0);
+      BOOST_TEST_REQUIRE(boost::asio::get_bytes_available(port) == 0u);
 
 
       ios.run();
@@ -275,7 +275,7 @@ BOOST_AUTO_TEST_CASE(test_isolated_cancellation) {
     }
 
     // just testing if it compiles
-    BOOST_TEST_REQUIRE(boost::asio::get_bytes_available(port) == 0);
+    BOOST_TEST_REQUIRE(boost::asio::get_bytes_available(port) == 0u);
 
 
   });

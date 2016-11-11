@@ -9,8 +9,8 @@ HunterGate(
 project (cpp-pre)
 
 set (pre_VERSION_MAJOR 1)
-set (pre_VERSION_MINOR 3)
-set (pre_VERSION_PATCH 8)
+set (pre_VERSION_MINOR 4)
+set (pre_VERSION_PATCH 1)
 
 set (PRE_VERSION "${pre_VERSION_MAJOR}.${pre_VERSION_MINOR}.${pre_VERSION_PATCH}")
 
@@ -22,6 +22,16 @@ if (UNIT_TESTS)
 endif()
 
 add_definitions(--std=c++11)
+
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR "${CMAKE_CXX_COMPILER_ID}" MATCHES "CLANG")
+	add_compile_options(-Wall
+					-Werror
+					-Wno-unused-local-typedefs
+					-Wno-unused-variable
+					-Wno-deprecated-declarations # neede for boost 1.59 filesystem uses auto_ptr :-( gcc5.3 does not like this
+					-Wno-uninitialized
+					)
+endif()				
 
 if(MSVC)
   add_definitions(-DNOMINMAX)
@@ -44,6 +54,9 @@ hunter_add_package(nlohmann-json)
 find_package(nlohmann-json REQUIRED)
 
 install(DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/pre DESTINATION include
+        FILES_MATCHING PATTERN "*.[ih]pp")
+
+install(DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/mapbox DESTINATION include
         FILES_MATCHING PATTERN "*.[ih]pp")
 
 include(CMakePackageConfigHelpers)
