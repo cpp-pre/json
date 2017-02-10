@@ -25,7 +25,7 @@ namespace boost { namespace asio {
   /// @param serial_port Port to flush.
   /// @param what Determines the buffers to flush.
   /// @param error Set to indicate what error occurred, if any.
-  void flush_serial_port(
+  inline void flush_serial_port(
     boost::asio::serial_port& serial_port,
     flush_type what,
     boost::system::error_code& error)
@@ -46,7 +46,7 @@ namespace boost { namespace asio {
 #endif
   }
 
-  void flush_serial_port(
+  inline void flush_serial_port(
     basic_serial_port<mockup_serial_port_service>&,
     flush_type,
     boost::system::error_code& error) {
