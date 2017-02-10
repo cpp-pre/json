@@ -8,7 +8,7 @@ namespace boost { namespace asio {
 
   /// @brief Returns the number of bytes available for reading from a serial
   ///        port without blocking.
-  std::size_t get_bytes_available(
+ inline std::size_t get_bytes_available(
     boost::asio::serial_port& serial_port,
     boost::system::error_code& error)
   {
@@ -41,7 +41,7 @@ namespace boost { namespace asio {
 
   }
 
-  std::size_t get_bytes_available(
+ inline std::size_t get_bytes_available(
     basic_serial_port<mockup_serial_port_service>& serial_port,
     boost::system::error_code& error)
   {
