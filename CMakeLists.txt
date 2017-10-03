@@ -2,15 +2,15 @@ cmake_minimum_required (VERSION 3.0.0)
 
 include("cmake/HunterGate.cmake")
 HunterGate(
-    URL "https://github.com/ruslo/hunter/archive/v0.14.12.tar.gz"
-    SHA1 "2d444140db0d53393b5490604006bb4f4896a444"
+    URL "https://github.com/ruslo/hunter/archive/v0.19.116.tar.gz"
+    SHA1 "c872605eee88941a751fb91a028cc5a69c77eac0"
 )
 
 project (cpp-pre)
 
 set (pre_VERSION_MAJOR 1)
 set (pre_VERSION_MINOR 4)
-set (pre_VERSION_PATCH 2)
+set (pre_VERSION_PATCH 3)
 
 set (PRE_VERSION "${pre_VERSION_MAJOR}.${pre_VERSION_MINOR}.${pre_VERSION_PATCH}")
 
@@ -50,8 +50,8 @@ include_directories ( ${Boost_INCLUDE_DIRS} )
 include_directories( BEFORE ${CMAKE_CURRENT_LIST_DIR} )
 
 # nlohmann-json
-hunter_add_package(nlohmann-json)
-find_package(nlohmann-json REQUIRED)
+hunter_add_package(nlohmann_json)
+find_package(nlohmann_json CONFIG REQUIRED)
 
 install(DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/pre DESTINATION include
         FILES_MATCHING PATTERN "*.[ih]pp")

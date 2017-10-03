@@ -48,8 +48,8 @@ link_directories ( ${Boost_LIBRARY_DIRS} )
 include_directories(BEFORE ${CMAKE_SOURCE_DIR})
 
 # nlohmann-json
-hunter_add_package(nlohmann-json)
-find_package(nlohmann-json REQUIRED)
+hunter_add_package(nlohmann_json)
+find_package(nlohmann_json REQUIRED)
 
 set (platform_specific_lib)
 if(WIN32)
@@ -64,7 +64,7 @@ add_unit_test(NAME asio_mockup_serial_port_service_test
   ${platform_specific_lib})
 
 add_unit_test(NAME dejsonize_test
-  LIBS nlohmann-json::nlohmann-json)
+  LIBS nlohmann_json)
 
 add_unit_test(NAME function_traits_test 
   LIBS 
