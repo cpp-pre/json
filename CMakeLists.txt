@@ -10,7 +10,7 @@ project (cpp-pre)
 
 set (pre_VERSION_MAJOR 1)
 set (pre_VERSION_MINOR 4)
-set (pre_VERSION_PATCH 3)
+set (pre_VERSION_PATCH 4)
 
 set (PRE_VERSION "${pre_VERSION_MAJOR}.${pre_VERSION_MINOR}.${pre_VERSION_PATCH}")
 
