@@ -75,3 +75,7 @@ add_unit_test(NAME function_traits_test
 add_unit_test(NAME retry_for
   LIBS ${CMAKE_THREAD_LIBS_INIT}
   ${Boost_LIBRARIES})
+
+add_unit_test(NAME variant_for_each_type
+  LIBS ${CMAKE_THREAD_LIBS_INIT}
+  ${Boost_LIBRARIES})
