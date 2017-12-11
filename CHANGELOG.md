@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## v1.4.4
+  * Support complete build on MSVC 2017
+  * pre::variant::for_each_type now supports referencing non-const visitor too.
+  * updated Hunter distribution to current release 
+    * nlohmann-json v2.1.1-p1
+    * Boost 1.63.0 (stays compatible to Boost 1.59.0 though)
+
 ## v1.4.2
 
   * FEATURE: pre::retry_for (Function which retries a callback during a given duration)
