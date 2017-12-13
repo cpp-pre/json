@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## v1.4.5
+  * boost::asio::mockup\_serial\_port :
+    * Fix hanging on cancelled reads.
+    * Fix crash on close
+
 ## v1.4.4
   * Support complete build on MSVC 2017
   * pre::variant::for_each_type now supports referencing non-const visitor too.

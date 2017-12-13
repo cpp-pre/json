@@ -176,6 +176,8 @@ public:
 
     impl.ready_read_->notify_all();
 
+    impl.cancelled_ = false;
+
     ec = boost::system::error_code();
     return ec;
   }
@@ -280,7 +282,7 @@ public:
       bytes_available = !impl.serial_line_simulation_buffer_in_->empty();
     }
 
-    while ( (!bytes_available) && (!impl.cancelled_) ) {
+    while ( (impl.open_) && (!bytes_available) && (!impl.cancelled_) ) {
       // Wait for bytes to be available
       boost::mutex mutex_wait{};
       boost::mutex::scoped_lock wait_lock{mutex_wait};
