@@ -8,6 +8,7 @@
 
 #include <boost/asio/detail/config.hpp>
 
+#include <functional>
 #include <memory>
 #include <cstring>
 #include <string>
@@ -21,7 +22,7 @@ namespace boost {
 namespace asio {
 namespace detail {
 
-  typedef std::map<std::string, mockup_serial_port_service::implementation_type>
+  typedef std::map<std::string, std::reference_wrapper<mockup_serial_port_service::implementation_type>>
     mockup_device_map;
 
   /**
@@ -39,7 +40,7 @@ namespace detail {
   //mockup_device_map mockup_device_storage::device_store{};
   //boost::recursive_mutex mockup_device_storage::mutex_;
 
-  static mockup_device_storage& mockup_storage() {
+  inline mockup_device_storage& mockup_storage() {
     static mockup_device_storage store{};
     return store;
   }
@@ -67,9 +68,10 @@ boost::system::error_code mockup_serial_port_service::open(
   }
 
   if (mockup_storage().device_store.find(device) == mockup_storage().device_store.end()) {
-    mockup_storage().device_store.emplace(device, impl);
+    mockup_storage().device_store.emplace(device, std::ref(impl));
+    impl = mockup_storage().device_store.at(device);
   } else {
-    impl = mockup_storage().device_store[device];
+    impl = mockup_storage().device_store.at(device);
   }
 
   // Assign thread specific variables
