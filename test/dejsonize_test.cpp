@@ -106,11 +106,11 @@ BOOST_AUTO_TEST_CASE (composedtype) {
   std::cout << json_customer.dump(2) << std::endl;
 
   auto customer_parsed = pre::json::from_json<datamodel::customer>(json_customer);
-  BOOST_ASSERT(customer_parsed == customer);
+  BOOST_REQUIRE(customer_parsed == customer);
 
   auto json_customer_after_reserialize = pre::json::to_json(customer);
   std::cout << json_customer_after_reserialize.dump(2) << std::endl;
-  BOOST_ASSERT(json_customer == json_customer_after_reserialize);
+  BOOST_REQUIRE(json_customer == json_customer_after_reserialize);
 
   // testing an adapted skill alone from plain json
   nlohmann::json obj {
@@ -120,8 +120,8 @@ BOOST_AUTO_TEST_CASE (composedtype) {
 
   auto skill_parsed = pre::json::from_json<datamodel::skill>(obj);
 
-  BOOST_ASSERT(skill_parsed.skill_name == "GML");
-  BOOST_ASSERT(skill_parsed.experience == 10);
+  BOOST_REQUIRE(skill_parsed.skill_name == "GML");
+  BOOST_REQUIRE(skill_parsed.experience == 10);
   std::cout << pre::json::to_json(skill_parsed).dump(2) << std::endl;
 }
 
@@ -145,7 +145,7 @@ BOOST_AUTO_TEST_CASE (nested) {
   auto json_sales_assistant_reserialized = pre::json::to_json(deser_assistant);
   std::cout << json_sales_assistant_reserialized.dump(2) << std::endl;
 
-  BOOST_ASSERT(json_sales_assistant_reserialized == json_sales_assistant);
+  BOOST_REQUIRE(json_sales_assistant_reserialized == json_sales_assistant);
 }
 
 BOOST_AUTO_TEST_CASE (working_plain_json) {
@@ -220,12 +220,12 @@ BOOST_AUTO_TEST_CASE (incorrect_plain_json) {
 
     auto deser_assistant = pre::json::from_json<datamodel::sales_assitant>(json);
     // Must fail
-    BOOST_ASSERT(false);
+    BOOST_REQUIRE(false);
 
   } catch (...) {
     std::cout << "EXCEPTION which will be outputed to library user : " << std::endl;
     std::cout << boost::current_exception_diagnostic_information(true) << std::endl;
-    BOOST_ASSERT(true);
+    BOOST_REQUIRE(true);
   }
 
   // Test buggy value types
@@ -262,12 +262,12 @@ BOOST_AUTO_TEST_CASE (incorrect_plain_json) {
 
     auto deser_assistant = pre::json::from_json<datamodel::sales_assitant>(json);
     // Must fail
-    BOOST_ASSERT(false);
+    BOOST_REQUIRE(false);
 
   } catch (...) {
     std::cout << "EXCEPTION which will be outputed to library user : " << std::endl;
     std::cout << boost::current_exception_diagnostic_information(true) << std::endl;
-    BOOST_ASSERT(true);
+    BOOST_REQUIRE(true);
   }
 }
 
@@ -287,7 +287,7 @@ BOOST_AUTO_TEST_CASE (containers_direct) {
   std::cout << skills_json.dump(2) << std::endl;
 
   auto skills_deserialized = pre::json::from_json<std::vector<datamodel::skill>>(skills_json); 
-  BOOST_ASSERT(skills == skills_deserialized);
+  BOOST_REQUIRE(skills == skills_deserialized);
 }
 
 namespace datamodel {
@@ -360,7 +360,7 @@ BOOST_AUTO_TEST_CASE (boost_variant) {
   auto employees_reserialized = pre::json::to_json(employees_deserialized);
   std::cout << employees_reserialized.dump(2) << std::endl;
 
-  BOOST_ASSERT(employees == employees_deserialized);
+  BOOST_REQUIRE(employees == employees_deserialized);
 }
 
 namespace datamodel {
@@ -391,7 +391,7 @@ BOOST_AUTO_TEST_CASE(maps) {
 
   auto some_deserialized = pre::json::from_json<datamodel::struct_with_a_map>(some_json);
   
-  BOOST_ASSERT(some_deserialized == some); 
+  BOOST_REQUIRE(some_deserialized == some); 
 }
 
 
@@ -433,7 +433,7 @@ BOOST_AUTO_TEST_CASE (enums) {
   auto val_reserialized = pre::json::to_json(val_deserialized);
   std::cout << val_reserialized.dump(2) << std::endl;
 
-  BOOST_ASSERT(val == val_deserialized);
+  BOOST_REQUIRE(val == val_deserialized);
 }
 
 BOOST_AUTO_TEST_CASE (adapted_struct_jsonize_chrono) {
@@ -448,7 +448,7 @@ BOOST_AUTO_TEST_CASE (adapted_struct_jsonize_chrono) {
   auto val_reserialized = pre::json::to_json(val_deserialized);
   std::cout << val_reserialized.dump(2) << std::endl;
 
-  BOOST_ASSERT(val == val_deserialized);
+  BOOST_REQUIRE(val == val_deserialized);
 }
 
 namespace datamodel {
@@ -477,7 +477,7 @@ BOOST_AUTO_TEST_CASE (adapted_struct_jsonize_chrono_composed) {
   auto val_reserialized = pre::json::to_json(val_deserialized);
   std::cout << val_reserialized.dump(2) << std::endl;
 
-  BOOST_ASSERT(val == val_deserialized);
+  BOOST_REQUIRE(val == val_deserialized);
 }
 
 namespace datamodel {
@@ -503,7 +503,7 @@ BOOST_AUTO_TEST_CASE (optional) {
   auto val_reserialized = pre::json::to_json(val_deserialized);
   std::cout << val_reserialized.dump(2) << std::endl;
 
-  BOOST_ASSERT(val == val_deserialized);
+  BOOST_REQUIRE(val == val_deserialized);
 }
 
 BOOST_AUTO_TEST_CASE (optional_member) {
@@ -521,7 +521,7 @@ BOOST_AUTO_TEST_CASE (optional_member) {
     auto val_reserialized = pre::json::to_json(val_deserialized);
     std::cout << val_reserialized.dump(2) << std::endl;
 
-    BOOST_ASSERT(val == val_deserialized);
+    BOOST_REQUIRE(val == val_deserialized);
   }
 
   {
@@ -536,7 +536,7 @@ BOOST_AUTO_TEST_CASE (optional_member) {
     auto val_reserialized = pre::json::to_json(val_deserialized);
     std::cout << val_reserialized.dump(2) << std::endl;
 
-    BOOST_ASSERT(val == val_deserialized);
+    BOOST_REQUIRE(val == val_deserialized);
   }
 }
 
@@ -574,7 +574,7 @@ BOOST_AUTO_TEST_CASE (mapbox_variant_simple) {
     auto val_reserialized = pre::json::to_json(val_deserialized);
     std::cout << val_reserialized.dump(2) << std::endl;
 
-    BOOST_ASSERT(val == val_deserialized);
+    BOOST_REQUIRE(val == val_deserialized);
   }
 
 
@@ -605,7 +605,7 @@ BOOST_AUTO_TEST_CASE (mapbox_variant) {
     auto val_reserialized = pre::json::to_json(val_deserialized);
     std::cout << val_reserialized.dump(2) << std::endl;
 
-    BOOST_ASSERT(val == val_deserialized);
+    BOOST_REQUIRE(val == val_deserialized);
   }
 
 
