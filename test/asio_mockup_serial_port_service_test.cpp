@@ -112,6 +112,7 @@ BOOST_AUTO_TEST_CASE (asio_mockup_serial_port_service_test_simplereadwrite) {
         auto bytes_written = boost::asio::write(port, buffer(message.data(), message.size()));
         BOOST_ASSERT(bytes_written == message.size());
 
+        boost::this_thread::sleep_for(100_ms);
         std::string message_end = ", and this ends here.||";
         bytes_written = boost::asio::write(port, buffer(message_end.data(), message_end.size()));
         BOOST_ASSERT(bytes_written == message_end.size());
