@@ -39,7 +39,7 @@ BOOST_AUTO_TEST_CASE (readwrite) {
       boost::function<void(const boost::system::error_code& ec, std::size_t bytes_transferred)> write_handler 
         = [&tries, &called, &port, &buffer, &write_handler]
           (const boost::system::error_code& ec, std::size_t bytes_transferred) { 
-        BOOST_ASSERT(!ec);
+        BOOST_REQUIRE(!ec);
         --tries; ++called;
 
         buffer = "Holla";
@@ -56,7 +56,7 @@ BOOST_AUTO_TEST_CASE (readwrite) {
       boost::asio::async_write(port, boost::asio::buffer(buffer.data(), buffer.size()), write_handler);
           
       ios.run();
-      BOOST_ASSERT(called == try_count);
+      BOOST_REQUIRE(called == try_count);
     });
 
     boost::thread t2([try_count](){
@@ -72,13 +72,13 @@ BOOST_AUTO_TEST_CASE (readwrite) {
           [try_count, tries, &buffer, &called](const boost::system::error_code& ec, std::size_t bytes_transferred) {
 
             std::cout << "Read " << bytes_transferred << " bytes : " << buffer << std::endl;
-            BOOST_ASSERT(bytes_transferred == 5);
-            BOOST_ASSERT(!ec);
+            BOOST_REQUIRE(bytes_transferred == size_t{5});
+            BOOST_REQUIRE(!ec);
 
             if (tries == try_count) {
-              BOOST_ASSERT(std::string(buffer, bytes_transferred) == "Hello");
+              BOOST_REQUIRE(std::string(buffer, bytes_transferred) == "Hello");
             } else {
-              BOOST_ASSERT(std::string(buffer, bytes_transferred) == "Holla");
+              BOOST_REQUIRE(std::string(buffer, bytes_transferred) == "Holla");
             }
             ++called;
           }
@@ -88,7 +88,7 @@ BOOST_AUTO_TEST_CASE (readwrite) {
       }
       
       ios.run();
-      BOOST_ASSERT(called == try_count);
+      BOOST_REQUIRE(called == try_count);
     });
 
     t2.join();
@@ -112,12 +112,12 @@ BOOST_AUTO_TEST_CASE (readwrite) {
 
         std::string message = str(boost::format("This is a message %1%") % trie);
         auto bytes_written = boost::asio::write(port, buffer(message.data(), message.size()));
-        BOOST_ASSERT(bytes_written == message.size());
+        BOOST_REQUIRE(bytes_written == message.size());
 
         boost::this_thread::sleep_for(100_ms);
         std::string message_end = ", and this ends here.||";
         bytes_written = boost::asio::write(port, buffer(message_end.data(), message_end.size()));
-        BOOST_ASSERT(bytes_written == message_end.size());
+        BOOST_REQUIRE(bytes_written == message_end.size());
 
         boost::this_thread::sleep_for(100_ms);
       }
@@ -134,7 +134,7 @@ BOOST_AUTO_TEST_CASE (readwrite) {
       size_t retries = try_count;
       boost::function<void (const boost::system::error_code& ec, size_t bytes_read)> readHandler =
         [&receive_buf, &readHandler, &port, &retries](const boost::system::error_code& ec, size_t bytes_read) {
-          BOOST_ASSERT(!ec);
+          BOOST_REQUIRE(!ec);
           --retries;
 
           std::cout << "message arrived of size " << bytes_read << std::endl;
@@ -153,7 +153,7 @@ BOOST_AUTO_TEST_CASE (readwrite) {
       boost::asio::async_read_until(port, receive_buf, "||", readHandler);
 
       ios.run();
-      BOOST_ASSERT_MSG(retries == 0, "Not all message where given back");
+      BOOST_TEST_REQUIRE(retries == 0u, "Not all message where given back");
     });
 
     producer.join();
@@ -179,7 +179,7 @@ BOOST_AUTO_TEST_CASE(async_read_and_cancellation) {
         boost::system::error_code ec{};
         boost::asio::flush_serial_port(port, boost::asio::flush_both, ec);
 
-        BOOST_ASSERT(bytes == message.size());
+        BOOST_REQUIRE(bytes == message.size());
         boost::this_thread::sleep_for(10_ms);
       }
 
@@ -194,8 +194,8 @@ BOOST_AUTO_TEST_CASE(async_read_and_cancellation) {
       boost::function<void (const boost::system::error_code& ec, size_t bytes_read)> readHandler =
         [&](const boost::system::error_code& ec, size_t bytes_read) {
 
-          BOOST_ASSERT(ec == boost::asio::error::operation_aborted);
-          BOOST_ASSERT(bytes_read == 0);
+          BOOST_REQUIRE(ec == boost::asio::error::operation_aborted);
+          BOOST_REQUIRE(bytes_read == 0);
         };
 
       boost::asio::steady_timer timeout{ios};
@@ -210,7 +210,7 @@ BOOST_AUTO_TEST_CASE(async_read_and_cancellation) {
       boost::asio::async_read_until(port, receive_buf, "||", readHandler);
 
       // just testing if it compiles
-      BOOST_TEST_REQUIRE(boost::asio::get_bytes_available(port) == 0u);
+      BOOST_REQUIRE(boost::asio::get_bytes_available(port) == 0u);
 
 
       ios.run();
@@ -241,7 +241,7 @@ BOOST_AUTO_TEST_CASE(test_isolated_cancellation) {
       boost::system::error_code ec{};
       boost::asio::flush_serial_port(port, boost::asio::flush_both, ec);
 
-      BOOST_ASSERT(bytes == message.size());
+      BOOST_REQUIRE(bytes == message.size());
     }
 
   }); 
@@ -284,7 +284,7 @@ BOOST_AUTO_TEST_CASE(test_isolated_cancellation) {
     }
 
     // just testing if it compiles
-    BOOST_TEST_REQUIRE(boost::asio::get_bytes_available(port) == 0u);
+    BOOST_REQUIRE(boost::asio::get_bytes_available(port) == 0u);
 
 
   });
