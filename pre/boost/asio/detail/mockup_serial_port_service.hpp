@@ -40,6 +40,7 @@ namespace boost {
 namespace asio {
 namespace detail {
 
+
 // Extend mockup_descriptor_service to provide serial port support.
 class mockup_serial_port_service
 {
@@ -219,7 +220,6 @@ public:
     size_t bytes_transferred = std::distance(begin_bytes, end_bytes);
 
     for (auto& pending_ioservice : *impl.pending_read_handlers_) {
-      
       // Iterating over std::deque< read_handler_entry >
       if (pending_ioservice.first != std::addressof(io_service_)) {
 
@@ -291,14 +291,15 @@ public:
     };
 
     // Register a read handler and run the ios when it's time to (write_some will post the handler) !
+    io_service ios_for_read_notification;
     { boost::recursive_mutex::scoped_lock lock{*impl.mutex_};
 
       impl.pending_read_handlers_
-        ->at(std::addressof(io_service_))
-        ->push_front(std::make_pair(perform_read, boost::make_unique<io_service::work>(io_service_)));
+        ->at(std::addressof(ios_for_read_notification))
+        ->push_front(std::make_pair(perform_read, boost::make_unique<io_service::work>(ios_for_read_notification)));
     }
 
-    io_service_.run(); // We wait here until write_some dispatches the call to perform_read
+    ios_for_read_notification.run(); // We wait here until write_some dispatches the call to perform_read
     return read_count;
   }
 
