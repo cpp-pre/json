@@ -55,6 +55,20 @@ void mockup_serial_port_service::shutdown_service()
 {
 }
 
+void mockup_serial_port_service::destroy(implementation_type& impl) {
+  boost::recursive_mutex::scoped_lock lock{mockup_storage().mutex_};
+  
+  for (auto iter = mockup_storage().device_store.begin();
+      iter != mockup_storage().device_store.end();) {
+    implementation_type& device = iter->second;
+    if (std::addressof(device) == std::addressof(impl)) {
+      iter = mockup_storage().device_store.erase(iter);
+    } else {
+      ++iter;
+    }
+  }
+}
+
 boost::system::error_code mockup_serial_port_service::open(
     mockup_serial_port_service::implementation_type& impl,
     const std::string& device, boost::system::error_code& ec)
@@ -75,13 +89,16 @@ boost::system::error_code mockup_serial_port_service::open(
   }
 
   // Assign thread specific variables
-  mockup_storage().handle_count++;
-  impl.handle_ = mockup_storage().handle_count;
-  impl.open_ = true;
-  impl.cancelled_ = false;
-  impl.pending_read_handlers_->emplace(
-      std::addressof(io_service_), 
-      std::make_shared<std::deque<implementation_type::read_handler_entry>>());
+  { 
+    boost::recursive_mutex::scoped_lock lock{*impl.mutex_};
+    mockup_storage().handle_count++;
+    impl.handle_ = mockup_storage().handle_count;
+    impl.open_ = true;
+    impl.cancelled_ = false;
+    impl.pending_read_handlers_->emplace(
+        std::addressof(io_service_), 
+        std::make_shared<std::deque<implementation_type::read_handler_entry>>());
+  }
 
   ec = boost::system::error_code();
   return ec;

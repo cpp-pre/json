@@ -102,10 +102,8 @@ public:
 //  }
 
   // Destroy a serial port implementation.
-  void destroy(implementation_type& impl) 
-  {
-  }
-
+  void destroy(implementation_type& impl);
+  
   // Open the serial port using the specified device name.
   BOOST_ASIO_DECL boost::system::error_code open(implementation_type& impl,
       const std::string& device, boost::system::error_code& ec);
