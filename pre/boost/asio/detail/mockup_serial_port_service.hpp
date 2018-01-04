@@ -223,12 +223,10 @@ public:
       // Iterating over std::deque< read_handler_entry >
       if (pending_ioservice.first != std::addressof(io_service_)) {
 
-        for (auto iter = pending_ioservice.second->begin(); 
-          iter != pending_ioservice.second->end();
-          iter = pending_ioservice.second->erase(iter)) {
-
-          const auto& pending_read_handler = std::bind(iter->first, data);
+        if (!pending_ioservice.second->empty()) {
+          const auto& pending_read_handler = std::bind(pending_ioservice.second->back().first, data);
           pending_ioservice.first->post(pending_read_handler);
+          pending_ioservice.second->pop_back();
         }
       }
     }
