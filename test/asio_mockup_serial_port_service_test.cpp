@@ -20,7 +20,7 @@
 
 #include <pre/chrono/chrono_suffixes.hpp>
 
-BOOST_AUTO_TEST_CASE (asio_mockup_serial_port_service_test_simplereadwrite) {
+BOOST_AUTO_TEST_CASE (readwrite) {
 
   using namespace boost::asio;
   using namespace pre::chrono::boost;
@@ -103,9 +103,11 @@ BOOST_AUTO_TEST_CASE (asio_mockup_serial_port_service_test_simplereadwrite) {
       io_service ios;
       basic_serial_port<mockup_serial_port_service> port{ios, "SLC0"};
       
+
       boost::this_thread::sleep_for(1_sec);
 
       for (size_t trie = 0; trie < try_count; ++trie) {
+
         std::cout << "Sending message " << trie << std::endl;
 
         std::string message = str(boost::format("This is a message %1%") % trie);
@@ -157,6 +159,12 @@ BOOST_AUTO_TEST_CASE (asio_mockup_serial_port_service_test_simplereadwrite) {
     producer.join();
     consumer.join();
   }
+}
+
+BOOST_AUTO_TEST_CASE(async_read_and_cancellation) {
+
+  using namespace boost::asio;
+  using namespace pre::chrono::boost;
 
   {
     boost::thread producer([]() {
