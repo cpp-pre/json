@@ -1,8 +1,7 @@
-# from/to JSON 
+[![pipeline status](https://git.lecbna.org/cpp-pre/json/badges/master/pipeline.svg)](https://git.lecbna.org/cpp-pre/json/commits/master)
+# pre::from_ or to_ json
 
-Deserializes any json object or value in a C++ type.
-
-The function throws an std::exception if a mandatory member isn't found, but doesn't in the case of boost::optional.
+[de]Serializes any json object or value to a C++ type with the magic of compile time reflection.
 
 ## Examples
 
