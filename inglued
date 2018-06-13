@@ -1,0 +1,4 @@
+{
+  "boostorg/fusion" : { "@" : "boost-1.67.0", "-I": "include/" },
+  "nlohmann/json" :  { "@" : "v3.1.2", "-I" : "include/" }
+}
