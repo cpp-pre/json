@@ -13,7 +13,7 @@
 #include <boost/fusion/include/tag_of.hpp>
 #include <boost/fusion/include/struct.hpp>
 
-#include <pre/variant/traits/is_boost_variant.hpp>
+#include <pre/variant/traits/is_std_variant.hpp>
 #include <pre/json/traits/is_container.hpp>
 #include <pre/json/traits/is_associative_container.hpp>
 #include <pre/json/traits/is_string.hpp>
@@ -56,7 +56,7 @@ namespace pre { namespace json { namespace traits {
         typename fusion::traits::is_sequence<T>::type,
 
         // Any boost variant
-        typename pre::variant::traits::is_boost_variant<T>::type,
+        typename pre::variant::traits::is_std_variant<T>::type,
 
         // Integral types
         typename mpl::or_<

@@ -325,7 +325,7 @@ namespace datamodel {
     std::string fighting_tactic;
   };
 
-  typedef boost::variant<cleaner, cashier, security> possible_responsibilities;
+  typedef std::variant<cleaner, cashier, security> possible_responsibilities;
 }
 
 BOOST_FUSION_ADAPT_STRUCT(datamodel::security,
@@ -440,12 +440,12 @@ BOOST_AUTO_TEST_CASE (enums) {
 
 BOOST_AUTO_TEST_CASE (adapted_struct_jsonize_chrono) {
 
-  boost::chrono::milliseconds val{100};
+  std::chrono::milliseconds val{100};
 
   auto val_json = pre::json::to_json(val);
   std::cout << val_json.dump(2) << std::endl;
 
-  auto val_deserialized = pre::json::from_json<boost::chrono::milliseconds>(val_json); 
+  auto val_deserialized = pre::json::from_json<std::chrono::milliseconds>(val_json); 
 
   auto val_reserialized = pre::json::to_json(val_deserialized);
   std::cout << val_reserialized.dump(2) << std::endl;
@@ -456,7 +456,7 @@ BOOST_AUTO_TEST_CASE (adapted_struct_jsonize_chrono) {
 namespace datamodel {
   struct some_time {
     std::string label;
-    boost::chrono::milliseconds millis;
+    std::chrono::milliseconds millis;
     std::chrono::minutes mins;
   };
 
@@ -469,7 +469,7 @@ BOOST_FUSION_ADAPT_STRUCT(datamodel::some_time,
 
 BOOST_AUTO_TEST_CASE (adapted_struct_jsonize_chrono_composed) {
 
-  datamodel::some_time val{"my time", boost::chrono::milliseconds(100), std::chrono::minutes(43)};
+  datamodel::some_time val{"my time", std::chrono::milliseconds(100), std::chrono::minutes(43)};
 
   auto val_json = pre::json::to_json(val);
   std::cout << val_json.dump(2) << std::endl;
@@ -484,7 +484,7 @@ BOOST_AUTO_TEST_CASE (adapted_struct_jsonize_chrono_composed) {
 
 namespace datamodel {
   struct with_optional_member {
-    boost::optional<double> field_optional; 
+    std::optional<double> field_optional; 
     double other; 
   };
 }
@@ -495,12 +495,12 @@ BOOST_FUSION_ADAPT_STRUCT(datamodel::with_optional_member,
 
 BOOST_AUTO_TEST_CASE (optional) {
 
-  boost::optional<std::string> val{"some text"};
+  std::optional<std::string> val{"some text"};
 
   auto val_json = pre::json::to_json(val);
   std::cout << val_json.dump(2) << std::endl;
 
-  auto val_deserialized = pre::json::from_json<boost::optional<std::string>>(val_json); 
+  auto val_deserialized = pre::json::from_json<std::optional<std::string>>(val_json); 
 
   auto val_reserialized = pre::json::to_json(val_deserialized);
   std::cout << val_reserialized.dump(2) << std::endl;
@@ -548,7 +548,7 @@ namespace datamodel {
 
   struct with_std_variant{
     possible_responsibilities_std responsibility;
-    boost::optional<possible_responsibilities_std> additional_responsibility;
+    std::optional<possible_responsibilities_std> additional_responsibility;
   };
 }
 

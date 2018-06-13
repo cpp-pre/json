@@ -1,7 +1,6 @@
-#ifndef PRE_VARIANT_FOR_EACH_TYPE_HPP
-#define PRE_VARIANT_FOR_EACH_TYPE_HPP
+#pragma once
 
-namespace pre { namespace variant {
+namespace pre::variant {
 
   template< template<class...> class Variant, class F, class... Types>
   inline void for_each_type( Variant<Types...>& variant, F&& f) {
@@ -13,6 +12,4 @@ namespace pre { namespace variant {
     (void)std::initializer_list<int>{(std::ref(f)(std::forward<Types>(Types{})),0)...};
   }
 
-}}
-
-#endif
+}

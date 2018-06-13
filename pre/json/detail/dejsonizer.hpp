@@ -1,8 +1,8 @@
 #ifndef PRE_JSON_DETAIL_DEJSONIZER_HPP
 #define PRE_JSON_DETAIL_DEJSONIZER_HPP
 
-#include <boost/variant.hpp>
-#include <boost/optional.hpp>
+#include <variant>
+#include <optional>
 #include <boost/type_index.hpp>
 
 #include <boost/mpl/for_each.hpp>
@@ -37,8 +37,8 @@ namespace pre { namespace json { namespace detail {
     }
 
     template<class T> 
-    void operator()(const char* name, boost::optional<T>& value) const {
-      // boost::optional doesn't need to be in the json object
+    void operator()(const char* name, std::optional<T>& value) const {
+      // std::optional doesn't need to be in the json object
       if (_json_object.find(name) != std::end(_json_object)) {
         dejsonizer dejsonizer(_json_object.at(name));
         dejsonizer(value);
@@ -46,8 +46,8 @@ namespace pre { namespace json { namespace detail {
     }
 
     template<class T>
-    void operator()(boost::optional<T>& value) const {
-      // boost::optional doesn't need to be in the json object
+    void operator()(std::optional<T>& value) const {
+      // std::optional doesn't need to be in the json object
       if (!_json_object.empty()) {
         dejsonizer dejsonizer(_json_object);
 

@@ -13,7 +13,7 @@ namespace pre { namespace json {
    * Deserialize any json object or value in a C++ type.
    *
    * The function throws an std::exception if a mandatory member 
-   * isn't found, but doesn't in the case of boost::optional.
+   * isn't found, but doesn't in the case of std::optional.
    *
    * The type has to be supported, or adapted with [BOOST\_FUSION\_ADAPT\_STRUCT](http://www.boost.org/doc/libs/release/libs/fusion/doc/html/fusion/adapted/adapt_struct.html).
    *
@@ -58,8 +58,8 @@ namespace pre { namespace json {
    *   - [Aggregate/struct adapted with Boost.Fusion](http://www.boost.org/doc/libs/master/libs/fusion/doc/html/fusion/adapted/adapt_struct.html)
    *   - [Any Container](http://en.cppreference.com/w/cpp/concept/AssociativeContainer) ( i.e. std::vector, std::list...)
    *   - [Any AssociativeContainer](http://en.cppreference.com/w/cpp/concept/AssociativeContainer) ( i.e. std::map, std::set, std::multimap...)
-   *   - [boost::optional<X>](http://www.boost.org/doc/libs/release/libs/optional/doc/html/index.html)
-   *   - [boost::variant<Xs...>](http://www.boost.org/doc/libs/release/doc/html/variant.html)
+   *   - [std::optional<X>](http://en.cppreference.com/w/cpp/utility/optional)
+   *   - [std::variant<Xs...>](http://en.cppreference.com/w/cpp/utility/variant)
    *   - [boost::chrono::duration](http://www.boost.org/doc/libs/release/doc/html/chrono.html)
    *   - [std::chrono::duration](http://en.cppreference.com/w/cpp/chrono/duration)
    *

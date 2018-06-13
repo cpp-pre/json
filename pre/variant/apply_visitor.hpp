@@ -1,44 +1,11 @@
-#ifndef PRE_VARIANT_APPLY_VISITOR_HPP
-#define PRE_VARIANT_APPLY_VISITOR_HPP
+#pragma once
 
 #include <type_traits>
-
-#include <boost/variant.hpp>
 #include <variant>
 
-#include <pre/variant/traits/is_boost_variant.hpp>
+#include <pre/variant/traits/is_std_variant.hpp>
 
-namespace pre { namespace variant { 
-
-  // Boost.Variant
-  template<class VisitorType, class VariantType,
-    typename std::enable_if< pre::variant::traits::is_boost_variant<VariantType>::value >::type* = nullptr>
-  inline auto apply_visitor(const VisitorType& visitor, const VariantType& variant) -> decltype(variant.apply_visitor(visitor)) {
-    return variant.apply_visitor(visitor);
-  }
-
-  template<class VisitorType, class VariantType,
-    typename std::enable_if< pre::variant::traits::is_boost_variant<VariantType>::value >::type* = nullptr>
-  inline auto apply_visitor(const VisitorType& visitor, VariantType& variant) -> decltype(variant.apply_visitor(visitor)) {
-    return variant.apply_visitor(visitor);
-  }
-
-  template<class VisitorType, class VariantType,
-    typename std::enable_if< pre::variant::traits::is_boost_variant<VariantType>::value >::type* = nullptr>
-  inline auto apply_visitor(VisitorType& visitor, const VariantType& variant) -> decltype(variant.apply_visitor(visitor)) {
-    return variant.apply_visitor(visitor);
-  }
-
-  template<class VisitorType, class VariantType,
-    typename std::enable_if< pre::variant::traits::is_boost_variant<VariantType>::value >::type* = nullptr>
-  inline auto apply_visitor(VisitorType& visitor, VariantType& variant) -> decltype(variant.apply_visitor(visitor)) {
-    return variant.apply_visitor(visitor);
-  }
-
-
-
-
-
+namespace pre::variant { 
 
   // std variant
 
@@ -67,14 +34,4 @@ namespace pre { namespace variant {
   }
 
 
-
- // template<class VisitorType, class VariantType,
- //   typename std::enable_if< pre::variant::traits::is_std_variant<VariantType>::value >::type* = nullptr>
- // inline auto apply_visitor(VisitorType&& visitor, VariantType&& variant) -> decltype(std::visit(visitor,variant)) {
- //   return std::visit(visitor,variant);
- // }
-
-
-}}
-
-#endif
+}

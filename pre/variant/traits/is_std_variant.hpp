@@ -1,9 +1,8 @@
-#ifndef PRE_VARIANT_TRAITS_IS_STD_VARIANT_HPP
-#define PRE_VARIANT_TRAITS_IS_STD_VARIANT_HPP
+#pragma once
 
 #include <variant>
 
-namespace pre { namespace variant { namespace traits {
+namespace pre::variant::traits {
 
   /**
    * \return whether the given Container is a standard container
@@ -13,6 +12,4 @@ namespace pre { namespace variant { namespace traits {
 
   template <typename... Ts> struct is_std_variant<std::variant<Ts...> > : std::true_type { };
 
-}}}
-
-#endif
+}

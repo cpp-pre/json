@@ -7,14 +7,11 @@
 #include <boost/fusion/include/tag_of.hpp>
 #include <boost/fusion/include/struct.hpp>
 
-#include <pre/variant/traits/is_boost_variant.hpp>
 #include <pre/variant/traits/is_std_variant.hpp>
 #include <pre/json/traits/is_container.hpp>
 #include <pre/json/traits/is_associative_container.hpp>
 #include <pre/json/traits/is_string.hpp>
 
-// XXX: Could we forward declare them ? to support them without depending explicitely on them ?
-#include <boost/chrono/duration.hpp>
 #include <chrono>
 
 
@@ -22,8 +19,7 @@ namespace pre { namespace json { namespace detail {
 
     template<class T>
     using enable_if_is_chrono_duration_t = typename std::enable_if< 
-      std::is_same<boost::chrono::duration<typename T::rep, typename T::period>, T>::value 
-      || std::is_same<std::chrono::duration<typename T::rep, typename T::period>, T>::value 
+      std::is_same<std::chrono::duration<typename T::rep, typename T::period>, T>::value 
     >::type;
 
     template<class T>
@@ -33,8 +29,7 @@ namespace pre { namespace json { namespace detail {
 
     template<class T>
     using enable_if_is_variant_t = typename std::enable_if<
-      pre::variant::traits::is_boost_variant<T>::value
-      || pre::variant::traits::is_std_variant<T>::value
+      pre::variant::traits::is_std_variant<T>::value
     ,T>::type;
 
     template<class T>

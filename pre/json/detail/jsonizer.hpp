@@ -1,8 +1,8 @@
 #ifndef PRE_JSON_DETAIL_JSONIZER_HPP
 #define PRE_JSON_DETAIL_JSONIZER_HPP
 
-#include <boost/variant.hpp>
-#include <boost/optional.hpp>
+#include <variant>
+#include <optional>
 #include <boost/type_index.hpp>
 
 #include <boost/fusion/include/for_each.hpp>
@@ -20,11 +20,10 @@
 
 namespace pre { namespace json { namespace detail {
 
-  struct jsonizer : public boost::static_visitor<> {
+  struct jsonizer {
 
     jsonizer(nlohmann::json& json_object) 
-      : boost::static_visitor<>(),
-      _json_object(json_object),
+      : _json_object(json_object),
       _disambiguate_struct(false) {}
 
     template<class T>
@@ -37,15 +36,15 @@ namespace pre { namespace json { namespace detail {
     }
 
     template<class T>
-    void operator()(const char* name, const boost::optional<T>& value) const {
-      if (value != boost::none) {
-        this->operator()(name, value.get());
+    void operator()(const char* name, const std::optional<T>& value) const {
+      if (value != std::nullopt) {
+        this->operator()(name, value.value());
       }
     }
 
     template<class T>
-    void operator()(const boost::optional<T>& value) const {
-      if (value != boost::none) {
+    void operator()(const std::optional<T>& value) const {
+      if (value != std::nullopt) {
         jsonizer subjsonizer(_json_object);
         subjsonizer(*value);
       } else {
