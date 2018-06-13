@@ -18,5 +18,6 @@ build-win10:
     - win10
   script:
     - set PreferredToolArchitecture=x64
-    - mkdir build && cd build && cmake .. -DUNIT_TESTS=ON -DCMAKE_TOOLCHAIN_FILE=deps/polly/vs-15-2017-win64-cxx17.cmake  && cmake --build .
+    - mkdir build && cd build 
+    - cmake .. -DUNIT_TESTS=ON -DCMAKE_TOOLCHAIN_FILE=deps/polly/vs-15-2017-cxx17.cmake  && cmake --build .
     - ctest . --verbose
