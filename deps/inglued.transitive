@@ -1,9 +1,21 @@
 {
+  "boostorg/algorithm": {
+    "-I": "include/",
+    "@": "boost-1.67.0"
+  },
+  "boostorg/array": {
+    "-I": "include/",
+    "@": "boost-1.67.0"
+  },
   "boostorg/assert": {
     "-I": "include/",
     "@": "boost-1.67.0"
   },
   "boostorg/bind": {
+    "-I": "include/",
+    "@": "boost-1.67.0"
+  },
+  "boostorg/concept_check": {
     "-I": "include/",
     "@": "boost-1.67.0"
   },
@@ -39,11 +51,23 @@
     "-I": "include/",
     "@": "boost-1.67.0"
   },
+  "boostorg/io": {
+    "-I": "include/",
+    "@": "boost-1.67.0"
+  },
+  "boostorg/iterator": {
+    "-I": "include/",
+    "@": "boost-1.67.0"
+  },
   "boostorg/move": {
     "-I": "include/",
     "@": "boost-1.67.0"
   },
   "boostorg/mpl": {
+    "-I": "include/",
+    "@": "boost-1.67.0"
+  },
+  "boostorg/numeric_conversion": {
     "-I": "include/",
     "@": "boost-1.67.0"
   },
@@ -55,6 +79,14 @@
     "-I": "include/",
     "@": "boost-1.67.0"
   },
+  "boostorg/range": {
+    "-I": "include/",
+    "@": "boost-1.67.0"
+  },
+  "boostorg/regex": {
+    "-I": "include/",
+    "@": "boost-1.67.0"
+  },
   "boostorg/smart_ptr": {
     "-I": "include/",
     "@": "boost-1.67.0"
@@ -63,7 +95,15 @@
     "-I": "include/",
     "@": "boost-1.67.0"
   },
+  "boostorg/system": {
+    "-I": "include/",
+    "@": "boost-1.67.0"
+  },
   "boostorg/throw_exception": {
+    "-I": "include/",
+    "@": "boost-1.67.0"
+  },
+  "boostorg/timer": {
     "-I": "include/",
     "@": "boost-1.67.0"
   },
@@ -84,6 +124,10 @@
     "@": "boost-1.67.0"
   },
   "boostorg/utility": {
+    "-I": "include/",
+    "@": "boost-1.67.0"
+  },
+  "boostorg/winapi": {
     "-I": "include/",
     "@": "boost-1.67.0"
   }
