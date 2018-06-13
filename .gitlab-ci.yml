@@ -1,0 +1,10 @@
+image: registry.gitlab.com/nxxm/nxxm/ci/ubuntu-cpp:latest
+
+build:
+  script:
+    - mkdir build/ && cd build/ && cmake .. -DUNIT_TESTS=ON && cmake --build .
+
+test:
+  script:
+    - cd build/ && ctest . --verbose
+
