@@ -1,9 +1,9 @@
-#ifndef PRE_JSON_TRAITS_IS_BOOST_VARIANT_HPP
-#define PRE_JSON_TRAITS_IS_BOOST_VARIANT_HPP
+#ifndef PRE_VARIANT_TRAITS_IS_BOOST_VARIANT_HPP
+#define PRE_VARIANT_TRAITS_IS_BOOST_VARIANT_HPP
 
 #include <boost/variant.hpp>
 
-namespace pre { namespace json { namespace traits {
+namespace pre { namespace variant { namespace traits {
 
   /**
    * \return whether the given Container is a standard container

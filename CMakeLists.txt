@@ -28,8 +28,6 @@ cmake_minimum_required(VERSION 3.5.0)
 project(json VERSION "2.0.0")
 enable_testing()
 
-set(CMAKE_CXX_STANDARD 14)
-
 # Compile with shipped-with headers or without 
 option(INGLUED "Enable use of #inglued shipped with dependencies." ON)
 

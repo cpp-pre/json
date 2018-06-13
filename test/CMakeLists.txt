@@ -19,5 +19,5 @@ function(add_unit_test)
 
 endfunction(add_unit_test) 
 
-add_unit_test(NAME dejsonize_test
-  LIBS pre::json)
+add_unit_test(NAME dejsonize_test LIBS pre::json)
+add_unit_test(NAME variant_for_each_type LIBS pre::json)

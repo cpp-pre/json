@@ -14,6 +14,8 @@
 
 #include <boost/exception_ptr.hpp>
 
+#include <variant>
+
 #include <pre/json/traits/is_jsonizable.hpp>
 #include <pre/json/to_json.hpp>
 #include <pre/json/from_json.hpp>
@@ -542,29 +544,29 @@ BOOST_AUTO_TEST_CASE (optional_member) {
 
 
 namespace datamodel {
-  typedef mapbox::util::variant<cleaner, cashier, security> possible_responsibilities_mapbox;
+  typedef std::variant<cleaner, cashier, security> possible_responsibilities_std;
 
-  struct with_mapbox_variant{
-    possible_responsibilities_mapbox responsibility;
-    boost::optional<possible_responsibilities_mapbox> additional_responsibility;
+  struct with_std_variant{
+    possible_responsibilities_std responsibility;
+    boost::optional<possible_responsibilities_std> additional_responsibility;
   };
 }
 
-BOOST_FUSION_ADAPT_STRUCT(datamodel::with_mapbox_variant,
+BOOST_FUSION_ADAPT_STRUCT(datamodel::with_std_variant,
   responsibility,
   additional_responsibility)
 
 
-BOOST_AUTO_TEST_CASE (mapbox_variant_simple) {
+BOOST_AUTO_TEST_CASE (std_variant_simple) {
 
   {
     using datamodel::with_mapbox_variant;
-    using datamodel::possible_responsibilities_mapbox;
+    using datamodel::possible_responsibilities_std;
     using datamodel::cashier;
     using datamodel::cleaner;
     using datamodel::security;
 
-    with_mapbox_variant val{cashier{"hardware", 1} } ;
+    with_std_variant val{cashier{"hardware", 1} } ;
 
     auto val_json = pre::json::to_json(val);
     std::cout << val_json.dump(2) << std::endl;
@@ -581,20 +583,20 @@ BOOST_AUTO_TEST_CASE (mapbox_variant_simple) {
 }
 
 
-BOOST_AUTO_TEST_CASE (mapbox_variant) {
+BOOST_AUTO_TEST_CASE (std_variant) {
 
   {
-    using datamodel::with_mapbox_variant;
-    using datamodel::possible_responsibilities_mapbox;
+    using datamodel::with_std_variant;
+    using datamodel::possible_responsibilities_std;
     using datamodel::cashier;
     using datamodel::cleaner;
     using datamodel::security;
 
-    std::vector<with_mapbox_variant> val {
-      with_mapbox_variant{cashier{"hardware", 1} },
-      with_mapbox_variant{security{true, "Krav Maga"}, possible_responsibilities_mapbox{cleaner{"Entrance", "Doors" }}},
-      with_mapbox_variant{cleaner{"5th floor", "Toys, Petshop, Drugs, Food" } },
-      with_mapbox_variant{cashier{"Food", 2} }
+    std::vector<with_std_variant> val {
+      with_std_variant{cashier{"hardware", 1} },
+      with_std_variant{security{true, "Krav Maga"}, possible_responsibilities_std{cleaner{"Entrance", "Doors" }}},
+      with_std_variant{cleaner{"5th floor", "Toys, Petshop, Drugs, Food" } },
+      with_std_variant{cashier{"Food", 2} }
     };
 
     auto val_json = pre::json::to_json(val);
