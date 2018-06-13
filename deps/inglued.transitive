@@ -1,0 +1,86 @@
+{
+  "boostorg/assert": {
+    "-I": "include/",
+    "@": "boost-1.67.0"
+  },
+  "boostorg/config": {
+    "-I": "include/",
+    "@": "boost-1.67.0"
+  },
+  "boostorg/core": {
+    "-I": "include/",
+    "@": "boost-1.67.0"
+  },
+  "boostorg/detail": {
+    "-I": "include/",
+    "@": "boost-1.67.0"
+  },
+  "boostorg/exception": {
+    "-I": "include/",
+    "@": "boost-1.67.0"
+  },
+  "boostorg/function": {
+    "-I": "include/",
+    "@": "boost-1.67.0"
+  },
+  "boostorg/function_types": {
+    "-I": "include/",
+    "@": "boost-1.67.0"
+  },
+  "boostorg/functional": {
+    "-I": "include/",
+    "@": "boost-1.67.0"
+  },
+  "boostorg/integer": {
+    "-I": "include/",
+    "@": "boost-1.67.0"
+  },
+  "boostorg/move": {
+    "-I": "include/",
+    "@": "boost-1.67.0"
+  },
+  "boostorg/mpl": {
+    "-I": "include/",
+    "@": "boost-1.67.0"
+  },
+  "boostorg/predef": {
+    "-I": "include/",
+    "@": "boost-1.67.0"
+  },
+  "boostorg/preprocessor": {
+    "-I": "include/",
+    "@": "boost-1.67.0"
+  },
+  "boostorg/smart_ptr": {
+    "-I": "include/",
+    "@": "boost-1.67.0"
+  },
+  "boostorg/static_assert": {
+    "-I": "include/",
+    "@": "boost-1.67.0"
+  },
+  "boostorg/throw_exception": {
+    "-I": "include/",
+    "@": "boost-1.67.0"
+  },
+  "boostorg/tuple": {
+    "-I": "include/",
+    "@": "boost-1.67.0"
+  },
+  "boostorg/type_index": {
+    "-I": "include/",
+    "@": "boost-1.67.0"
+  },
+  "boostorg/type_traits": {
+    "-I": "include/",
+    "@": "boost-1.67.0"
+  },
+  "boostorg/typeof": {
+    "-I": "include/",
+    "@": "boost-1.67.0"
+  },
+  "boostorg/utility": {
+    "-I": "include/",
+    "@": "boost-1.67.0"
+  }
+}
