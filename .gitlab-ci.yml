@@ -3,7 +3,7 @@ build-linux:
   script:
     - mkdir build/ && cd build/ 
     - cmake .. -DCMAKE_BUILD_TYPE=MinSizeRel -DUNIT_TESTS=ON -DCMAKE_TOOLCHAIN_FILE=deps/polly/gcc-7-cxx17.cmake 
-    - cmake --build .
+    - cmake --build . --config MinSizeRel
     - ctest . -C MinSizeRel --verbose
 
 build-macOS:
@@ -12,7 +12,7 @@ build-macOS:
   script:
     - mkdir build/ && cd build/ 
     - cmake .. -DCMAKE_BUILD_TYPE=MinSizeRel -DUNIT_TESTS=ON -DCMAKE_TOOLCHAIN_FILE=deps/polly/clang-cxx17.cmake 
-    - cmake --build .
+    - cmake --build . --config MinSizeRel
     - ctest . -C MinSizeRel --verbose
 
 build-win10:
@@ -22,5 +22,5 @@ build-win10:
     - set PreferredToolArchitecture=x64
     - mkdir build && cd build 
     - cmake .. -DCMAKE_BUILD_TYPE=MinSizeRel -DUNIT_TESTS=ON -DCMAKE_TOOLCHAIN_FILE=deps/polly/vs-15-2017-cxx17.cmake
-    - cmake --build .
+    - cmake --build . --config MinSizeRel
     - ctest . -C MinSizeRel --verbose
