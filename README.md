@@ -48,9 +48,8 @@ std::cout << "Customer " << my_customer.name << " spent " <<
   - [Aggregate/struct adapted with Boost.Fusion](http://www.boost.org/doc/libs/master/libs/fusion/doc/html/fusion/adapted/adapt_struct.html)
   - [Any Container](http://en.cppreference.com/w/cpp/concept/AssociativeContainer) ( i.e. std::vector, std::list...)
   - [Any AssociativeContainer](http://en.cppreference.com/w/cpp/concept/AssociativeContainer) ( i.e. std::map, std::set, std::multimap...)
-  - [boost::optional<X>](http://www.boost.org/doc/libs/release/libs/optional/doc/html/index.html)
-  - [boost::variant<Xs...>](http://www.boost.org/doc/libs/release/doc/html/variant.html)
-  - [boost::chrono::duration](http://www.boost.org/doc/libs/release/doc/html/chrono.html)
+  - [std::optional<X>](http://en.cppreference.com/w/cpp/utility/optional)
+  - [std::variant<Xs...>](http://en.cppreference.com/w/cpp/utility/variant)
   - [std::chrono::duration](http://en.cppreference.com/w/cpp/chrono/duration)
 
 

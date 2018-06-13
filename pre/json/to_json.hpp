@@ -55,7 +55,6 @@ namespace pre { namespace json {
    *   - [Any AssociativeContainer](http://en.cppreference.com/w/cpp/concept/AssociativeContainer) ( i.e. std::map, std::set, std::multimap...)
    *   - [std::optional<X>](http://en.cppreference.com/w/cpp/utility/optional)
    *   - [std::variant<Xs...>](http://en.cppreference.com/w/cpp/utility/variant)
-   *   - [boost::chrono::duration](http://www.boost.org/doc/libs/release/doc/html/chrono.html)
    *   - [std::chrono::duration](http://en.cppreference.com/w/cpp/chrono/duration)
    *
    *
