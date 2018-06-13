@@ -14,6 +14,7 @@ json can be installed in three ways :
 ```
 -I json/ \
 -I json/deps/boostorg/assert/include/ \
+-I json/deps/boostorg/bind/include/ \
 -I json/deps/boostorg/config/include/ \
 -I json/deps/boostorg/container_hash/include/ \
 -I json/deps/boostorg/core/include/ \
@@ -26,6 +27,7 @@ json can be installed in three ways :
 -I json/deps/boostorg/integer/include/ \
 -I json/deps/boostorg/move/include/ \
 -I json/deps/boostorg/mpl/include/ \
+-I json/deps/boostorg/optional/include/ \
 -I json/deps/boostorg/predef/include/ \
 -I json/deps/boostorg/preprocessor/include/ \
 -I json/deps/boostorg/smart_ptr/include/ \
@@ -36,6 +38,7 @@ json can be installed in three ways :
 -I json/deps/boostorg/type_traits/include/ \
 -I json/deps/boostorg/typeof/include/ \
 -I json/deps/boostorg/utility/include/ \
+-I json/deps/boostorg/variant/include/ \
 -I json/deps/nlohmann/json/include/ \
 ```
 
