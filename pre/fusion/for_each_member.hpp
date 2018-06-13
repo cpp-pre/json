@@ -4,7 +4,6 @@
 #include <type_traits>
 #include <functional>
 
-#include <boost/format.hpp>
 #include <boost/fusion/include/adapt_struct.hpp> 
 
 #include <boost/fusion/sequence/intrinsic/begin.hpp>
@@ -83,7 +82,7 @@ namespace detail {
       std::string name =  typeid(decltype(*first)).name();
 
       f(
-				str(boost::format("%1% (%2%)") % index % name ).data(), 
+				 (name + std::string("_") + std::to_string(index)).data(), 
 				*first
 			);
 
