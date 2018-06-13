@@ -2,16 +2,18 @@ build-linux:
   image: registry.gitlab.com/nxxm/nxxm/ci/ubuntu-cpp:latest
   script:
     - mkdir build/ && cd build/ 
-    - cmake .. -DUNIT_TESTS=ON -DCMAKE_TOOLCHAIN_FILE=deps/polly/gcc-7-cxx17.cmake && cmake --build .
-    - ctest . --verbose
+    - cmake .. -DCMAKE_BUILD_TYPE=MinSizeRel -DUNIT_TESTS=ON -DCMAKE_TOOLCHAIN_FILE=deps/polly/gcc-7-cxx17.cmake 
+    - cmake --build .
+    - ctest . -C MinSizeRel --verbose
 
 build-macOS:
   tags:
     - macOS
   script:
     - mkdir build/ && cd build/ 
-    - cmake .. -DUNIT_TESTS=ON -DCMAKE_TOOLCHAIN_FILE=deps/polly/clang-cxx17.cmake && cmake --build .
-    - ctest . --verbose
+    - cmake .. -DCMAKE_BUILD_TYPE=MinSizeRel -DUNIT_TESTS=ON -DCMAKE_TOOLCHAIN_FILE=deps/polly/clang-cxx17.cmake 
+    - cmake --build .
+    - ctest . -C MinSizeRel --verbose
 
 build-win10:
   tags:
@@ -19,5 +21,6 @@ build-win10:
   script:
     - set PreferredToolArchitecture=x64
     - mkdir build && cd build 
-    - cmake .. -DUNIT_TESTS=ON -DCMAKE_TOOLCHAIN_FILE=deps/polly/vs-15-2017-cxx17.cmake  && cmake --build .
-    - ctest . --verbose
+    - cmake .. -DCMAKE_BUILD_TYPE=MinSizeRel -DUNIT_TESTS=ON -DCMAKE_TOOLCHAIN_FILE=deps/polly/vs-15-2017-cxx17.cmake
+    - cmake --build .
+    - ctest . -C MinSizeRel --verbose
