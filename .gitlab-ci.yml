@@ -1,11 +1,11 @@
-build:
+build-linux:
   image: registry.gitlab.com/nxxm/nxxm/ci/ubuntu-cpp:latest
   script:
     - mkdir build/ && cd build/ 
     - cmake .. -DUNIT_TESTS=ON -DCMAKE_TOOLCHAIN_FILE=deps/polly/gcc-7-cxx17.cmake && cmake --build .
     - ctest . --verbose
 
-build:
+build-macOS:
   tags:
     - macOS
   script:
@@ -13,7 +13,7 @@ build:
     - cmake .. -DUNIT_TESTS=ON -DCMAKE_TOOLCHAIN_FILE=deps/polly/clang-cxx17.cmake && cmake --build .
     - ctest . --verbose
 
-build:
+build-win10:
   tags:
     - win10
   script:
