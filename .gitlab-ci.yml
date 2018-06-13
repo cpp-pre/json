@@ -14,7 +14,7 @@ build:
     - ctest . --verbose
 
 build:
-tags:
+  tags:
     - win10
   script:
     - set PreferredToolArchitecture=x64
