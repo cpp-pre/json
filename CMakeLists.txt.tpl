@@ -19,7 +19,7 @@
 #   - {{include_path_end_backslash}} : same as above but with a guaranteed end slash.
 #
 
-cmake_minimum_required(VERSION 3.7.2)
+cmake_minimum_required(VERSION 3.5.0)
 
 project({{project}} VERSION "2.0.0")
 enable_testing()
