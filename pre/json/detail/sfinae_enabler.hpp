@@ -8,6 +8,7 @@
 #include <boost/fusion/include/struct.hpp>
 
 #include <pre/variant/traits/is_boost_variant.hpp>
+#include <pre/variant/traits/is_std_variant.hpp>
 #include <pre/json/traits/is_container.hpp>
 #include <pre/json/traits/is_associative_container.hpp>
 #include <pre/json/traits/is_string.hpp>
@@ -31,13 +32,19 @@ namespace pre { namespace json { namespace detail {
     ,T>::type;
 
     template<class T>
+    using enable_if_is_variant_t = typename std::enable_if<
+      pre::variant::traits::is_boost_variant<T>::value
+      || pre::variant::traits::is_std_variant<T>::value
+    ,T>::type;
+
+    template<class T>
     using enable_if_is_other_sequence_and_not_variant_t = typename std::enable_if<
       boost::fusion::traits::is_sequence<T>::value
       && !std::is_same< 
             typename boost::fusion::traits::tag_of<T>::type, 
             boost::fusion::struct_tag
           >::value
-      && !pre::variant::traits::is_boost_variant<T>::value 
+      && !enable_if_is_variant_t<T>::value 
     ,T>::type;
 
     template<class T>
@@ -48,10 +55,6 @@ namespace pre { namespace json { namespace detail {
       >::value
     ,T>::type;
 
-    template<class T>
-    using enable_if_is_variant_t = typename std::enable_if<
-         pre::variant::traits::is_boost_variant<T>::value
-    ,T>::type;
 
     template<class T>
     using enable_if_is_container_t = typename std::enable_if<

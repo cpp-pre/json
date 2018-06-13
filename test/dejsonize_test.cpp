@@ -560,7 +560,7 @@ BOOST_FUSION_ADAPT_STRUCT(datamodel::with_std_variant,
 BOOST_AUTO_TEST_CASE (std_variant_simple) {
 
   {
-    using datamodel::with_mapbox_variant;
+    using datamodel::with_std_variant;
     using datamodel::possible_responsibilities_std;
     using datamodel::cashier;
     using datamodel::cleaner;

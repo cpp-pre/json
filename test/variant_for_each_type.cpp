@@ -2,6 +2,7 @@
 #include <boost/test/included/unit_test.hpp>
 
 #include <iostream>
+#include <boost/variant.hpp>
 #include <variant>
 #include <pre/variant/for_each_type.hpp>
 
