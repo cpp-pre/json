@@ -2,6 +2,7 @@ image: registry.gitlab.com/nxxm/nxxm/ci/ubuntu-cpp:latest
 
 build:
   script:
-    - mkdir build/ && cd build/ && cmake .. -DUNIT_TESTS=ON -DCMAKE_TOOLCHAIN_FILE=deps/polly/gcc-7-cxx17.cmake && cmake --build .
-    - cd build/ && ctest . --verbose
+    - mkdir build/ && cd build/ 
+    - cmake .. -DUNIT_TESTS=ON -DCMAKE_TOOLCHAIN_FILE=deps/polly/gcc-7-cxx17.cmake && cmake --build .
+    - ctest . --verbose
 
