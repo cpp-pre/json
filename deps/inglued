@@ -6,5 +6,6 @@
   "boostorg/optional" : { "@" : "boost-1.67.0", "-I": "include/" },
   "boostorg/tuple" : { "@" : "boost-1.67.0", "-I": "include/" },
   "boostorg/exception" : { "@" : "boost-1.67.0", "-I": "include/" },
+  "boostorg/test" : { "@" : "boost-1.67.0", "-I": "include/" },
   "nlohmann/json" :  { "@" : "v3.1.2", "-I" : "include/" }
 }
