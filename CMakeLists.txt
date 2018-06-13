@@ -13,7 +13,7 @@
 # * json : current project name
 # * . : current project srcs folder.
 #
-# *                             : all deps direct and transitive 
+# *                                         : all deps direct and transitive 
 #   -  : The cmake package name from the cmake_package_map otherwise: pre
 #   -  : The cmake target name from cmake_package_map otherwise: ::
 #   - pre : the github organization name
@@ -48,6 +48,20 @@ endif()
 
 
 
+# algorithm
+if (INGLUED)
+  include_directories(AFTER deps/boostorg/algorithm/include/)
+else ()
+  find_package(Boost REQUIRED)
+endif()
+
+# array
+if (INGLUED)
+  include_directories(AFTER deps/boostorg/array/include/)
+else ()
+  find_package(Boost REQUIRED)
+endif()
+
 # assert
 if (INGLUED)
   include_directories(AFTER deps/boostorg/assert/include/)
@@ -58,6 +72,13 @@ endif()
 # bind
 if (INGLUED)
   include_directories(AFTER deps/boostorg/bind/include/)
+else ()
+  find_package(Boost REQUIRED)
+endif()
+
+# concept_check
+if (INGLUED)
+  include_directories(AFTER deps/boostorg/concept_check/include/)
 else ()
   find_package(Boost REQUIRED)
 endif()
@@ -132,6 +153,20 @@ else ()
   find_package(Boost REQUIRED)
 endif()
 
+# io
+if (INGLUED)
+  include_directories(AFTER deps/boostorg/io/include/)
+else ()
+  find_package(Boost REQUIRED)
+endif()
+
+# iterator
+if (INGLUED)
+  include_directories(AFTER deps/boostorg/iterator/include/)
+else ()
+  find_package(Boost REQUIRED)
+endif()
+
 # move
 if (INGLUED)
   include_directories(AFTER deps/boostorg/move/include/)
@@ -142,6 +177,13 @@ endif()
 # mpl
 if (INGLUED)
   include_directories(AFTER deps/boostorg/mpl/include/)
+else ()
+  find_package(Boost REQUIRED)
+endif()
+
+# numeric_conversion
+if (INGLUED)
+  include_directories(AFTER deps/boostorg/numeric_conversion/include/)
 else ()
   find_package(Boost REQUIRED)
 endif()
@@ -167,6 +209,20 @@ else ()
   find_package(Boost REQUIRED)
 endif()
 
+# range
+if (INGLUED)
+  include_directories(AFTER deps/boostorg/range/include/)
+else ()
+  find_package(Boost REQUIRED)
+endif()
+
+# regex
+if (INGLUED)
+  include_directories(AFTER deps/boostorg/regex/include/)
+else ()
+  find_package(Boost REQUIRED)
+endif()
+
 # smart_ptr
 if (INGLUED)
   include_directories(AFTER deps/boostorg/smart_ptr/include/)
@@ -181,9 +237,30 @@ else ()
   find_package(Boost REQUIRED)
 endif()
 
+# system
+if (INGLUED)
+  include_directories(AFTER deps/boostorg/system/include/)
+else ()
+  find_package(Boost REQUIRED)
+endif()
+
+# test
+if (INGLUED)
+  include_directories(AFTER deps/boostorg/test/include/)
+else ()
+  find_package(Boost REQUIRED)
+endif()
+
 # throw_exception
 if (INGLUED)
   include_directories(AFTER deps/boostorg/throw_exception/include/)
+else ()
+  find_package(Boost REQUIRED)
+endif()
+
+# timer
+if (INGLUED)
+  include_directories(AFTER deps/boostorg/timer/include/)
 else ()
   find_package(Boost REQUIRED)
 endif()
@@ -230,6 +307,13 @@ else ()
   find_package(Boost REQUIRED)
 endif()
 
+# winapi
+if (INGLUED)
+  include_directories(AFTER deps/boostorg/winapi/include/)
+else ()
+  find_package(Boost REQUIRED)
+endif()
+
 # json
 if (INGLUED)
   include_directories(AFTER deps/nlohmann/json/include/)
@@ -256,6 +340,18 @@ if (INGLUED)
 else()
 
   target_link_libraries(json INTERFACE 
+      Boost::boost
+      Boost::boost
+      Boost::boost
+      Boost::boost
+      Boost::boost
+      Boost::boost
+      Boost::boost
+      Boost::boost
+      Boost::boost
+      Boost::boost
+      Boost::boost
+      Boost::boost
       Boost::boost
       Boost::boost
       Boost::boost
@@ -355,6 +451,22 @@ if (INGLUED)
 
 
   install(
+      DIRECTORY deps/boostorg/algorithm/include/
+      DESTINATION ${include_install_dir}/./deps
+      FILES_MATCHING PATTERN "*.[ih]*"
+      PATTERN deps/boostorg/algorithm/deps EXCLUDE # Transitive deps are hikedup on `glue seal`.
+      )
+
+
+  install(
+      DIRECTORY deps/boostorg/array/include/
+      DESTINATION ${include_install_dir}/./deps
+      FILES_MATCHING PATTERN "*.[ih]*"
+      PATTERN deps/boostorg/array/deps EXCLUDE # Transitive deps are hikedup on `glue seal`.
+      )
+
+
+  install(
       DIRECTORY deps/boostorg/assert/include/
       DESTINATION ${include_install_dir}/./deps
       FILES_MATCHING PATTERN "*.[ih]*"
@@ -367,6 +479,14 @@ if (INGLUED)
       DESTINATION ${include_install_dir}/./deps
       FILES_MATCHING PATTERN "*.[ih]*"
       PATTERN deps/boostorg/bind/deps EXCLUDE # Transitive deps are hikedup on `glue seal`.
+      )
+
+
+  install(
+      DIRECTORY deps/boostorg/concept_check/include/
+      DESTINATION ${include_install_dir}/./deps
+      FILES_MATCHING PATTERN "*.[ih]*"
+      PATTERN deps/boostorg/concept_check/deps EXCLUDE # Transitive deps are hikedup on `glue seal`.
       )
 
 
@@ -451,6 +571,22 @@ if (INGLUED)
 
 
   install(
+      DIRECTORY deps/boostorg/io/include/
+      DESTINATION ${include_install_dir}/./deps
+      FILES_MATCHING PATTERN "*.[ih]*"
+      PATTERN deps/boostorg/io/deps EXCLUDE # Transitive deps are hikedup on `glue seal`.
+      )
+
+
+  install(
+      DIRECTORY deps/boostorg/iterator/include/
+      DESTINATION ${include_install_dir}/./deps
+      FILES_MATCHING PATTERN "*.[ih]*"
+      PATTERN deps/boostorg/iterator/deps EXCLUDE # Transitive deps are hikedup on `glue seal`.
+      )
+
+
+  install(
       DIRECTORY deps/boostorg/move/include/
       DESTINATION ${include_install_dir}/./deps
       FILES_MATCHING PATTERN "*.[ih]*"
@@ -463,6 +599,14 @@ if (INGLUED)
       DESTINATION ${include_install_dir}/./deps
       FILES_MATCHING PATTERN "*.[ih]*"
       PATTERN deps/boostorg/mpl/deps EXCLUDE # Transitive deps are hikedup on `glue seal`.
+      )
+
+
+  install(
+      DIRECTORY deps/boostorg/numeric_conversion/include/
+      DESTINATION ${include_install_dir}/./deps
+      FILES_MATCHING PATTERN "*.[ih]*"
+      PATTERN deps/boostorg/numeric_conversion/deps EXCLUDE # Transitive deps are hikedup on `glue seal`.
       )
 
 
@@ -491,6 +635,22 @@ if (INGLUED)
 
 
   install(
+      DIRECTORY deps/boostorg/range/include/
+      DESTINATION ${include_install_dir}/./deps
+      FILES_MATCHING PATTERN "*.[ih]*"
+      PATTERN deps/boostorg/range/deps EXCLUDE # Transitive deps are hikedup on `glue seal`.
+      )
+
+
+  install(
+      DIRECTORY deps/boostorg/regex/include/
+      DESTINATION ${include_install_dir}/./deps
+      FILES_MATCHING PATTERN "*.[ih]*"
+      PATTERN deps/boostorg/regex/deps EXCLUDE # Transitive deps are hikedup on `glue seal`.
+      )
+
+
+  install(
       DIRECTORY deps/boostorg/smart_ptr/include/
       DESTINATION ${include_install_dir}/./deps
       FILES_MATCHING PATTERN "*.[ih]*"
@@ -507,10 +667,34 @@ if (INGLUED)
 
 
   install(
+      DIRECTORY deps/boostorg/system/include/
+      DESTINATION ${include_install_dir}/./deps
+      FILES_MATCHING PATTERN "*.[ih]*"
+      PATTERN deps/boostorg/system/deps EXCLUDE # Transitive deps are hikedup on `glue seal`.
+      )
+
+
+  install(
+      DIRECTORY deps/boostorg/test/include/
+      DESTINATION ${include_install_dir}/./deps
+      FILES_MATCHING PATTERN "*.[ih]*"
+      PATTERN deps/boostorg/test/deps EXCLUDE # Transitive deps are hikedup on `glue seal`.
+      )
+
+
+  install(
       DIRECTORY deps/boostorg/throw_exception/include/
       DESTINATION ${include_install_dir}/./deps
       FILES_MATCHING PATTERN "*.[ih]*"
       PATTERN deps/boostorg/throw_exception/deps EXCLUDE # Transitive deps are hikedup on `glue seal`.
+      )
+
+
+  install(
+      DIRECTORY deps/boostorg/timer/include/
+      DESTINATION ${include_install_dir}/./deps
+      FILES_MATCHING PATTERN "*.[ih]*"
+      PATTERN deps/boostorg/timer/deps EXCLUDE # Transitive deps are hikedup on `glue seal`.
       )
 
 
@@ -559,6 +743,14 @@ if (INGLUED)
       DESTINATION ${include_install_dir}/./deps
       FILES_MATCHING PATTERN "*.[ih]*"
       PATTERN deps/boostorg/variant/deps EXCLUDE # Transitive deps are hikedup on `glue seal`.
+      )
+
+
+  install(
+      DIRECTORY deps/boostorg/winapi/include/
+      DESTINATION ${include_install_dir}/./deps
+      FILES_MATCHING PATTERN "*.[ih]*"
+      PATTERN deps/boostorg/winapi/deps EXCLUDE # Transitive deps are hikedup on `glue seal`.
       )
 
 

@@ -13,8 +13,11 @@ json can be installed in three ways :
 ### GCC / Clang / MSVC
 ```
 -I json/ \
+-I json/deps/boostorg/algorithm/include/ \
+-I json/deps/boostorg/array/include/ \
 -I json/deps/boostorg/assert/include/ \
 -I json/deps/boostorg/bind/include/ \
+-I json/deps/boostorg/concept_check/include/ \
 -I json/deps/boostorg/config/include/ \
 -I json/deps/boostorg/container_hash/include/ \
 -I json/deps/boostorg/core/include/ \
@@ -25,20 +28,29 @@ json can be installed in three ways :
 -I json/deps/boostorg/functional/include/ \
 -I json/deps/boostorg/fusion/include/ \
 -I json/deps/boostorg/integer/include/ \
+-I json/deps/boostorg/io/include/ \
+-I json/deps/boostorg/iterator/include/ \
 -I json/deps/boostorg/move/include/ \
 -I json/deps/boostorg/mpl/include/ \
+-I json/deps/boostorg/numeric_conversion/include/ \
 -I json/deps/boostorg/optional/include/ \
 -I json/deps/boostorg/predef/include/ \
 -I json/deps/boostorg/preprocessor/include/ \
+-I json/deps/boostorg/range/include/ \
+-I json/deps/boostorg/regex/include/ \
 -I json/deps/boostorg/smart_ptr/include/ \
 -I json/deps/boostorg/static_assert/include/ \
+-I json/deps/boostorg/system/include/ \
+-I json/deps/boostorg/test/include/ \
 -I json/deps/boostorg/throw_exception/include/ \
+-I json/deps/boostorg/timer/include/ \
 -I json/deps/boostorg/tuple/include/ \
 -I json/deps/boostorg/type_index/include/ \
 -I json/deps/boostorg/type_traits/include/ \
 -I json/deps/boostorg/typeof/include/ \
 -I json/deps/boostorg/utility/include/ \
 -I json/deps/boostorg/variant/include/ \
+-I json/deps/boostorg/winapi/include/ \
 -I json/deps/nlohmann/json/include/ \
 ```
 
