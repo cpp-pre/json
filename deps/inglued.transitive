@@ -3,6 +3,10 @@
     "-I": "include/",
     "@": "boost-1.67.0"
   },
+  "boostorg/bind": {
+    "-I": "include/",
+    "@": "boost-1.67.0"
+  },
   "boostorg/config": {
     "-I": "include/",
     "@": "boost-1.67.0"
