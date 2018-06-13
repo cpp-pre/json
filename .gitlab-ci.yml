@@ -1,8 +1,22 @@
-image: registry.gitlab.com/nxxm/nxxm/ci/ubuntu-cpp:latest
-
 build:
+  image: registry.gitlab.com/nxxm/nxxm/ci/ubuntu-cpp:latest
   script:
     - mkdir build/ && cd build/ 
     - cmake .. -DUNIT_TESTS=ON -DCMAKE_TOOLCHAIN_FILE=deps/polly/gcc-7-cxx17.cmake && cmake --build .
     - ctest . --verbose
 
+build:
+  tags:
+    - macOS
+  script:
+    - mkdir build/ && cd build/ 
+    - cmake .. -DUNIT_TESTS=ON -DCMAKE_TOOLCHAIN_FILE=deps/polly/clang-cxx17.cmake && cmake --build .
+    - ctest . --verbose
+
+build:
+tags:
+    - win10
+  script:
+    - set PreferredToolArchitecture=x64
+    - mkdir build && cd build && cmake .. -DUNIT_TESTS=ON -DCMAKE_TOOLCHAIN_FILE=deps/polly/vs-15-2017-win64-cxx17.cmake  && cmake --build .
+    - ctest . --verbose
