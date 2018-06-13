@@ -20,4 +20,4 @@ function(add_unit_test)
 endfunction(add_unit_test) 
 
 add_unit_test(NAME dejsonize_test
-  LIBS cpp-pre::json)
+  LIBS pre::json)

@@ -3,9 +3,29 @@
 # To modify it edit CMakeLists.txt.tpl ( i.e. Generate it with `inglued cmaketpl` )
 
 
+# This is an #inglued <> template !
+#
+# The template is processed by http://mustache.github.io/, more info about
+# syntax here : http://mustache.github.io/mustache.5.html 
+#
+# You can access the following variables : 
+# * pre : github organization name
+# * json : current project name
+# * . : current project srcs folder.
+#
+# *                          : all deps direct and transitive 
+#   -  : The cmake package name from the cmake_package_map otherwise: pre
+#   -  : The cmake target name from cmake_package_map otherwise: ::
+#   - pre : the github organization name
+#   -  : the dependency repository name
+#   -  : tag or branch wished for the dep
+#   -  : the path you specified in deps/inglued -I
+#   -  : same as above but with a guaranteed end slash.
+#
+
 cmake_minimum_required(VERSION 3.7.2)
 
-project(json VERSION "0.0.1")
+project(json VERSION "2.0.0")
 enable_testing()
 
 set(CMAKE_CXX_STANDARD 14)
@@ -40,6 +60,13 @@ endif()
 # config
 if (INGLUED)
   include_directories(AFTER deps/boostorg/config/include/)
+else ()
+  find_package(Boost REQUIRED)
+endif()
+
+# container_hash
+if (INGLUED)
+  include_directories(AFTER deps/boostorg/container_hash/include/)
 else ()
   find_package(Boost REQUIRED)
 endif()
@@ -195,7 +222,7 @@ endif()
 # Define header only library
 include_directories(BEFORE ${CMAKE_CURRENT_LIST_DIR})
 add_library(json INTERFACE)
-add_library(cpp-pre::json ALIAS json)
+add_library(pre::json ALIAS json)
 
 set(include_install_dir "include")
 
@@ -232,6 +259,7 @@ else()
       Boost::boost
       Boost::boost
       Boost::boost
+      Boost::boost
       nlohmann_json
   )
 
@@ -239,6 +267,7 @@ endif()
 
 
 if( UNIT_TESTS )
+ add_subdirectory(examples)
  add_subdirectory(test)
 endif()
 
@@ -316,6 +345,14 @@ if (INGLUED)
       DESTINATION ${include_install_dir}/./deps
       FILES_MATCHING PATTERN "*.[ih]*"
       PATTERN deps/boostorg/config/deps EXCLUDE # Transitive deps are hikedup on `glue seal`.
+      )
+
+
+  install(
+      DIRECTORY deps/boostorg/container_hash/include/
+      DESTINATION ${include_install_dir}/./deps
+      FILES_MATCHING PATTERN "*.[ih]*"
+      PATTERN deps/boostorg/container_hash/deps EXCLUDE # Transitive deps are hikedup on `glue seal`.
       )
 
 

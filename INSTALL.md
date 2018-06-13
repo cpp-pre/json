@@ -1,5 +1,5 @@
 
-# Installing cpp-pre::json
+# Installing pre::json
 json can be installed in three ways :
 
 * [Copy paste in your project](#copy-paste-in-your-project)
@@ -15,6 +15,7 @@ json can be installed in three ways :
 -I json/ \
 -I json/deps/boostorg/assert/include/ \
 -I json/deps/boostorg/config/include/ \
+-I json/deps/boostorg/container_hash/include/ \
 -I json/deps/boostorg/core/include/ \
 -I json/deps/boostorg/detail/include/ \
 -I json/deps/boostorg/exception/include/ \
@@ -52,7 +53,7 @@ You can tweak destination with `-DCMAKE_INSTALL_PREFIX=/install/path` to change 
 ```cmake
 find_package(json REQUIRED)
 add_executable(app your_code.cpp)
-target_link_libraries(app cpp-pre::json)
+target_link_libraries(app pre::json)
 ```
 
 ## If you don't use CMake : 
