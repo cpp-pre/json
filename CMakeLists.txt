@@ -13,7 +13,7 @@
 # * json : current project name
 # * . : current project srcs folder.
 #
-# *                                         : all deps direct and transitive 
+# *                                        : all deps direct and transitive 
 #   -  : The cmake package name from the cmake_package_map otherwise: pre
 #   -  : The cmake target name from cmake_package_map otherwise: ::
 #   - pre : the github organization name
@@ -300,13 +300,6 @@ else ()
   find_package(Boost REQUIRED)
 endif()
 
-# variant
-if (INGLUED)
-  include_directories(AFTER deps/boostorg/variant/include/)
-else ()
-  find_package(Boost REQUIRED)
-endif()
-
 # winapi
 if (INGLUED)
   include_directories(AFTER deps/boostorg/winapi/include/)
@@ -340,7 +333,6 @@ if (INGLUED)
 else()
 
   target_link_libraries(json INTERFACE 
-      Boost::boost
       Boost::boost
       Boost::boost
       Boost::boost
@@ -735,14 +727,6 @@ if (INGLUED)
       DESTINATION ${include_install_dir}/./deps
       FILES_MATCHING PATTERN "*.[ih]*"
       PATTERN deps/boostorg/utility/deps EXCLUDE # Transitive deps are hikedup on `glue seal`.
-      )
-
-
-  install(
-      DIRECTORY deps/boostorg/variant/include/
-      DESTINATION ${include_install_dir}/./deps
-      FILES_MATCHING PATTERN "*.[ih]*"
-      PATTERN deps/boostorg/variant/deps EXCLUDE # Transitive deps are hikedup on `glue seal`.
       )
 
 

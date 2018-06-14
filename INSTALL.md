@@ -49,7 +49,6 @@ json can be installed in three ways :
 -I json/deps/boostorg/type_traits/include/ \
 -I json/deps/boostorg/typeof/include/ \
 -I json/deps/boostorg/utility/include/ \
--I json/deps/boostorg/variant/include/ \
 -I json/deps/boostorg/winapi/include/ \
 -I json/deps/nlohmann/json/include/ \
 ```
