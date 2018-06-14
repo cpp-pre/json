@@ -9,9 +9,6 @@
 #include <boost/fusion/include/define_struct.hpp>
 #include <boost/fusion/include/adapt_struct.hpp>
 
-#include <boost/variant.hpp>
-#include <boost/tuple/tuple.hpp>
-
 #include <boost/exception_ptr.hpp>
 
 #include <variant>
@@ -345,7 +342,7 @@ BOOST_FUSION_ADAPT_STRUCT(datamodel::employee,
   name,
   responsibility)
 
-BOOST_AUTO_TEST_CASE (boost_variant) {
+BOOST_AUTO_TEST_CASE (std_variant) {
 
   std::vector<datamodel::employee> employees {
     {"King", datamodel::cashier{"hardware", 1} },
