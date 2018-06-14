@@ -580,7 +580,7 @@ BOOST_AUTO_TEST_CASE (std_variant_simple) {
 }
 
 
-BOOST_AUTO_TEST_CASE (std_variant) {
+BOOST_AUTO_TEST_CASE (std_variant_complex) {
 
   {
     using datamodel::with_std_variant;
