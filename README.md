@@ -1,4 +1,4 @@
-[![pipeline status](https://git.lecbna.org/cpp-pre/json/badges/master/pipeline.svg)](https://git.lecbna.org/cpp-pre/json/commits/master)
+[![pipeline status](https://git.lecbna.org/cpp-pre/json/badges/master/pipeline.svg)](https://git.lecbna.org/cpp-pre/json/commits/master) *for win10, macOS & linux.*
 # pre::from_ or to_ json
 
 [de]Serializes any json object or value to a C++ type with the magic of compile time reflection.
