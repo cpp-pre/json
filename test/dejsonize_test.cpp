@@ -609,3 +609,30 @@ BOOST_AUTO_TEST_CASE (std_variant_complex) {
 
 
 }
+
+namespace datamodel {
+  struct with_cstyle_array {
+    bool elems[3];
+  };
+}
+
+
+BOOST_FUSION_ADAPT_STRUCT(datamodel::with_cstyle_array, elems);
+
+
+BOOST_AUTO_TEST_CASE (with_cstyle_array) {
+
+  using datamodel::with_cstyle_array;
+
+  with_cstyle_array val{{true,false,true}};
+  auto val_json = pre::json::to_json(val);
+  std::cout << val_json.dump(2) << std::endl;
+
+  auto val_deserialized = pre::json::from_json<decltype(val)>(val_json); 
+
+  auto val_reserialized = pre::json::to_json(val_deserialized);
+  std::cout << val_reserialized.dump(2) << std::endl;
+
+  BOOST_REQUIRE(val_json == val_reserialized);
+
+}

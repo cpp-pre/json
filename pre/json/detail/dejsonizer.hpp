@@ -126,13 +126,25 @@ namespace pre { namespace json { namespace detail {
     void operator()(T& value) const {
       if (_json_object.is_array()) {
 
-        value.clear(); //XXX: Needed to clear if already somehow full ?
-        // XXX: Not supported by all containers : value.reserve(array.size());
-        for (auto entry_json : _json_object) { 
-          typename T::value_type entry_deser;
-          dejsonizer dejsonizer(entry_json);
-          dejsonizer(entry_deser);
-          value.push_back(entry_deser);
+        if constexpr(std::is_array_v<T>) {
+          std::size_t index = 0;
+          for (auto entry_json : _json_object) {
+            if (index > std::extent_v<T>) { break; }
+            typename std::remove_extent_t<T> entry_deser;
+            dejsonizer dejsonizer(entry_json);
+            dejsonizer(entry_deser);
+            value[index++] = entry_deser;
+          }
+
+        } else {
+          value.clear(); //XXX: Needed to clear if already somehow full ?
+          // XXX: Not supported by all containers : value.reserve(array.size());
+          for (auto entry_json : _json_object) { 
+            typename T::value_type entry_deser;
+            dejsonizer dejsonizer(entry_json);
+            dejsonizer(entry_deser);
+            value.push_back(entry_deser);
+          }
         }
 
       } else {

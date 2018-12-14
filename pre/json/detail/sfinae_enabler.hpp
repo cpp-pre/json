@@ -53,7 +53,8 @@ namespace pre { namespace json { namespace detail {
 
     template<class T>
     using enable_if_is_container_t = typename std::enable_if<
-      traits::is_container<T>::value
+      traits::is_container<T>::value ||
+      std::is_array<T>::value
     ,T>::type;
 
     template<class T>
