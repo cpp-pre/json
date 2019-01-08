@@ -26,13 +26,9 @@ namespace pre { namespace json { namespace detail {
 
     template<class T> 
     void operator()(const char* name, T& value) const {
-
       if (_json_object.find(name) != std::end(_json_object)) {
         dejsonizer dejsonizer(_json_object.at(name));
         dejsonizer(value);
-      } else {
-        throw std::runtime_error(
-          "Missing key " + std::string(name) + " in JSON Object : " + _json_object.dump());
       }
     }
 

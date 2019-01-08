@@ -185,48 +185,6 @@ BOOST_AUTO_TEST_CASE (working_plain_json) {
 }
 
 BOOST_AUTO_TEST_CASE (incorrect_plain_json) {
-  // Test buggy keys
-  try {
-    auto json = R"(
-      {
-          "main_customer": {
-              "BUGGYKEYage": 43,
-              "friends_id": [
-                  1,
-                  5
-              ],
-              "name": "Mr. Dupond",
-              "skillset": [
-                  {
-                      "experience": 10,
-                      "skill_name": "C++"
-                  },
-                  {
-                      "experience": 20,
-                      "skill_name": "GML"
-                  },
-                  {
-                      "experience": 2,
-                      "skill_name": "Linux"
-                  }
-              ]
-          },
-          "nickname": "Mr. Gold",
-          "OTHERBUGGYKEYsalary": 130000
-      }
-
-    )"_json;
-
-    auto deser_assistant = pre::json::from_json<datamodel::sales_assitant>(json);
-    // Must fail
-    BOOST_REQUIRE(false);
-
-  } catch (...) {
-    std::cout << "EXCEPTION which will be outputed to library user : " << std::endl;
-    std::cout << boost::current_exception_diagnostic_information(true) << std::endl;
-    BOOST_REQUIRE(true);
-  }
-
   // Test buggy value types
   try {
     auto json = R"(
