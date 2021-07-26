@@ -1,6 +1,8 @@
 #define BOOST_TEST_MODULE dejsonize_test
 #include <boost/test/included/unit_test.hpp>
 
+#include "wasm_boost_test.hpp"
+
 #include <iostream>
 #include <vector>
 #include <list>
