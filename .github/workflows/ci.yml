@@ -6,7 +6,7 @@ jobs:
   build-wasm: 
     name: build-wasm
     runs-on: ubuntu-latest
-    container: nxxm/nxxm-ubuntu-staging
+    container: nxxm/nxxm-ubuntu-develop
     steps:
       - name: checkout
         uses: actions/checkout@v2
@@ -16,7 +16,7 @@ jobs:
   build-gcc: 
     name: build-gcc
     runs-on: ubuntu-latest
-    container: nxxm/nxxm-ubuntu-staging
+    container: nxxm/nxxm-ubuntu-develop
     steps:
       - name: checkout
         uses: actions/checkout@v2
@@ -26,7 +26,7 @@ jobs:
   build-clang-linux: 
     name: build-clang-linux
     runs-on: ubuntu-latest
-    container: nxxm/nxxm-ubuntu-staging
+    container: nxxm/nxxm-ubuntu-develop
     steps:
       - name: checkout
         uses: actions/checkout@v2
