@@ -99,6 +99,7 @@ namespace pre { namespace json { namespace detail {
     template<class T, 
       enable_if_is_container_t<T>* = nullptr>
     void operator()(const T& value) const {
+      _json_object = nlohmann::json::array();
       for (const auto& each : value) {
         nlohmann::json json_subobject;
         jsonizer subjsonizer(json_subobject);

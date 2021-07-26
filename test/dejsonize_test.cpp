@@ -289,6 +289,11 @@ BOOST_AUTO_TEST_CASE (containers_direct) {
 
   auto skills_deserialized = pre::json::from_json<std::vector<datamodel::skill>>(skills_json); 
   BOOST_REQUIRE(skills == skills_deserialized);
+
+  auto empty_skills = pre::json::to_json( std::vector<datamodel::skill> {} ).dump();
+  BOOST_REQUIRE(empty_skills != "null");
+  BOOST_REQUIRE(empty_skills == "[]");
+
 }
 
 namespace datamodel {
