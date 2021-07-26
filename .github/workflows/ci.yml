@@ -1,6 +1,6 @@
 name: build 
 # This workflow is triggered on pushes to the repository.
-on: [pr, push]
+on: [pull_request]
 
 jobs:
   build-wasm: 
