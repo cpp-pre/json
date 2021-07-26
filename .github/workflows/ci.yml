@@ -1,0 +1,35 @@
+name: build 
+# This workflow is triggered on pushes to the repository.
+on: [pr, push]
+
+jobs:
+  build-wasm: 
+    name: build-wasm
+    runs-on: ubuntu-latest
+    container: nxxm/nxxm-ubuntu-staging
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+      - name: nxxm builds project 
+        run: |
+          nxxm . --dont-upgrade --verbose --test all 
+  build-gcc: 
+    name: build-gcc
+    runs-on: ubuntu-latest
+    container: nxxm/nxxm-ubuntu-staging
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+      - name: nxxm builds project 
+        run: |
+          nxxm . --dont-upgrade --verbose --test all -t gcc-7-cxx17
+  build-clang-linux: 
+    name: build-clang-linux
+    runs-on: ubuntu-latest
+    container: nxxm/nxxm-ubuntu-staging
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+      - name: nxxm builds project 
+        run: |
+          nxxm . --dont-upgrade --verbose --test all -t linux
