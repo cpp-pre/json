@@ -1,6 +1,8 @@
 #define BOOST_TEST_MODULE for_each_type
 #include <boost/test/included/unit_test.hpp>
 
+#include "wasm_boost_test.hpp"
+
 #include <iostream>
 #include <variant>
 #include <pre/variant/for_each_type.hpp>
