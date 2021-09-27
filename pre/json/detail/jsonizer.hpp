@@ -3,7 +3,6 @@
 
 #include <variant>
 #include <optional>
-#include <boost/type_index.hpp>
 
 #include <boost/fusion/include/for_each.hpp>
 
@@ -12,6 +11,7 @@
 #include <nlohmann/json.hpp>
 
 #include <pre/json/detail/sfinae_enabler.hpp>
+#include <pre/json/detail/get_type_name_as_string.hpp>
 #include <pre/enums/to_underlying.hpp>
 #include <pre/variant/apply_visitor.hpp>
 
@@ -57,7 +57,7 @@ namespace pre { namespace json { namespace detail {
     void operator()(const T& value) const {
 
       if (_disambiguate_struct) {
-        _json_object["struct"] = boost::typeindex::type_id<T>().pretty_name();
+        _json_object["struct"] =  get_type_name_as_string<T>();
         _disambiguate_struct = false; // Do it only once in hierarchy
       }
       pre::fusion::for_each_member(value, *this);
