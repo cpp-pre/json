@@ -3,7 +3,6 @@
 
 #include <variant>
 #include <optional>
-#include <boost/type_index.hpp>
 
 #include <boost/mpl/for_each.hpp>
 #include <boost/fusion/include/for_each.hpp>
@@ -13,6 +12,7 @@
 #include <nlohmann/json.hpp>
 
 #include <pre/json/detail/sfinae_enabler.hpp>
+#include <pre/json/detail/get_type_name_as_string.hpp>
 #include <pre/enums/to_underlying.hpp>
 
 #include <pre/variant/for_each_type.hpp>
@@ -78,7 +78,7 @@ namespace pre { namespace json { namespace detail {
             auto struct_it = _json_object.find("struct");
             
             if ( (struct_it != _json_object.end()) && 
-                (*struct_it == boost::typeindex::type_id<U>().pretty_name()) ) {
+                (*struct_it == get_type_name_as_string<U>()) ) {
 
               dejsonizer dejsonizer(_json_object);
               U test_value;
