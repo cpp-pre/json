@@ -616,3 +616,40 @@ BOOST_AUTO_TEST_CASE (std_variant_complex) {
 
 
 }
+
+namespace datamodel {
+
+  struct with_a_json_type {
+    int id;
+    std::string name;
+    pre::json::json_t nested_json;
+  };
+}
+
+BOOST_FUSION_ADAPT_STRUCT(datamodel::with_a_json_type,
+  id,
+  name,
+  image)
+
+
+
+BOOST_AUTO_TEST_CASE(json_as_expected_member) {
+  using datamodel::with_a_json_type;
+
+  with_a_json_type val {
+    .id = 43,
+    .name = "that's a name",
+    .nested_json;
+  };
+
+  auto val_json = pre::json::to_json(val);
+  std::cout << val_json.dump(2) << std::endl;
+
+  auto val_deserialized = pre::json::from_json<decltype(val)>(val_json); 
+
+  auto val_reserialized = pre::json::to_json(val_deserialized);
+  std::cout << val_reserialized.dump(2) << std::endl;
+
+  BOOST_REQUIRE(val == val_deserialized);
+
+}
