@@ -7,7 +7,7 @@
 #include <vector>
 #include <list>
 
-#include <boost/fusion/include/equal_to.hpp>
+#include <boost/fusion/include/comparison.hpp>
 #include <boost/fusion/include/define_struct.hpp>
 #include <boost/fusion/include/adapt_struct.hpp>
 
@@ -22,6 +22,7 @@
 namespace datamodel {
 
   using boost::fusion::operator==;
+  using boost::fusion::operator<;
   using boost::fusion::operator!=;
 
   typedef size_t years;
@@ -617,34 +618,33 @@ BOOST_AUTO_TEST_CASE (std_variant_complex) {
 
 }
 
-#define json_key(type, name) ::pre::cx::key_value_pair<"" # name, type> name
-
 namespace datamodel {
   struct BuildRunnerRequestDto {
-    json_key(std::string, ssh_public_key);
-    json_key(std::string, environment_name);
-    json_key(std::string, environment_zip_hash);
-    json_key(std::size_t, job_size);
-    json_key(std::string, environment_zip);
-    json_key(cashier, user);
+    pre_json_key(std::string, ssh_public_key);
+    pre_json_key(std::string, environment_name);
+    pre_json_key(std::string, environment_zip_hash);
+    pre_json_key(std::size_t, job_size);
+    pre_json_key(std::string, environment_zip);
+    pre_json_key(cashier, user);
   };
+  BOOST_PFR_FUNCTIONS_FOR(BuildRunnerRequestDto);
 }
 
 BOOST_AUTO_TEST_CASE (compile_time_named_fields_no_adapt_struct) {
 
   {
     using datamodel::BuildRunnerRequestDto;
-    BuildRunnerRequestDto val{.ssh_public_key = { "that's one key"} };
+    BuildRunnerRequestDto val{ .ssh_public_key = { "that's one key"} };
 
     auto val_json = pre::json::to_json(val);
     std::cout << val_json.dump(2) << std::endl;
 
-    //auto val_deserialized = pre::json::from_json<decltype(val)>(val_json); 
+    auto val_deserialized = pre::json::from_json<decltype(val)>(val_json); 
 
-    //auto val_reserialized = pre::json::to_json(val_deserialized);
-    //std::cout << val_reserialized.dump(2) << std::endl;
+    auto val_reserialized = pre::json::to_json(val_deserialized);
+    std::cout << val_reserialized.dump(2) << std::endl;
 
-    //BOOST_REQUIRE(val == val_deserialized);
+    BOOST_REQUIRE(val == val_deserialized);
   }
 
   {
@@ -652,18 +652,18 @@ BOOST_AUTO_TEST_CASE (compile_time_named_fields_no_adapt_struct) {
     std::vector<BuildRunnerRequestDto> vals{
       {.ssh_public_key = { "that's one key"}, .job_size = {11}},
       {.ssh_public_key = { "that's second key"}, .job_size = {43}},
-      {.ssh_public_key = { "that's third key"}, .job_size = {13}}
+      {.ssh_public_key = { "that's third key"}, .job_size = {13}, .user{{ .section="banananas", .checkout_number=23 }} }
     };
 
     auto val_json = pre::json::to_json(vals);
     std::cout << val_json.dump(2) << std::endl;
 
-    //auto val_deserialized = pre::json::from_json<decltype(val)>(val_json); 
+    auto val_deserialized = pre::json::from_json<decltype(vals)>(val_json); 
 
-    //auto val_reserialized = pre::json::to_json(val_deserialized);
-    //std::cout << val_reserialized.dump(2) << std::endl;
+    auto val_reserialized = pre::json::to_json(val_deserialized);
+    std::cout << val_reserialized.dump(2) << std::endl;
 
-    //BOOST_REQUIRE(val == val_deserialized);
+    BOOST_REQUIRE(vals == val_deserialized);
   }
 
 

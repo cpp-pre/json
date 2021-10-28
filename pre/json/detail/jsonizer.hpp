@@ -135,7 +135,7 @@ namespace pre { namespace json { namespace detail {
     template<class T, 
       enable_if_is_struct_non_adapted_t<T>* = nullptr>
     void operator()(const T& value) const {
-      auto t = boost::pfr::structure_to_tuple(value);
+      auto t = boost::pfr::structure_tie(value);
       boost::hana::for_each(t, 
       [this]<cx::static_string key_, class TVal>(pre::cx::key_value_pair<key_, TVal> x) {
         this->operator()(x);
