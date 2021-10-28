@@ -137,7 +137,16 @@ namespace pre { namespace json { namespace detail {
     void operator()(const T& value) const {
       auto t = boost::pfr::structure_tie(value);
       boost::hana::for_each(t, 
-      [this]<cx::static_string key_, class TVal>(pre::cx::key_value_pair<key_, TVal> x) {
+      [this](const auto& x) {
+        this->operator()(x);
+      });
+    }
+
+    //! tuples
+    template<requirements::tuple_like T>
+    void operator()(const T& value) const {
+      boost::hana::for_each(value, 
+      [this](const auto& x) {
         this->operator()(x);
       });
     }

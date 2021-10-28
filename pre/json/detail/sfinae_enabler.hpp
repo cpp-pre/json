@@ -68,6 +68,29 @@ namespace pre { namespace json { namespace detail {
       traits::is_associative_container<T>::value 
     ,T>::type;
 
+    namespace requirements {
+      template<class T, std::size_t N>
+      concept has_tuple_element =
+        requires(T t) {
+          typename std::tuple_element_t<N, std::remove_const_t<T>>;
+          { get<N>(t) } -> std::convertible_to<const std::tuple_element_t<N, T>&>;
+        };
+
+      template<class T>
+      concept tuple_like = !std::is_reference_v<T> 
+        && requires(T t) { 
+          typename std::tuple_size<T>::type; 
+          requires std::derived_from<
+            std::tuple_size<T>, 
+            std::integral_constant<std::size_t, std::tuple_size_v<T>>
+          >;
+        } && []<std::size_t... N>(std::index_sequence<N...>) { 
+          return (has_tuple_element<T, N> && ...); 
+        }(std::make_index_sequence<std::tuple_size_v<T>>());
+
+      template<class T>
+      concept not_tuple_like = !tuple_like<T>;
+    }
 }}}
 
 #endif
