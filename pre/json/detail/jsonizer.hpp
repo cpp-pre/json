@@ -15,6 +15,12 @@
 #include <pre/enums/to_underlying.hpp>
 #include <pre/variant/apply_visitor.hpp>
 
+#include <pre/cx/key_value_pair.hpp>
+
+#include <boost/pfr.hpp>
+#include <boost/hana/for_each.hpp>
+#include <boost/hana/ext/std/tuple.hpp>
+
 //TODO: What about tuples ?
 //TODO: What about normal union?
 
@@ -117,6 +123,23 @@ namespace pre { namespace json { namespace detail {
         subjsonizer(each.second);
         _json_object[each.first] = json_subobject; 
       }
+    }
+
+    //! Named fields
+    template<cx::static_string key_, class T>
+    void operator()(const pre::cx::key_value_pair<key_, T>& value) const {
+        this->operator()(get_key(value), value.value);
+    }
+
+    //! Non adapted structs with key_value_pair
+    template<class T, 
+      enable_if_is_struct_non_adapted_t<T>* = nullptr>
+    void operator()(const T& value) const {
+      auto t = boost::pfr::structure_to_tuple(value);
+      boost::hana::for_each(t, 
+      [this]<cx::static_string key_, class TVal>(pre::cx::key_value_pair<key_, TVal> x) {
+        this->operator()(x);
+      });
     }
 
     

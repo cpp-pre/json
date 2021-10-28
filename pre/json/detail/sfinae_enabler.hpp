@@ -50,6 +50,13 @@ namespace pre { namespace json { namespace detail {
       >::value
     ,T>::type;
 
+    template<class T>
+    using enable_if_is_struct_non_adapted_t = typename std::enable_if< 
+      ! std::is_same<
+        typename boost::fusion::traits::tag_of<T>::type, 
+        boost::fusion::struct_tag
+      >::value && std::is_aggregate_v<T>
+    ,T>::type;
 
     template<class T>
     using enable_if_is_container_t = typename std::enable_if<
@@ -60,7 +67,6 @@ namespace pre { namespace json { namespace detail {
     using enable_if_is_associative_container_t = typename std::enable_if<
       traits::is_associative_container<T>::value 
     ,T>::type;
-
 
 }}}
 
