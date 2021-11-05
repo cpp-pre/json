@@ -1,0 +1,6 @@
+{
+  "nlohmann/json" :  { "@" : "v3.1.2", "x" : ["benchmarks"] }
+  , "boostorg/pfr" : {}
+  , "tipi-build/constexpr_all_the_things" : { "@" : "feature/json-substrings-as-types" }
+  , "platform" : [ "Boost::+boost" ]
+}

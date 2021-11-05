@@ -7,7 +7,7 @@
 #include <vector>
 #include <list>
 
-#include <boost/fusion/include/equal_to.hpp>
+#include <boost/fusion/include/comparison.hpp>
 #include <boost/fusion/include/define_struct.hpp>
 #include <boost/fusion/include/adapt_struct.hpp>
 
@@ -22,6 +22,7 @@
 namespace datamodel {
 
   using boost::fusion::operator==;
+  using boost::fusion::operator<;
   using boost::fusion::operator!=;
 
   typedef size_t years;
@@ -612,6 +613,118 @@ BOOST_AUTO_TEST_CASE (std_variant_complex) {
     std::cout << val_reserialized.dump(2) << std::endl;
 
     BOOST_REQUIRE(val == val_deserialized);
+  }
+
+
+}
+
+namespace datamodel {
+  struct BuildRunnerRequestDto {
+    pre_json_key(std::string, ssh_public_key);
+    pre_json_key(std::string, environment_name);
+    pre_json_key(std::string, environment_zip_hash);
+    pre_json_key(std::size_t, job_size);
+    pre_json_key(std::string, environment_zip);
+    pre_json_key(cashier, user);
+  };
+  BOOST_PFR_FUNCTIONS_FOR(BuildRunnerRequestDto);
+}
+
+BOOST_AUTO_TEST_CASE (compile_time_named_fields_no_adapt_struct) {
+
+  {
+    using datamodel::BuildRunnerRequestDto;
+    BuildRunnerRequestDto val{ .ssh_public_key = { "that's one key"} };
+
+    auto val_json = pre::json::to_json(val);
+    std::cout << val_json.dump(2) << std::endl;
+
+    auto val_deserialized = pre::json::from_json<decltype(val)>(val_json); 
+
+    auto val_reserialized = pre::json::to_json(val_deserialized);
+    std::cout << val_reserialized.dump(2) << std::endl;
+
+    BOOST_REQUIRE(val == val_deserialized);
+  }
+
+  {
+    using datamodel::BuildRunnerRequestDto;
+    std::vector<BuildRunnerRequestDto> vals{
+      {.ssh_public_key = { "that's one key"}, .job_size = {11}},
+      {.ssh_public_key = { "that's second key"}, .job_size = {43}},
+      {.ssh_public_key = { "that's third key"}, .job_size = {13}, .user{{ .section="banananas", .checkout_number=23 }} }
+    };
+
+    auto val_json = pre::json::to_json(vals);
+    std::cout << val_json.dump(2) << std::endl;
+
+    auto val_deserialized = pre::json::from_json<decltype(vals)>(val_json); 
+
+    auto val_reserialized = pre::json::to_json(val_deserialized);
+    std::cout << val_reserialized.dump(2) << std::endl;
+
+    BOOST_REQUIRE(vals == val_deserialized);
+  }
+
+  {
+    using pre::cx::key_value_pair;
+    using namespace datamodel;
+    using namespace std::literals;
+
+    auto val = std::make_tuple(
+      key_value_pair<"ssh_public_key"         , std::string>  {"key"s},
+      key_value_pair<"environment_name"       , std::string>  {"env"s},
+      key_value_pair<"environment_zip_hash"   , std::string>  {"zip_hash"s},
+      key_value_pair<"job_size"               , std::size_t>  {434343},
+      key_value_pair<"environment_zip"        , std::string>  {"zip"s},
+      key_value_pair<"user"                   , cashier>      {{ .section="wine & spirits", .checkout_number=27}} 
+    );
+
+    auto val_json = pre::json::to_json(val);
+    std::cout << val_json.dump(2) << std::endl;
+
+    auto val_deserialized = pre::json::from_json<decltype(val)>(val_json); 
+
+    auto val_reserialized = pre::json::to_json(val_deserialized);
+    std::cout << val_reserialized.dump(2) << std::endl;
+
+    BOOST_REQUIRE(val == val_deserialized);
+  }
+
+
+    {
+    using pre::cx::key_value_pair;
+    using namespace datamodel;
+    using namespace std::literals;
+
+    auto val = std::make_tuple(
+      key_value_pair<"ssh_public_key"         , std::string>  {"key"s},
+      key_value_pair<"environment_name"       , std::string>  {"env"s},
+      key_value_pair<"environment_zip_hash"   , std::string>  {"zip_hash"s},
+      key_value_pair<"job_size"               , std::size_t>  {434343},
+      key_value_pair<"environment_zip"        , std::string>  {"zip"s},
+      key_value_pair<"user"                   , cashier>      {{ .section="wine & spirits", .checkout_number=27}} 
+    );
+
+    std::vector vals { val };
+    vals.push_back(std::make_tuple(
+      key_value_pair<"ssh_public_key"         , std::string>  {"yoooo"s},
+      key_value_pair<"environment_name"       , std::string>  {"woui"s},
+      key_value_pair<"environment_zip_hash"   , std::string>  {"noooooo"s},
+      key_value_pair<"job_size"               , std::size_t>  {540210},
+      key_value_pair<"environment_zip"        , std::string>  {"timeeeee"s},
+      key_value_pair<"user"                   , cashier>      {{ .section="Gemüse", .checkout_number=3486}} 
+    ));
+
+    auto val_json = pre::json::to_json(vals);
+    std::cout << val_json.dump(2) << std::endl;
+
+    auto val_deserialized = pre::json::from_json<decltype(vals)>(val_json); 
+
+    auto val_reserialized = pre::json::to_json(val_deserialized);
+    std::cout << val_reserialized.dump(2) << std::endl;
+
+    BOOST_REQUIRE(vals == val_deserialized);
   }
 
 

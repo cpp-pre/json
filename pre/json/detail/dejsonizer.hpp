@@ -17,6 +17,12 @@
 
 #include <pre/variant/for_each_type.hpp>
 
+#include <pre/cx/key_value_pair.hpp>
+
+#include <boost/pfr.hpp>
+#include <boost/hana/for_each.hpp>
+#include <boost/hana/ext/std/tuple.hpp>
+
 namespace pre { namespace json { namespace detail {
 
   struct dejsonizer {
@@ -158,6 +164,35 @@ namespace pre { namespace json { namespace detail {
       } else {
         throw std::runtime_error("Expected " + _json_object.dump() + " to be a json object.");
       }
+    }
+
+
+    //! Named fields
+    template<cx::static_string key_, class T>
+    void operator()(pre::cx::key_value_pair<key_, T>& value) const {
+        this->operator()(get_key(value), value.value);
+    }
+
+    //! Non adapted structs with key_value_pair
+    template<class T, 
+      enable_if_is_struct_non_adapted_t<T>* = nullptr>
+    void operator()(T& value) const {
+
+                
+      auto t = boost::pfr::structure_tie(value);
+      boost::hana::for_each(t, 
+      [this](auto& x) {
+        this->operator()(x);
+      });
+    }
+
+    //! tuples
+    template<requirements::tuple_like T>
+    void operator()(T& value) const {
+      boost::hana::for_each(value, 
+      [this](auto& x) {
+        this->operator()(x);
+      });
     }
       
     private:
