@@ -1,0 +1,4 @@
+{
+  "nlohmann/json" :  { "@" : "v3.11.1", "x" : ["benchmarks"] }
+  , "platform" : [ "Boost::+boost" ]
+}
