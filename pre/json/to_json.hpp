@@ -68,6 +68,22 @@ namespace pre { namespace json {
     return json_object;
   }
 
+  /**
+   * \brief Same as pre::json::to_json<T>(const T&) but with a post serialization mapper function
+   * 
+   * \tparam T 
+   * \param value 
+   * \param mapper 
+   * \return An [nlohmann::json](https://github.com/nlohmann/json/) object directly streamable to std::cout or convertible to string.
+   */
+  template<class T>
+  nlohmann::json to_json(const T& value, std::function<void(nlohmann::json&)> mapper) {
+    nlohmann::json json_object;
+    detail::jsonizer jsonizer(json_object);
+    jsonizer(value);
+    mapper(json_object);
+    return json_object;
+  }
 }}
 
 #endif
