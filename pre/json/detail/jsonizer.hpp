@@ -112,7 +112,7 @@ namespace pre { namespace json { namespace detail {
       enable_if_is_associative_container_t<T>* = nullptr>
     void operator()(const T& value) const {
       for (const auto& each : value) {
-        nlohmann::json json_subobject;
+        nlohmann::json json_subobject = nlohmann::json::object();
         jsonizer subjsonizer(json_subobject);
         subjsonizer(each.second);
         _json_object[each.first] = json_subobject; 
