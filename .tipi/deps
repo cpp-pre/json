@@ -3,7 +3,7 @@
   , "tipi-deps/boost" : { 
       "@" : "v1.80.0-without-submodules"
     , "u" : true
-    , "packages" : ["boost_headers"]
-    , "targets" : ["Boost::headers"] 
+    , "packages" : ["boost_fusion"]
+    , "targets" : ["Boost::fusion"] 
   }
 }
