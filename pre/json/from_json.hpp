@@ -74,6 +74,19 @@ namespace pre { namespace json {
   }
 
   /**
+   * \brief Same as pre::json::from_json(const std::string&) but with an added mapper function
+   */
+  template<class T>
+  T from_json(const std::string& serialized_json, std::function<void(nlohmann::json&)> mapper) {
+    nlohmann::json json_object = nlohmann::json::parse(serialized_json);
+    mapper(json_object);  // does whatever mapping is required
+    T object;
+    detail::dejsonizer dejsonizer(json_object);
+    dejsonizer(object);
+    return object;
+  }
+
+  /**
    * \brief Same as pre::json::from_json(const std::string&) but directly with a JSON.
    */
   template<class T>
