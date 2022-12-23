@@ -4,6 +4,6 @@
       "@" : "v1.80.0-without-submodules"
     , "u" : true
     , "packages" : ["boost_headers"]
-    , "targets" : ["Boost::boost"] 
+    , "targets" : ["Boost::headers"] 
   }
 }
