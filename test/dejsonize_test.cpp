@@ -407,9 +407,13 @@ BOOST_AUTO_TEST_CASE(empty_map) {
   auto some_json = pre::json::to_json(some);
   std::cout << some_json.dump(2) << std::endl; 
 
-  auto some_deserialized = pre::json::from_json<datamodel::struct_with_a_map>(some_json);
+  auto some_deserialized = pre::json::from_json<decltype(some)>(some_json);
   
   BOOST_REQUIRE(some_deserialized == some); 
+
+  auto empty_map = pre::json::to_json( std::map<std::string, std::string> {} ).dump();
+  BOOST_REQUIRE(empty_map != "null");
+  BOOST_REQUIRE(empty_map == "{}");
 }
 
 
