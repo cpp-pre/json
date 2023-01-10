@@ -1,9 +1,4 @@
-{ 
-  "nlohmann/json" :  { "@" : "v3.11.2", "x" : ["benchmarks"] }
-  , "tipi-deps/boost" : { 
-      "@" : "v1.80.0-without-submodules"
-    , "u" : true
-    , "packages" : ["boost_fusion"]
-    , "targets" : ["Boost::fusion"] 
-  }
+{
+  "nlohmann/json" :  { "@" : "v3.11.1", "x" : ["benchmarks"] }
+  , "platform" : [ "Boost::+boost" ]
 }
