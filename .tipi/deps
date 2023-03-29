@@ -1,7 +1,7 @@
 { 
   "nlohmann/json" :  { "@" : "v3.11.2", "x" : ["benchmarks"] }
   , "boostorg/boost" : {
-    , "@" : "v1.80.0"
+      "@" : "v1.80.0"
     , "u" : true
     , "opts" : "set(BOOST_INCLUDE_LIBRARIES fusion)"
     , "packages" : ["boost_fusion"]
