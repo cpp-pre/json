@@ -91,10 +91,21 @@ namespace pre { namespace json { namespace detail {
     }
 
     template<class T, 
+      enable_if_is_shared_pointer_t<T>* = nullptr>
+    void operator()(T pointed_value) const {
+      if (pointed_value) { 
+       operator()(*pointed_value);
+      } else {
+       _json_object = nlohmann::json{};
+      }
+    }
+
+    template<class T, 
       enable_if_is_directly_serializable_t<T>* = nullptr>
     void operator()(const T& value) const {
       _json_object = value;
     }
+
 
     template<class T, 
       enable_if_is_container_t<T>* = nullptr>

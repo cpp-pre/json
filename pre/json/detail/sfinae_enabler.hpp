@@ -56,6 +56,22 @@ namespace pre { namespace json { namespace detail {
       traits::is_container<T>::value
     ,T>::type;
 
+
+    template <typename T> 
+    struct is_shared_pointer : std::false_type 
+    {};
+
+    template <typename T> 
+    struct is_shared_pointer<std::shared_ptr<T>>
+      : std::true_type 
+    {};
+
+    template<class T>
+    using enable_if_is_shared_pointer_t = typename std::enable_if<
+      is_shared_pointer<T>::value
+    ,T>::type;
+
+
     template<class T>
     using enable_if_is_associative_container_t = typename std::enable_if<
       traits::is_associative_container<T>::value 
