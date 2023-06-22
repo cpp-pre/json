@@ -1,4 +1,10 @@
-{
-  "nlohmann/json" :  { "@" : "v3.11.1", "x" : ["benchmarks"] }
-  , "platform" : [ "Boost::+boost" ]
+{ 
+  "nlohmann/json" :  { "@" : "v3.11.2", "x" : ["benchmarks"] }
+  , "boostorg/boost" : {
+      "@" : "boost-1.80.0"
+    , "u" : true
+    , "opts" : "set(BOOST_INCLUDE_LIBRARIES fusion)"
+    , "packages" : ["boost_fusion"]
+    , "targets" : ["Boost::fusion"] 
+  }
 }
